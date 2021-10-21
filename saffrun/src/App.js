@@ -1,9 +1,11 @@
-import './App.css';
+import React from "react"
+import Router from "./Router"
 
-function App() {
-  return (
-    <h1>WelCome To Saffrun</h1>
-  );
+import "react-perfect-scrollbar/dist/css/styles.css"
+import "prismjs/themes/prism-tomorrow.css"
+
+const App = props => {
+  return <Router />
 }
 
-export default App;
+export default App
