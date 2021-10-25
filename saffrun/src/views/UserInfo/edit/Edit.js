@@ -11,30 +11,16 @@ import {
   TabPane
 } from "reactstrap"
 import classnames from "classnames"
-import { User, Info, Users } from "react-feather"
+import { User, Info, Share } from "react-feather"
 import AccountTab from "./Account"
 import InfoTab from "./Information"
 import SocialTab from "./Social"
-import "../../assets/scss/pages/users.scss"
-import axios from "axios"
+import "../../../../assets/scss/pages/users.scss"
 class UserEdit extends React.Component {
   state = {
-    activeTab: "1",
-    userData : {}
+    activeTab: "1"
   }
-  componentDidMount = async  ()=>{
-    let userData = await axios.get("https://6176598703178d00173daba2.mockapi.io/users/12");
-    this.setState({userData : userData.data})
-    console.log(this.state.userData)
-  }
-  updateData = (e) =>{
-    let userData = {...this.state.userData ,[e.target.id]: e.target.value};
 
-    this.setState({ userData })
-    console.log(this.state.userData)
-  };
-    
-  
   toggle = tab => {
     this.setState({
       activeTab: tab
@@ -57,7 +43,7 @@ class UserEdit extends React.Component {
                     }}
                   >
                     <User size={16} />
-                    <span className="align-middle ml-50">حساب کاربری</span>
+                    <span className="align-middle ml-50">Account</span>
                   </NavLink>
                 </NavItem>
                 <NavItem>
@@ -69,8 +55,8 @@ class UserEdit extends React.Component {
                       this.toggle("2")
                     }}
                   >
-                    <Info size={16}  />
-                    <span className="align-middle ml-50">اطلاعات شخصی</span>
+                    <Info size={16} />
+                    <span className="align-middle ml-50">Information</span>
                   </NavLink>
                 </NavItem>
                 <NavItem>
@@ -82,20 +68,20 @@ class UserEdit extends React.Component {
                       this.toggle("3")
                     }}
                   >
-                    <Users size={16} />
-                    <span className="align-middle ml-50">دنبال کنندگان</span>
+                    <Share size={16} />
+                    <span className="align-middle ml-50">Social</span>
                   </NavLink>
                 </NavItem>
               </Nav>
               <TabContent activeTab={this.state.activeTab}>
                 <TabPane tabId="1">
-                  <AccountTab userData={this.state.userData} updateData = {this.updateData}  />
+                  <AccountTab />
                 </TabPane>
                 <TabPane tabId="2">
-                  <InfoTab updateData = {this.updateData} userData ={this.state.userData}/>
+                  <InfoTab />
                 </TabPane>
                 <TabPane tabId="3">
-                  <SocialTab userData = {this.state.userData} />
+                  <SocialTab />
                 </TabPane>
               </TabContent>
             </CardBody>
