@@ -17,12 +17,13 @@ class RegisterJWT extends React.Component {
 
   handleRegister = async (e) => {
     e.preventDefault();
-    if (this.state.password.length <= 7) {
-      toast.error("طول رمز شما باید از ۸ بیشتر باشد", {
-        position: toast.POSITION.TOP_LEFT,
-      });
-      return;
-    }
+    this.props.changeSpinnerState(true);
+    // if (this.state.password.length <= 7) {
+    //   toast.error("طول رمز شما باید از ۸ بیشتر باشد", {
+    //     position: toast.POSITION.TOP_CENTER,
+    //   });
+    //   return;
+    // }
     try {
       // register user
       await axios.post(`${urlDomain}/api/auth/register/`, {
@@ -34,17 +35,26 @@ class RegisterJWT extends React.Component {
           ...this.state,
         });
         localStorage.setItem("access", loginResponse.data["access"]);
+        this.props.changeSpinnerState(false);
         history.push("/");
       } catch (e) {
-        toast.error(JSON.stringify(e.response.data), {
-          position: toast.POSITION.TOP_LEFT,
+        this.props.changeSpinnerState(false);
+        toast.error("JSON.stringify(e.response.data)", {
+          position: toast.POSITION.TOP_CENTER,
         });
       }
     } catch (e) {
-      toast.error(JSON.stringify(e.response.data), {
-        position: toast.POSITION.TOP_LEFT,
+      this.props.changeSpinnerState(false);
+      toast.error("JSON.stringify(e.response.data)", {
+        position: toast.POSITION.TOP_CENTER,
       });
     }
+  };
+  setConditionRegister = () => {
+    const { username, password, confirmPass } = this.state;
+    return (
+      username.length < 6 || password.length < 8 || confirmPass !== password
+    );
   };
 
   render() {
@@ -52,27 +62,45 @@ class RegisterJWT extends React.Component {
       <React.Fragment>
         <ToastContainer />
         <Form onSubmit={this.handleRegister}>
-          <FormGroup className="form-label-group">
+          <FormGroup style={{ marginTop: "5%" }} className="form-label-group">
             <Input
               type="text"
               placeholder="نام کاربری"
               required
               value={this.state.username}
               onChange={(e) => this.setState({ username: e.target.value })}
+              invalid={
+                this.state.username.length > 0 && this.state.username.length < 6
+              }
             />
-            <Label>نام کاربری</Label>
+            <Label style={{ fontSize: "12px" }}>نام کاربری</Label>
+            {this.state.username.length > 0 &&
+              this.state.username.length < 6 && (
+                <small style={{ color: "red", fontSize: "11px" }}>
+                  طول نام کاربری شما باید بیش‌تر از ۵ باشد
+                </small>
+              )}
           </FormGroup>
-          <FormGroup className="form-label-group">
+          <FormGroup style={{ marginTop: "10%" }} className="form-label-group">
             <Input
               type="password"
               placeholder="رمز"
               required
               value={this.state.password}
               onChange={(e) => this.setState({ password: e.target.value })}
+              invalid={
+                this.state.password.length > 0 && this.state.password.length < 8
+              }
             />
-            <Label>رمز</Label>
+            <Label style={{ fontSize: "12px" }}>رمز</Label>
+            {this.state.password.length > 0 &&
+              this.state.password.length < 8 && (
+                <small style={{ color: "red", fontSize: "11px" }}>
+                  طول رمز شما باید بیشتر از ۷ باشد
+                </small>
+              )}
           </FormGroup>
-          <FormGroup className="form-label-group">
+          <FormGroup style={{ marginTop: "10%" }} className="form-label-group">
             <Input
               type="password"
               placeholder="تایید رمز"
@@ -81,9 +109,24 @@ class RegisterJWT extends React.Component {
               onChange={(e) => this.setState({ confirmPass: e.target.value })}
               invalid={this.state.confirmPass !== this.state.password}
             />
-            <Label>تایید رمز</Label>
+            <Label style={{ fontSize: "12px" }}>تایید رمز</Label>
+            {this.state.confirmPass !== this.state.password && (
+              <small style={{ color: "red", fontSize: "11px" }}>
+                رمز شما مطابقت ندارد
+              </small>
+            )}
           </FormGroup>
-          <div className="d-flex justify-content-between">
+          <div
+            style={{ marginTop: "10%" }}
+            className="d-flex justify-content-between"
+          >
+            <Button
+              disabled={this.setConditionRegister()}
+              color="primary"
+              type="submit"
+            >
+              ثبت نام
+            </Button>
             <Button
               outline
               color="primary"
@@ -92,13 +135,6 @@ class RegisterJWT extends React.Component {
               }}
             >
               ورود
-            </Button>
-            <Button
-              disabled={this.state.confirmPass !== this.state.password}
-              color="primary"
-              type="submit"
-            >
-              ثبت نام
             </Button>
           </div>
         </Form>

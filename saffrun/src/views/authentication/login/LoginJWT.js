@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { CardBody, FormGroup, Form, Input, Button, Label } from "reactstrap";
-import { Mail, Lock } from "react-feather";
+import { Mail, Lock, User } from "react-feather";
 import { history } from "../../../history";
 import axios from "axios";
 import urlDomain from "../../../utility/urlDomain";
@@ -13,6 +13,7 @@ class LoginJWT extends React.Component {
   state = {
     username: "",
     password: "",
+    loadSpinner: false,
   };
   async componentDidMount() {
     let token = localStorage.getItem("access");
@@ -30,15 +31,18 @@ class LoginJWT extends React.Component {
   }
   handleLogin = async (e) => {
     e.preventDefault();
+    this.props.changeSpinnerState(true);
     try {
       let loginResponse = await axios.post(`${urlDomain}/api/auth/login/`, {
         ...this.state,
       });
       localStorage.setItem("access", loginResponse.data["access"]);
+      this.props.changeSpinnerState(false);
       history.push("/");
     } catch (e) {
-      toast.error(JSON.stringify(e.response.data), {
-        position: toast.POSITION.TOP_LEFT,
+      this.props.changeSpinnerState(false);
+      toast.error("سلام نمایش ارور", {
+        position: toast.POSITION.TOP_CENTER,
       });
     }
   };
@@ -57,11 +61,14 @@ class LoginJWT extends React.Component {
                 required
               />
               <div className="form-control-position">
-                <Mail size={15} />
+                <User size={15} />
               </div>
-              <Label>نام کاربری</Label>
+              <Label style={{ fontSize: "12px" }}>نام کاربری</Label>
             </FormGroup>
-            <FormGroup className="form-label-group position-relative has-icon-left">
+            <FormGroup
+              style={{ marginTop: "15%" }}
+              className="form-label-group position-relative has-icon-left"
+            >
               <Input
                 type="password"
                 placeholder="رمز ورود"
@@ -72,15 +79,22 @@ class LoginJWT extends React.Component {
               <div className="form-control-position">
                 <Lock size={15} />
               </div>
-              <Label>رمز ورود</Label>
+              <Label style={{ fontSize: "12px" }}>رمز ورود</Label>
             </FormGroup>
-            <FormGroup className="d-flex justify-content-between align-items-center">
+            <FormGroup
+              style={{ marginTop: "10%" }}
+              className="d-flex justify-content-between align-items-center"
+            >
               <div className="float-right">
                 <Link to="/forget-password">رمز خود را فراموش کرده‌اید؟</Link>
               </div>
             </FormGroup>
 
-            <div className="d-flex justify-content-between">
+            <div
+              style={{ marginTop: "2%" }}
+              className="d-flex justify-content-between"
+            >
+              <Button color="warning">ورود</Button>
               <Button
                 onClick={() => {
                   history.push("/register");
@@ -90,7 +104,6 @@ class LoginJWT extends React.Component {
               >
                 ثبت نام
               </Button>
-              <Button color="warning">ورود</Button>
             </div>
           </Form>
         </CardBody>
