@@ -25,17 +25,6 @@ class IntlProviderWrapper extends React.Component {
     const { children } = this.props
     const { locale, messages } = this.state
     return (
-      <Context.Provider
-        value={{
-          state: this.state,
-          switchLanguage: language => {
-            this.setState({
-              locale: language,
-              messages: menu_messages[language]
-            })
-          }
-        }}
-      >
         <IntlProvider
           key={locale}
           locale={locale}
@@ -44,7 +33,6 @@ class IntlProviderWrapper extends React.Component {
         >
           {children}
         </IntlProvider>
-      </Context.Provider>
     )
   }
 }
