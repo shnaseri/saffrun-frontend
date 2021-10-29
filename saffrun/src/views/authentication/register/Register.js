@@ -13,17 +13,21 @@ import {
   TabPane,
 } from "reactstrap";
 import classnames from "classnames";
-
+import { LogIn } from "react-feather";
 import RegisterJWT from "./RegisterJWT";
 import registerImg from "../../../assets/img/pages/register.jpg";
 import "../../../assets/scss/pages/authentication.scss";
+import ComponentSpinner from "../../../components/@vuexy/spinner/Loading-spinner";
 
 class Register extends React.Component {
   state = {
     activeTab: "1",
+    loadSpinner: false,
   };
-
-  render() {
+  toggleSpinner = (status) => {
+    this.setState({ loadSpinner: status });
+  };
+  to_show = () => {
     return (
       <Row className="m-0 justify-content-center">
         <Col
@@ -43,19 +47,18 @@ class Register extends React.Component {
               </Col>
               <Col lg="6" md="12" className="p-0">
                 <Card className="rounded-0 mb-0 p-2">
-                  <CardHeader className="pb-1 pt-50">
+                  <CardHeader className="pb-1 pt-50 text-center align-self-center">
                     <CardTitle>
-                      <h4 className="mb-0">ثبت نام</h4>
+                      <h2 className="mb-0 text-center align-self-center">
+                        ثبت نام
+                      </h2>
                     </CardTitle>
                   </CardHeader>
-                  <p className="px-2 auth-title mb-0">
-                    اطلاعات زیر را پر کنید.
-                  </p>
 
                   <CardBody className="pt-1 pb-50">
                     <TabContent activeTab={this.state.activeTab}>
                       <TabPane tabId="1">
-                        <RegisterJWT />
+                        <RegisterJWT changeSpinnerState={this.toggleSpinner} />
                       </TabPane>
                     </TabContent>
                   </CardBody>
@@ -66,6 +69,9 @@ class Register extends React.Component {
         </Col>
       </Row>
     );
+  };
+  render() {
+    return this.state.loadSpinner ? <ComponentSpinner /> : this.to_show();
   }
 }
 export default Register;
