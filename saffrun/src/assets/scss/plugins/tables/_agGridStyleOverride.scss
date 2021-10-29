@@ -28,15 +28,18 @@ $secondary-font-weight: 600;
   }
 
   .ag-header-cell {
+    
     .ag-cell-label-container {
       
       .ag-header-icon.ag-filter-icon {
         display: none;
+
       }
     }
   }
   .ag-header-cell-label {
     justify-content: center;
+    background-color: red($color: #bd1818);
   }
   .ag-cell {
     justify-content: center;

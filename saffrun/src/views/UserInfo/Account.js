@@ -10,17 +10,54 @@ import {
   FormGroup,
   Table,
   ButtonGroup,
-  ButtonDropdown
+  ButtonDropdown,
+  Dropdown,
+  DropdownItem,
+  DropdownMenu,
+  DropdownToggle
 } from "reactstrap"
-import userImg from "../../assets/img/portrait/small/avatar-s-18.jpg"
+import { Trash2 , Edit} from "react-feather"
+import userImg from "../../assets/img/profile/Generic-profile-picture.jpg.webp"
 import Checkbox from "../../components/@vuexy/checkbox/CheckboxesVuexy"
 import { Check, Lock } from "react-feather"
 import axios from "axios"
+// import { Avatar } from 'react-native-elements';
 
 
 class UserAccountTab extends React.Component {
+  constructor(props) {
+    super(props);
 
-  
+    this.toggle = this.toggle.bind(this);
+    this.state = {
+      dropdownOpen: false
+    };
+  }
+
+  toggle() {
+    this.setState(prevState => ({
+      dropdownOpen: !prevState.dropdownOpen
+    }));
+  }
+  hiddenFileInput = React.createRef()
+  handleClick = event => {
+    console.log(this.hiddenFileInput.current) ;
+    this.hiddenFileInput.current.click()
+  };
+  handleChange = event => {
+    const fileUploaded = event.target.files[0];
+    this.props.updateImg((URL.createObjectURL(fileUploaded)));
+    console.log(URL.createObjectURL(fileUploaded));
+  };
+  handleDel = ()=>{
+    this.props.delImg();
+  }
+  handleAvatar = () =>{
+    if (this.props.userData["avatar"] != "") return this.props.userData["avatar"]
+    else{
+      return userImg
+    }
+  }
   render() {
     return (
       <Row>
@@ -30,22 +67,42 @@ class UserAccountTab extends React.Component {
               <Media
                 className="users-avatar-shadow rounded"
                 object
-                src={this.props.userData["avatar"]}
+                src={this.handleAvatar()}
+                edi
                 alt="user profile image"
                 height="84"
                 width="84"
+                
               />
+             
+              <Dropdown direction="left"  isOpen={this.state.dropdownOpen} toggle={this.toggle} style={{marginTop:-15 }}>
+                <DropdownToggle  style={{padding:0,color:"#ff9f43" , float:"left"}} caret>
+                <Edit style={{right:0  }}  /> 
+                </DropdownToggle>
+                <DropdownMenu style={{position:"relative"}}>
+                  <DropdownItem onClick={this.handleClick} >تغییر</DropdownItem>
+                  <DropdownItem divider />
+                  <DropdownItem onClick={this.props.delImg} >حذف</DropdownItem>
+                </DropdownMenu>
+              </Dropdown>
+              {/* <Avatar   showEditButton/> */}
             </Media>
             <Media className="mt-2" body>
               <Media className="font-medium-1 text-bold-600" tag="p" heading>
               {this.props.userData["fname"]}{this.props.userData["lname"]}
               </Media>
-              <div className="d-flex flex-wrap">
-                <Button className="mr-1" color="primary" outline>
+              {/* <div className="d-flex flex-wrap">
+                <Button onClick={this.handleClick} className="mr-1" color="primary" outline>
                   تغییر
-                </Button>
-                <Button color="flat-danger">حذف تصویر</Button>
-              </div>
+                </Button> */}
+                <input
+                type="file"
+                ref={this.hiddenFileInput}
+                onChange={this.handleChange}
+                style={{display: 'none'}} 
+              />
+                {/* <Button  className="mr-1" color="danger" outline >حذف تصویر</Button> */}
+              {/* </div> */}
             </Media>
           </Media>
         </Col>
@@ -251,10 +308,10 @@ class UserAccountTab extends React.Component {
                 className="d-flex justify-content-end flex-wrap mt-2"
                 sm="12"
               >
-                <Button className="mr-1" color="primary">
+                <Button className="mr-1" color="primary" onClick={this.props.postData}>
                   اعمال تغییرات
                 </Button>
-                <Button color="flat-warning">بازگرداندن به قبل</Button>
+                {/* <Button color="flat-warning">بازگرداندن به قبل</Button> */}
               </Col>
             </Row>
           </Form>

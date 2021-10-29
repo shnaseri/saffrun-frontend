@@ -27,6 +27,7 @@ import classnames from "classnames"
 import { history } from "../../history"
 import "../../assets/scss/plugins/tables/_agGridStyleOverride.scss"
 import "../../assets/scss/pages/users.scss"
+import { Color } from "ag-grid-community"
 class UsersList extends React.Component {
   state = {
     rowData: null,
@@ -140,6 +141,7 @@ class UsersList extends React.Component {
           return (
             <div className="actions cursor-pointer">
               <Trash2
+                color="red"
                 size={15}
                 onClick={() => {
                   let selectedData = this.gridApi.getSelectedRows()
@@ -229,6 +231,12 @@ class UsersList extends React.Component {
     this.setState({ isVisible: false })
   }
 
+// all even rows assigned 'my-shaded-effect'
+  getRowClass = params => {
+    if (params.node.rowIndex % 2 === 0) {
+      return { background: 'withe' };
+  }
+};
   render() {
     const { rowData, columnDefs, defaultColDef, pageSize } = this.state
     return (
@@ -262,7 +270,7 @@ class UsersList extends React.Component {
                     <Input
                       className="w-50 mr-1 mb-1 mb-sm-0"
                       type="text"
-                      placeholder="search..."
+                      placeholder="جست و جو ..."
                       onChange={e => this.updateSearchQuery(e.target.value)}
                       value={this.state.searchVal}
                     /></div>
@@ -271,6 +279,7 @@ class UsersList extends React.Component {
                     {context => (
                       <AgGridReact
                         gridOptions={{}}
+                        
                         rowSelection="multiple"
                         defaultColDef={defaultColDef}
                         columnDefs={columnDefs}
@@ -284,6 +293,9 @@ class UsersList extends React.Component {
                         paginationPageSize={pageSize}
                         resizable={true}
                         enableRtl={context.state.direction === "rtl"}
+                        rowStyle={ {background: '#f8b87c'}}
+                        getRowStyle={this.getRowClass}
+                        
                       />
                     )}
                   </ContextLayout.Consumer>

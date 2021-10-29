@@ -152,7 +152,7 @@ class UserInfoTab extends React.Component {
                 />
               </div>
             </FormGroup>
-            <FormGroup>
+            {/* <FormGroup>
               <Label className="d-block mb-50" for="communication">
                 نوع ارتباط
               </Label>
@@ -180,7 +180,7 @@ class UserInfoTab extends React.Component {
                   defaultChecked={false}
                 />
               </div>
-            </FormGroup>
+            </FormGroup> */}
           </Col>
           <Col className="mt-1" md="6" sm="12">
             <h5 className="mb-1">
@@ -225,10 +225,10 @@ class UserInfoTab extends React.Component {
             </FormGroup>
           </Col>
           <Col className="d-flex justify-content-end flex-wrap" sm="12">
-            <Button className="mr-1" color="primary">
+            <Button className="mr-1" color="primary" onClick={this.props.postData}>
               اعمال تغییرات
             </Button>
-            <Button color="flat-warning">بازگرداندن به قبل</Button>
+            {/* <Button color="flat-warning">بازگرداندن به قبل</Button> */}
           </Col>
         </Row>
       </Form>

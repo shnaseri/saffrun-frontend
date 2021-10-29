@@ -17,14 +17,43 @@ import InfoTab from "./Information"
 import SocialTab from "./Social"
 import "../../assets/scss/pages/users.scss"
 import axios from "axios"
+import { toast } from "react-toastify"
+
 class UserEdit extends React.Component {
   state = {
     activeTab: "1",
     userData : {}
   }
+  notifySuccess = () => toast.success("اطلاعات به روزرسانی شد", {
+    position: toast.POSITION.TOP_CENTER
+  })
+  notifyError = () => toast.error("خطا",{
+    position: toast.POSITION.TOP_CENTER
+  })
   componentDidMount = async  ()=>{
-    let userData = await axios.get("https://6176598703178d00173daba2.mockapi.io/users/12");
+    console.log("asd")
+    let userData = await axios.get("https://6176598703178d00173daba2.mockapi.io/users/6");
     this.setState({userData : userData.data})
+    console.log(this.state.userData)
+  }
+  postData = async ()=>{
+    let x =await axios.put("https://6176598703178d00173daba2.mockapi.io/users/6",this.state.userData);
+    if (x.status === 200)
+    {
+      this.notifySuccess()
+    }
+    else{
+      this.notifyError()
+    }
+    
+  }
+  updateImg= (url) =>{
+    let userData = {...this.state.userData ,"avatar": url};
+    this.setState({ userData })
+  }
+  delImg = ()=>{
+    let userData = {...this.state.userData ,"avatar": ""};
+    this.setState({ userData })
     console.log(this.state.userData)
   }
   updateData = (e) =>{
@@ -42,7 +71,9 @@ class UserEdit extends React.Component {
   }
   render() {
     return (
+      
       <Row>
+        
         <Col sm="12">
           <Card>
             <CardBody className="pt-2">
@@ -89,7 +120,7 @@ class UserEdit extends React.Component {
               </Nav>
               <TabContent activeTab={this.state.activeTab}>
                 <TabPane tabId="1">
-                  <AccountTab userData={this.state.userData} updateData = {this.updateData}  />
+                  <AccountTab userData={this.state.userData} postData = {this.postData} updateData = {this.updateData} updateImg = {this.updateImg} delImg = {this.delImg} />
                 </TabPane>
                 <TabPane tabId="2">
                   <InfoTab updateData = {this.updateData} userData ={this.state.userData}/>
