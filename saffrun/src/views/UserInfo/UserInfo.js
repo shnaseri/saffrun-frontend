@@ -32,7 +32,7 @@ class UserEdit extends React.Component {
   })
   componentDidMount = async  ()=>{
     console.log("asd")
-    let userData = await axios.get("https://6176598703178d00173daba2.mockapi.io/users/6");
+    let userData = await axios.get("https://6176598703178d00173daba2.mockapi.io/users/20");
     this.setState({userData : userData.data})
     console.log(this.state.userData)
   }

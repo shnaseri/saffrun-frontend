@@ -232,17 +232,13 @@ class UsersList extends React.Component {
   }
 
 // all even rows assigned 'my-shaded-effect'
-  getRowClass = params => {
-    if (params.node.rowIndex % 2 === 0) {
-      return { background: 'withe' };
-  }
-};
   render() {
     const { rowData, columnDefs, defaultColDef, pageSize } = this.state
     return (
       <Row className="app-user-list">
-        <Col sm="12">
+        {/* <Col sm="12">
           <Card
+          // style={{backgroundColor: "solid"}}
             className={classnames("card-action card-reload", {
               "d-none": this.state.isVisible === false,
               "card-collapsed": this.state.status === "Closed",
@@ -261,19 +257,20 @@ class UsersList extends React.Component {
 
             </Collapse>
           </Card>
-        </Col>
+        </Col> */}
         <Col sm="12">
           <Card>
             <CardBody>
               <div className="ag-theme-material ag-grid-table">
-              <div className="filter-actions d-flex">
+              <div className="filter-actions d-flex"  style={{marginBottom : 25}}>
                     <Input
                       className="w-50 mr-1 mb-1 mb-sm-0"
                       type="text"
                       placeholder="جست و جو ..."
                       onChange={e => this.updateSearchQuery(e.target.value)}
                       value={this.state.searchVal}
-                    /></div>
+                    />
+                </div>
                 {this.state.rowData !== null ? (
                   <ContextLayout.Consumer>
                     {context => (
@@ -293,8 +290,8 @@ class UsersList extends React.Component {
                         paginationPageSize={pageSize}
                         resizable={true}
                         enableRtl={context.state.direction === "rtl"}
-                        rowStyle={ {background: '#f8b87c'}}
-                        getRowStyle={this.getRowClass}
+                        rowStyle={ {borderBlockColor: "#ff9f43"}}
+                        headerStyle={{backgroundColor: "#ff9f43"}}
                         
                       />
                     )}

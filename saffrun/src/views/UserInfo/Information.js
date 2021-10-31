@@ -108,7 +108,7 @@ class UserInfoTab extends React.Component {
               />
             </FormGroup>
             <FormGroup>
-              <Label for="website">Website</Label>
+              <Label for="website">کد ملی</Label>
               <Input type="url" id="website" placeholder="Web Address" />
             </FormGroup>
             {/* <FormGroup>
@@ -224,7 +224,7 @@ class UserInfoTab extends React.Component {
               />
             </FormGroup>
           </Col>
-          <Col className="d-flex justify-content-end flex-wrap" sm="12">
+          <Col className="d-flex justify-content-end flex-wrap" sm="12" style={{marginTop:20}}>
             <Button className="mr-1" color="primary" onClick={this.props.postData}>
               اعمال تغییرات
             </Button>
