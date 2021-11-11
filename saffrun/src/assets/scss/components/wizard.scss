@@ -4,10 +4,12 @@
   box-shadow: none !important;
   display: table;
   width: 100%;
+
   &.nav.nav-tabs {
     .step-wrapper.nav-item {
       display: table-cell;
       width: auto;
+
       .step.nav-link {
         transform: translateY(0) !important;
         text-align: center !important;
@@ -39,6 +41,7 @@
             top: 50% !important;
             z-index: -1;
             width: 50%;
+            right: 0;
           }
         }
         &.done {
@@ -52,11 +55,11 @@
             height: 3px;
             top: 50% !important;
             z-index: -1;
-            width: 50%;
+            width: 45.5%;
             content: "";
             position: absolute;
             top: 50%;
-            width: 45.5%;
+            width: 50%;
           }
           &:before {
             left: 0;

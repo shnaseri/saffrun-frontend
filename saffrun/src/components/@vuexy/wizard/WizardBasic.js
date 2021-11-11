@@ -35,13 +35,13 @@ class WizardBasic extends React.Component {
       { value: "سلمونی", label: "سلمونی" },
     ],
   };
-
+  
   stepsGenerator() {
     let { description, title } = this.state;
     let jobSelect = this.state.jobCategory ? this.state.jobCategory.value : ""
     return [
       {
-        title: "۳",
+        title: "۱",
         buttonDisabled:
           description.length === 0 ||
           title.length === 0 ||
@@ -167,7 +167,7 @@ class WizardBasic extends React.Component {
         ),
       },
       {
-        title: "۱",
+        title: "۳",
         buttonDisabled:
           description.length === 0 &&
           title.length === 0 &&
