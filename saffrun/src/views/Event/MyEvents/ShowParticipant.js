@@ -18,13 +18,13 @@ import {
   Spinner
 } from "reactstrap"
 import axios from "axios"
-import { ContextLayout } from "../../utility/context/Layout"
+import { ContextLayout } from "../../../utility/context/Layout"
 import { AgGridReact } from "ag-grid-react"
 import {
-  Trash2,
+  Trash2, AlignCenter,
 } from "react-feather"
 import classnames from "classnames"
-import { history } from "../../history"
+import { history } from "../../../history.js"
 import "../../../assets/scss/plugins/tables/_agGridStyleOverride.scss"
 import "../../../assets/scss/pages/users.scss"
 import { Color } from "ag-grid-community"
@@ -71,68 +71,13 @@ class UsersList extends React.Component {
       {
         headerName: "ایمیل",
         field: "email",
-        // filter: true,
         width: 250
       },
-      // {
-      //   headerName: "Name",
-      //   field: "name",
-      //   filter: true,
-      //   width: 200
-      // },
       {
         headerName: "شهر",
-        field: "city",
-        // filter: true,
-        
+        field: "city",        
         width: 200
       },
-      // {
-      //   headerName: "Role",
-      //   field: "role",
-      //   filter: true,
-      //   width: 150
-      // },
-      // {
-      //   headerName: "Status",
-      //   field: "status",
-      //   filter: true,
-      //   width: 150,
-      //   cellRendererFramework: params => {
-      //     return params.value === "active" ? (
-      //       <div className="badge badge-pill badge-light-success">
-      //         {params.value}
-      //       </div>
-      //     ) : params.value === "blocked" ? (
-      //       <div className="badge badge-pill badge-light-danger">
-      //         {params.value}
-      //       </div>
-      //     ) : params.value === "deactivated" ? (
-      //       <div className="badge badge-pill badge-light-warning">
-      //         {params.value}
-      //       </div>
-      //     ) : null
-      //   }
-      // },
-      // {
-      //   headerName: "Verified",
-      //   field: "is_verified",
-      //   filter: true,
-      //   width: 125,
-      //   cellRendererFramework: params => {
-      //     return params.value === true ? (
-      //       <div className="bullet bullet-sm bullet-primary"></div>
-      //     ) : params.value === false ? (
-      //       <div className="bullet bullet-sm bullet-secondary"></div>
-      //     ) : null
-      //   }
-      // },
-      // {
-      //   headerName: "Department",
-      //   field: "department",
-      //   filter: true,
-      //   width: 160
-      // },
       {
         headerName: "حذف",
         field: "transactions",
@@ -161,7 +106,14 @@ class UsersList extends React.Component {
       this.setState({ rowData })
     })
   }
-
+  fillRows ()
+  {
+    let rows = []
+    rows.push({name : "اکبر" , avatar:  require("../../../assets/img/portrait/small/avatar-s-18.jpg") , city : "تهران" , email: "asqar1890@gmail.com"})
+    rows.push({name : "علی" , avatar: require("../../../assets/img/portrait/small/avatar-s-7.jpg") , city : "سمنان" , email: "alialam2000@gmail.com"})
+    rows.push({name : "جواد" , avatar:require("../../../assets/img/portrait/small/avatar-s-14.jpg") , city : "بابل" , email: "javadmehdi@gmail.com"})
+    return rows
+  }
   onGridReady = params => {
     this.gridApi = params.api
     this.gridColumnApi = params.columnApi
@@ -265,7 +217,7 @@ class UsersList extends React.Component {
         <Col sm="12">
           <Card>
             <CardBody>
-              <div className="ag-theme-material ag-grid-table">
+              <div className="ag-theme-material ag-grid-table" >
               <div className="filter-actions d-flex">
                     <Input
                       className="w-50 mr-1 mb-1 mb-sm-0"
@@ -279,11 +231,10 @@ class UsersList extends React.Component {
                     {context => (
                       <AgGridReact
                         gridOptions={{}}
-                        
                         rowSelection="multiple"
                         defaultColDef={defaultColDef}
                         columnDefs={columnDefs}
-                        rowData={this.props.userData["followers"]}
+                        rowData={this.fillRows()}
                         onGridReady={this.onGridReady}
                         colResizeDefault={"shift"}
                         animateRows={true}
@@ -293,7 +244,7 @@ class UsersList extends React.Component {
                         paginationPageSize={pageSize}
                         resizable={true}
                         enableRtl={context.state.direction === "rtl"}
-                        rowStyle={ {background: '#f8b87c'}}
+                        rowStyle={ {background: '#f8b87c',AlignCenter: true}}
                         getRowStyle={this.getRowClass}
                         
                       />
