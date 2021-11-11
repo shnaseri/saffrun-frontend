@@ -259,73 +259,9 @@ class DetailPage extends React.Component {
           </Media>
         </Media>
 <hr></hr>
-        {/* <Media>
-          <Media left href="#" className="align-self-center">
-            <Media
-              object
-              // src={mediaImg2}
-              height="64"
-              width="64"
-              alt="Generic placeholder image"
-              middle
-            />
-          </Media>
-          <Media body>
-            <Media heading>Tootsie roll dessert</Media>
-            <p>
-              Tootsie roll dessert tart candy canes ice cream
-              gingerbread cookie. Jelly jelly-o bear claw bear claw
-              halvah. Biscuit icing pastry tootsie roll gingerbread
-              croissant chupa chups.
-            </p>
-            <p>
-              Dragée topping chocolate dragée icing gingerbread. Ice
-              cream jujubes pie sweet roll sweet roll marshmallow
-              powder. Cotton candy dessert apple pie chocolate cake
-              dessert lemon drops topping gingerbread biscuit. Sugar
-              plum tootsie roll sweet gummi bears soufflé cake gummies
-              lollipop jelly beans. Gummies sugar plum apple pie apple
-              pie cake bear claw. Jelly beans gingerbread biscuit
-              lollipop.
-            </p>
-          </Media>
-        </Media>
-
-      <Media>
-        <Media left href="#" className="align-self-end">
-          <Media
-            object
-            // src={mediaImg3}
-            height="64"
-            width="64"
-            alt="Generic placeholder image"
-            bottom
-          />
-        </Media>
-        <Media body>
-          <Media heading>Jelly chocolate cake</Media>
-          <p>
-            Jelly chocolate cake lemon drops halvah dragée caramels
-            jelly-o biscuit. Fruitcake jelly beans marzipan sesame
-            snaps.Jelly beans cake chocolate cake gummi bears
-            lollipop.
-          </p>
-          <p>
-            Sweet sesame snaps dragée chocolate tiramisu cotton
-            candy sweet roll bonbon dessert. Chocolate cake tiramisu
-            dragée. Carrot cake pudding marshmallow fruitcake carrot
-            cake. Cotton candy pastry chocolate bar. Apple pie
-            sesame snaps macaroon muffin cookie toffee bonbon
-            gummies candy canes. Soufflé chocolate bar soufflé tart
-            fruitcake muffin. Macaroon sweet roll apple pie jelly
-            beans powder pudding.
-          </p>
-        </Media>
-      </Media> */}
      </div> 
      </CardBody>
      </Card>
-       
       </TabPane>
       <TabPane tabId="3">
       <ShowParticipant userData = {this.state.userData} />

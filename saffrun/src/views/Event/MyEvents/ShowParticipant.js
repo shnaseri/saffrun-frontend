@@ -48,13 +48,12 @@ class UsersList extends React.Component {
       {
         headerName: "نام کاربری",
         field: "username",
-        // filter: true,
-        width: 250,
+        width: 350,
         cellRendererFramework: params => {
           return (
             <div
               className="d-flex align-items-center cursor-pointer"
-              onClick={() => history.push("/app/user/edit")}
+              // onClick={() => history.push("/app/user/edit")}
             >
               <img
                 className="rounded-circle mr-50"
@@ -71,32 +70,32 @@ class UsersList extends React.Component {
       {
         headerName: "ایمیل",
         field: "email",
-        width: 250
+        width: 350
       },
       {
         headerName: "شهر",
         field: "city",        
-        width: 200
-      },
-      {
-        headerName: "حذف",
-        field: "transactions",
-        width: 150,
-        cellRendererFramework: params => {
-          return (
-            <div className="actions cursor-pointer">
-              <Trash2
-                color="red"
-                size={15}
-                onClick={() => {
-                  let selectedData = this.gridApi.getSelectedRows()
-                  this.gridApi.updateRowData({ remove: selectedData })
-                }}
-              />
-            </div>
-          )
-        }
+        width: 450
       }
+      // {
+      //   headerName: "حذف",
+      //   field: "transactions",
+      //   width: 150,
+      //   cellRendererFramework: params => {
+      //     return (
+      //       <div className="actions cursor-pointer">
+      //         <Trash2
+      //           color="red"
+      //           size={15}
+      //           onClick={() => {
+      //             let selectedData = this.gridApi.getSelectedRows()
+      //             this.gridApi.updateRowData({ remove: selectedData })
+      //           }}
+      //         />
+      //       </div>
+          // )
+        // }
+      // }
     ]
   }
 
