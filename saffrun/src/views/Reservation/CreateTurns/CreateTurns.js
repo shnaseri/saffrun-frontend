@@ -18,6 +18,7 @@ import Checkbox from "../../../components/@vuexy/checkbox/CheckboxesVuexy";
 import { ChevronDown, Check, Plus, Clock, Trash2 } from "react-feather";
 import classnames from "classnames";
 import TimeField from "react-simple-timefield";
+import axios from "axios";
 
 class BookingCreation extends React.Component {
   constructor(props) {
@@ -33,20 +34,129 @@ class BookingCreation extends React.Component {
     collapse: true,
     display: false,
     basic: new Date(),
-    TimeOverlap: ["fsdf"],
+    ReservedName: "",
+    capacity: "",
+    period_count: "",
+    duration: "",
     week: {
-      saturday: [{ from: "08:00", to: "17:00" }],
-      sunday: [{ from: "08:00", to: "17:00" }],
-      monday: [{ from: "08:00", to: "17:00" }],
-      tuesday: [{ from: "08:00", to: "17:00" }],
-      wednesday: [{ from: "08:00", to: "17:00" }],
-      thursday: [{ from: "08:00", to: "17:00" }],
-      friday: [{ from: "08:00", to: "17:00" }],
+      saturday: [
+        {
+          start_time: "08:00",
+          end_time: "17:00",
+          duration: 0,
+          period_count: 0,
+          capacity: 0,
+        },
+      ],
+      sunday: [
+        {
+          start_time: "08:00",
+          end_time: "17:00",
+          duration: 0,
+          period_count: 0,
+          capacity: 0,
+        },
+      ],
+      monday: [
+        {
+          start_time: "08:00",
+          end_time: "17:00",
+          duration: 0,
+          period_count: 0,
+          capacity: 0,
+        },
+      ],
+      tuesday: [
+        {
+          start_time: "08:00",
+          end_time: "17:00",
+          duration: 0,
+          period_count: 0,
+          capacity: 0,
+        },
+      ],
+      wednesday: [
+        {
+          start_time: "08:00",
+          end_time: "17:00",
+          duration: 0,
+          period_count: 0,
+          capacity: 0,
+        },
+      ],
+      thursday: [
+        {
+          start_time: "08:00",
+          end_time: "17:00",
+          duration: 0,
+          period_count: 0,
+          capacity: 0,
+        },
+      ],
+      friday: [
+        {
+          start_time: "08:00",
+          end_time: "17:00",
+          duration: 0,
+          period_count: 0,
+          capacity: 0,
+        },
+      ],
     },
   };
-  // componentWillUpdate(){
-  //   document.getElementsByClassName("flatpickr-calendar")[0].setAttribute("dir", "ltr")
-  // }
+  PostToServer = async () => {
+    var days = {
+      0: "sunday",
+      1: "monday",
+      2: "tuesday",
+      3: "wednesday",
+      4: "thursday",
+      5: "friday",
+      6: "saturday",
+    };
+
+    let startDate = new Date(this.state.startDate * 1000);
+    let endDate = new Date(this.state.endDate * 1000);
+
+    let data = {
+      start_date: this.formatDate(startDate),
+      end_date: this.formatDate(endDate),
+      days_list: [],
+    };
+    let l = [];
+
+    const diffTime = Math.abs(
+      new Date(this.state.endDate * 1000) -
+        new Date(this.state.startDate * 1000)
+    );
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    for (let index = 0; index < diffDays + 1; index++) {
+      if (index === 7) break;
+      let date = new Date(this.state.startDate * 1000);
+      date.setDate(date.getDate() + index);
+      l.push({ reserve_periods: this.state.week[days[date.getDay()]] });
+    }
+    data["days_list"] = l;
+    let res = await axios.post("http://127.0.0.1:8000/reserve/create/", data, {
+      headers: {
+        Authorization:
+          "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjQxNzMwNzQwLCJpYXQiOjE2MzY1NDY3NDAsImp0aSI6IjNjYTcyYTI1M2Q2YjQwY2JhZWI1YjYyMTdlZDdjNWQ2IiwidXNlcl9pZCI6MX0.lgupX15ZE66txd77Q27kAAS3-F900Nwufi2GUiwG2Rk",
+      },
+    });
+    console.log(res);
+  };
+  formatDate = (date) => {
+    var d = new Date(date),
+      month = "" + (d.getMonth() + 1),
+      day = "" + d.getDate(),
+      year = d.getFullYear();
+
+    if (month.length < 2) month = "0" + month;
+    if (day.length < 2) day = "0" + day;
+
+    return [year, month, day].join("-");
+  };
+
   DatePickerInputFrom = (props) => {
     return (
       <React.Fragment>
@@ -88,11 +198,22 @@ class BookingCreation extends React.Component {
   };
 
   checkDate = () => {
-    if (this.state.endDate === 0) return false;
     if (this.state.startDate > this.state.endDate) return true;
     else return false;
   };
-  fillInput = () => {};
+  fillInput = () => {
+    if (
+      this.state.ReservedName === "" ||
+      this.state.capacity === "" ||
+      (this.state.period_count === "" && this.state.duration === "") ||
+      (this.state.period_count !== "" && this.state.duration !== "") ||
+      this.state.startDate === 0 || this.state.endDate === 0
+    ) {
+      return true;
+    } else {
+      return false;
+    }
+  };
   changeStart = (unix, formatted) => {
     this.setState({ disableEndTime: false, startDate: unix });
   };
@@ -103,23 +224,45 @@ class BookingCreation extends React.Component {
     this.setState({ collapse: !this.state.collapse });
   };
   GoToTimeSection = () => {
-    this.setState({ display: true });
+    var days = [
+      "sunday",
+      "monday",
+      "tuesday",
+      "wednesday",
+      "thursday",
+      "friday",
+      "saturday",
+    ];
+    for (let index = 0; index < days.length; index++) {
+      this.state.week[days[index]][0]["duration"] = parseInt(
+        this.state.duration === "" ? 0 : this.state.duration
+      );
+      this.state.week[days[index]][0]["period_count"] = parseInt(
+        this.state.period_count === "" ? 0 : this.state.period_count
+      );
+      this.state.week[days[index]][0]["capacity"] = parseInt(
+        this.state.capacity === "" ? 0 : this.state.capacity
+      );
+    }
+    let week = this.state.week;
+    console.log(week);
+    this.setState({ display: true, week });
   };
   checkOverlapTime = (day, index) => {
     let dayList = [...this.state.week[day]];
-    console.log(index);
-    console.log(day);
+    // console.log(index);
+    // console.log(day);
     for (let i = 0; i < dayList.length; i++) {
       if (i === index) continue;
       if (
-        dayList[index]["from"] < dayList[i]["from"] &&
-        dayList[index]["to"] > dayList[i]["from"]
+        dayList[index]["start_time"] < dayList[i]["start_time"] &&
+        dayList[index]["end_time"] > dayList[i]["start_time"]
       ) {
         return true;
       }
       if (
-        dayList[index]["from"] > dayList[i]["from"] &&
-        dayList[index]["from"] < dayList[i]["to"]
+        dayList[index]["start_time"] > dayList[i]["start_time"] &&
+        dayList[index]["start_time"] < dayList[i]["end_time"]
       ) {
         return true;
       }
@@ -170,7 +313,7 @@ class BookingCreation extends React.Component {
     else return false;
   };
   ShowError = (day, index, item) => {
-    if (item["from"] >= item["to"]) {
+    if (item["start_time"] >= item["end_time"]) {
       return (
         <small style={{ color: "red", fontSize: "11px" }}>
           زمان شروع نباید قبل از پایان باشد
@@ -192,7 +335,7 @@ class BookingCreation extends React.Component {
           <React.Fragment>
             <Col style={{ marginTop: 9 }} md="2" xl="1" lg="1" xs="4" sm="3">
               <TimeField
-                value={item["to"]}
+                value={item["end_time"]}
                 onChange={(event, value) =>
                   this.handleChangeTime(event, value, day, index, "to")
                 }
@@ -203,9 +346,9 @@ class BookingCreation extends React.Component {
 
             <Col style={{ marginTop: 9 }} md="2" xl="1" lg="1" xs="4" sm="3">
               <TimeField
-                value={item["from"]}
+                value={item["start_time"]}
                 onChange={(event, value) =>
-                  this.handleChangeTime(event, value, day, index, "from")
+                  this.handleChangeTime(event, value, day, index, "start_time")
                 }
                 input={<Input />}
                 colon=":"
@@ -217,6 +360,7 @@ class BookingCreation extends React.Component {
                 onClick={() => this.handleDeleteTime(day, index)}
                 size={18}
                 style={{ marginTop: 18 }}
+                color="red"
               />
             </Col>
             <Col md="3" xl="3" lg="3">
@@ -230,9 +374,9 @@ class BookingCreation extends React.Component {
 
             <Col style={{ marginTop: 9 }} md="2" xl="1" lg="1" xs="4" sm="3">
               <TimeField
-                value={item["to"]}
+                value={item["end_time"]}
                 onChange={(event, value) =>
-                  this.handleChangeTime(event, value, day, index, "to")
+                  this.handleChangeTime(event, value, day, index, "end_time")
                 }
                 input={<Input style={{ border: "2px solid red" }} />}
                 colon=":"
@@ -240,9 +384,9 @@ class BookingCreation extends React.Component {
             </Col>
             <Col style={{ marginTop: 9 }} md="2" xl="1" lg="1" xs="4" sm="3">
               <TimeField
-                value={item["from"]}
+                value={item["start_time"]}
                 onChange={(event, value) =>
-                  this.handleChangeTime(event, value, day, index, "from")
+                  this.handleChangeTime(event, value, day, index, "start_time")
                 }
                 input={<Input style={{ border: "1px solid red" }} />}
                 colon=":"
@@ -254,6 +398,7 @@ class BookingCreation extends React.Component {
                 onClick={() => this.handleDeleteTime(day, index)}
                 size={18}
                 style={{ marginTop: 18 }}
+                color="red"
               />
             </Col>
             <Col md="3" xl="3" lg="3">
@@ -270,8 +415,11 @@ class BookingCreation extends React.Component {
     if (tempDay.length < 5) {
       let lastTime = tempDay[tempDay.length - 1];
       tempDay.push({
-        from: lastTime["to"],
-        to: `${parseInt(lastTime["to"].split(":")[0]) + 1}:00`,
+        start_time: lastTime["end_time"],
+        end_time: `${parseInt(lastTime["end_time"].split(":")[0]) + 1}:00`,
+        duration: parseInt(this.state.duration),
+        period_count: parseInt(this.state.period_count),
+        capacity: parseInt(this.state.capacity),
       });
       let week = { ...this.state.week, [day]: tempDay };
       this.setState({ week });
@@ -293,6 +441,10 @@ class BookingCreation extends React.Component {
                       type="text"
                       name="name"
                       id="TurnName"
+                      onChange={(e) =>
+                        this.setState({ ReservedName: e.target.value })
+                      }
+                      value={this.state.ReservedName}
                       placeholder="نام نوبت"
                     />
                     <Label for="TurnName">نام نوبت</Label>
@@ -301,9 +453,14 @@ class BookingCreation extends React.Component {
                 <Col style={{ padding: 5 }} md="6" sm="12">
                   <FormGroup className="form-label-group">
                     <Input
-                      type="text"
+                      type="number"
                       name="personsNum"
+                      pattern="[1-9]"
                       id="personsNum"
+                      onChange={(e) =>
+                        this.setState({ capacity: e.target.value })
+                      }
+                      value={this.state.capacity}
                       placeholder="تعداد نفرات مجاز"
                     />
                     <Label for="personsNum">تعداد نفرات مجاز</Label>
@@ -335,6 +492,10 @@ class BookingCreation extends React.Component {
                       type="text"
                       name="NumOfTurns"
                       id="NumOfTurns"
+                      onChange={(e) =>
+                        this.setState({ period_count: e.target.value })
+                      }
+                      value={this.state.period_count}
                       placeholder="تعداد نوبت ها"
                     />
                     <Label for="NumOfTurns">تعداد نوبت ها </Label>
@@ -346,6 +507,10 @@ class BookingCreation extends React.Component {
                       type="text"
                       name="duration"
                       id="duration"
+                      onChange={(e) =>
+                        this.setState({ duration: e.target.value })
+                      }
+                      value={this.state.duration}
                       placeholder="مدت زمان هر نوبت (به دقیقه)"
                     />
                     <Label for="duration">مدت رمان هر نوبت (به دقیقه)</Label>
@@ -358,7 +523,7 @@ class BookingCreation extends React.Component {
                       // type="submit"
                       style={{ float: "left" }}
                       className="mr-1 mb-1"
-                      disabled={this.checkDate() && this.fillInput()}
+                      disabled={this.fillInput() || (this.checkDate() || this.state.endDate === 0)}
                       onClick={this.GoToTimeSection}
                     >
                       تایید و ادامه
@@ -397,20 +562,20 @@ class BookingCreation extends React.Component {
                         {" "}
                         <FormGroup row>
                           <Col md="1" xl="1" lg="1" xs="12" sm="12">
-                            <span>شنبه ها</span>
+                            <span >شنبه ها</span>
                           </Col>
                           <Col md="1" xl="1" lg="1" xs="2" sm="2">
                             <Plus
                               onMouseOver={(e) =>
                                 (e.currentTarget.style.cursor = "pointer")
                               }
-                              style={{ marginTop: 16 }}
+                              
                               onClick={() => this.addInput("saturday")}
                             ></Plus>
                           </Col>
                           {this.weekDayInput("saturday")}
                         </FormGroup>
-                        <div className="divider divider-left">
+                        <div className="divider divider-left divider-warning">
                           <div className="divider-text">
                             <Clock />
                           </div>
@@ -422,20 +587,20 @@ class BookingCreation extends React.Component {
                         {" "}
                         <FormGroup row>
                           <Col md="1" xl="1" lg="1" xs="12" sm="12">
-                            <span>یکشنبه ها</span>
+                            <span >یکشنبه ها</span>
                           </Col>
                           <Col md="1" xl="1" lg="1" xs="2" sm="2">
                             <Plus
                               onMouseOver={(e) =>
                                 (e.currentTarget.style.cursor = "pointer")
                               }
-                              style={{ marginTop: 16 }}
+                              
                               onClick={() => this.addInput("sunday")}
                             ></Plus>
                           </Col>
                           {this.weekDayInput("sunday")}
                         </FormGroup>
-                        <div className="divider divider-left">
+                        <div className="divider divider-left divider-warning " >
                           <div className="divider-text">
                             <Clock />
                           </div>
@@ -447,20 +612,20 @@ class BookingCreation extends React.Component {
                         {" "}
                         <FormGroup row>
                           <Col md="1" xl="1" lg="1" xs="12" sm="12">
-                            <span>دوشنبه ها</span>
+                            <span >دوشنبه ها</span>
                           </Col>
                           <Col md="1" xl="1" lg="1" xs="2" sm="2">
                             <Plus
                               onMouseOver={(e) =>
                                 (e.currentTarget.style.cursor = "pointer")
                               }
-                              style={{ marginTop: 16 }}
+                              
                               onClick={() => this.addInput("monday")}
                             ></Plus>
                           </Col>
                           {this.weekDayInput("monday")}
                         </FormGroup>
-                        <div className="divider divider-left">
+                        <div className="divider divider-left divider-warning">
                           <div className="divider-text">
                             <Clock />
                           </div>
@@ -472,20 +637,20 @@ class BookingCreation extends React.Component {
                         {" "}
                         <FormGroup row>
                           <Col md="1" xl="1" lg="1" xs="12" sm="12">
-                            <span>سه شنبه ها</span>
+                            <span >سه شنبه ها</span>
                           </Col>
                           <Col md="1" xl="1" lg="1" xs="2" sm="2">
                             <Plus
                               onMouseOver={(e) =>
                                 (e.currentTarget.style.cursor = "pointer")
                               }
-                              style={{ marginTop: 16 }}
+                              
                               onClick={() => this.addInput("tuesday")}
                             ></Plus>
                           </Col>
                           {this.weekDayInput("tuesday")}
                         </FormGroup>
-                        <div className="divider divider-left">
+                        <div className="divider divider-left divider-warning">
                           <div className="divider-text">
                             <Clock />
                           </div>
@@ -497,20 +662,20 @@ class BookingCreation extends React.Component {
                         {" "}
                         <FormGroup row>
                           <Col md="1" xl="1" lg="1" xs="12" sm="12">
-                            <span>چهارشنبه ها</span>
+                            <span >چهارشنبه ها</span>
                           </Col>
                           <Col md="1" xl="1" lg="1" xs="2" sm="2">
                             <Plus
                               onMouseOver={(e) =>
                                 (e.currentTarget.style.cursor = "pointer")
                               }
-                              style={{ marginTop: 16 }}
+                              
                               onClick={() => this.addInput("wednesday")}
                             ></Plus>
                           </Col>
                           {this.weekDayInput("wednesday")}
                         </FormGroup>
-                        <div className="divider divider-left">
+                        <div className="divider divider-left divider-warning">
                           <div className="divider-text">
                             <Clock />
                           </div>
@@ -521,20 +686,20 @@ class BookingCreation extends React.Component {
                       <React.Fragment>
                         <FormGroup row>
                           <Col md="1" xl="1" lg="1" xs="12" sm="12">
-                            <span>پنجشنبه ها</span>
+                            <span >پنجشنبه ها</span>
                           </Col>
                           <Col md="1" xl="1" lg="1" xs="2" sm="2">
                             <Plus
                               onMouseOver={(e) =>
                                 (e.currentTarget.style.cursor = "pointer")
                               }
-                              style={{ marginTop: 16 }}
+                              
                               onClick={() => this.addInput("thursday")}
                             ></Plus>
                           </Col>
                           {this.weekDayInput("thursday")}
                         </FormGroup>
-                        <div className="divider divider-left">
+                        <div className="divider divider-left divider-warning">
                           <div className="divider-text">
                             <Clock />
                           </div>
@@ -546,20 +711,20 @@ class BookingCreation extends React.Component {
                         {" "}
                         <FormGroup row>
                           <Col md="1" xl="1" lg="1" xs="12" sm="12">
-                            <span>جمعه ها</span>
+                            <span >جمعه ها</span>
                           </Col>
                           <Col md="1" xl="1" lg="1" xs="2" sm="2">
                             <Plus
                               onMouseOver={(e) =>
                                 (e.currentTarget.style.cursor = "pointer")
                               }
-                              style={{ marginTop: 16 }}
+                              
                               onClick={() => this.addInput("friday")}
                             ></Plus>
                           </Col>
                           {this.weekDayInput("friday")}
                         </FormGroup>
-                        <div className="divider divider-left">
+                        <div className="divider divider-left divider-warning">
                           <div className="divider-text">
                             <Clock />
                           </div>
@@ -572,9 +737,9 @@ class BookingCreation extends React.Component {
                         <Button
                           color="primary"
                           style={{ float: "left" }}
-                          type="submit"
+                          // type="submit"
                           className="mr-1 mb-1"
-                          onClick={(e) => e.preventDefault()}
+                          onClick={this.PostToServer}
                         >
                           ثبت
                         </Button>
