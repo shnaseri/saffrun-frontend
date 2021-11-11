@@ -3,6 +3,7 @@ import VerticalLayout from "../../layouts/VerticalLayout"
 import FullLayout from "../../layouts/FullpageLayout"
 import HorizontalLayout from "../../layouts/HorizontalLayout"
 import themeConfig from "../../configs/themeConfig"
+import "flatpickr/dist/themes/light.css";
 const layouts = {
   vertical: VerticalLayout,
   full: FullLayout,
@@ -71,9 +72,12 @@ class Layout extends React.Component {
 
   handleDirUpdate = () => {
     let dir = this.state.direction
-    if (dir === "rtl")
-      document.getElementsByTagName("html")[0].setAttribute("dir", "rtl")
+    
+    if (dir === "rtl"){
+
+      document.getElementsByTagName("html")[0].setAttribute("dir", "rtl")}
     else document.getElementsByTagName("html")[0].setAttribute("dir", "ltr")
+    
   }
 
 
