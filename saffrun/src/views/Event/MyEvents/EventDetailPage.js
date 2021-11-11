@@ -32,6 +32,7 @@ import mouse from "../../../assets/img/elements/magic-mouse.png"
 import "swiper/css/swiper.css"
 import "../../../assets/scss/pages/app-ecommerce-shop.scss"
 import Status from "../../../components/@vuexy/status/Status"
+import ShowParticipant from "./ShowParticipant"
 
 const mql = window.matchMedia(`(min-width: 992px)`)
 const swiperParams = {
@@ -397,10 +398,7 @@ class DetailPage extends React.Component {
       </div>
       </TabPane>
       <TabPane tabId="3">
-        Carrot cake dragée chocolate. Lemon drops ice cream wafer
-        gummies dragée. Chocolate bar liquorice cheesecake cookie
-        chupa chups marshmallow oat cake biscuit. Dessert toffee
-        fruitcake ice cream powder tootsie roll cake.
+      <ShowParticipant userData = {this.state.userData} />
       </TabPane>
     </TabContent>
 
