@@ -1,8 +1,523 @@
 import React from "react";
+import * as Icon from "react-feather";
+import { Badge } from "reactstrap";
+import img2 from "../../../assets/img/slider/banner-20.jpg";
+import {
+  Card,
+  CardBody,
+  CardHeader,
+  CardTitle,
+  CardImg,
+  FormGroup,
+  Label,
+  Input,
+  Row,
+  Col,
+  Collapse,
+  Spinner,
+  Button,
+  Progress,
+  UncontrolledButtonDropdown,
+  DropdownToggle,
+  DropdownItem,
+  DropdownMenu,
+} from "reactstrap";
+import ReactPaginate from "react-paginate";
+import Radio from "../../../components/@vuexy/radio/RadioVuexy";
+import "../../../assets/scss/plugins/extensions/react-paginate.scss";
+import {
+  ChevronLeft,
+  ChevronRight,
+  ChevronDown,
+  ArrowDown,
+  ArrowUp,
+  Filter,
+} from "react-feather";
+import "../../../assets/scss/plugins/forms/react-select/_react-select.scss";
+import {
+  DatePicker,
+  DateTimePicker,
+  DateRangePicker,
+  DateTimeRangePicker,
+} from "react-advance-jalaali-datepicker";
+import axios from "axios";
+import classnames from "classnames";
+import { history } from "../../../history";
+import isAuthenticated from "../../../utility/authenticated";
+import Status from "../../../components/@vuexy/status/status";
+import Select from "react-select";
+import moment from "moment-jalaali";
+import ComponentSpinner from "../../../components/@vuexy/spinner/Loading-spinner";
+import "../../../assets/scss/plugins/tables/_agGridStyleOverride.scss";
+import "../../../assets/scss/pages/users.scss";
+import urlDomain from "../../../utility/urlDomain";
 
 class MyEvents extends React.Component {
+  state = {
+    collapse: false,
+    events: [],
+    pageCards: 6,
+    startDate: "",
+    endDate: "",
+    eventState: "all",
+    eventTitle: "",
+    eventCollapse: true,
+    loadSpinner: true,
+    sortStates: [
+      {
+        basedOn: "start_datetime",
+        label: "زمان شروع",
+        status: null,
+        enabled: false,
+      },
+      { basedOn: "title", label: "عنوان", status: null, enabled: false },
+    ],
+    categories: [
+      { value: "پزشک", label: "پزشک" },
+      { value: "بغالی", label: "بغالی" },
+      { value: "استادیار", label: "استادیار" },
+      { value: "سلمونی", label: "سلمونی" },
+    ],
+    selectedCategory: null,
+  };
+  async componentDidMount() {
+    let authenticated = await isAuthenticated();
+    if (!authenticated) history.push("/login");
+    let token = localStorage.getItem("access");
+    token = `Bearer ${token}`;
+    try {
+      let events = await axios.get("http://127.0.0.1:8000/event/get-all/", {
+        headers: { Authorization: token },
+        params: { search_query: "" },
+      });
+      this.setState({ events: events.data.events, loadSpinner: false });
+    } catch (e) {
+      this.setState({ loadSpinner: false });
+    }
+  }
+  toggleCollapse = () => {
+    this.setState((state) => ({
+      collapse: !state.collapse,
+      eventCollapse: false,
+    }));
+  };
+  eventToggleCollapse = () => {
+    this.setState((state) => ({
+      eventCollapse: !state.eventCollapse,
+      collapse: false,
+    }));
+  };
+  compareDateTimes = (eventDateTime) => {
+    return new Date(eventDateTime) > new Date();
+  };
+  loadImg = (img) => {
+    console.log(`${urlDomain}${img.image.full_size}`);
+    return `${urlDomain}${img.image.full_size}`;
+  };
+  loadEventCards = () => {
+    return this.state.events.map((ev) => (
+      <Col key={ev.id} lg="4" md="6" sm="12">
+        <Card>
+          <CardBody>
+            <CardImg
+              className="img-fluid mb-2"
+              src={ev.image ? this.loadImg(ev.image) : img2}
+              alt={ev.title}
+              style={{ width: "340px", height: "240px" }}
+            />
+            <h5>{ev.title}</h5>
+            <Row>
+              <Col md="5" lg="6" sm="12" xl="7">
+                <p>
+                  {ev.description.length >= 20
+                    ? ev.description.substring(0, 20) + "..."
+                    : ev.description}
+                </p>
+              </Col>
+              <Col md="7" lg="6" sm="12" xl="5">
+                <Button style={{ width: "100%" }} color="primary">
+                  نمایش
+                </Button>
+              </Col>
+            </Row>
+            <hr className="my-1" />
+            <div style={{ height: "30px" }} className="card-btns  mt-2">
+              <Row>
+                <Col xs="4">
+                  <div className="fonticon-wrap">
+                    <Status
+                      currentState={
+                        this.compareDateTimes(ev.end_datetime)
+                          ? "success"
+                          : "danger"
+                      }
+                    />
+                    <span>
+                      {this.compareDateTimes(ev.end_datetime)
+                        ? "فعال"
+                        : "غیرفعال"}
+                    </span>
+                  </div>
+                </Col>
+                <Col xs="3">
+                  <div className="fonticon-wrap">
+                    <Icon.Users size={30} className="mr-4 fonticon-wrap" />
+                    <p>{ev.participants.length}</p>
+                  </div>
+                </Col>
+                <Col style={{ textAlign: "left" }} xs="5">
+                  <div className="fonticon-wrap">{`${new Date(
+                    ev.end_datetime
+                  ).toLocaleString("fa-IR")}`}</div>
+                </Col>
+              </Row>
+            </div>
+          </CardBody>
+        </Card>
+      </Col>
+    ));
+  };
+  startDateSelected = (timeStamp, formatted) => {
+    this.setState({ startDate: timeStamp });
+  };
+  endDateSelected = (timeStamp, formatted) => {
+    this.setState({ endDate: timeStamp });
+  };
+
+  startDatePickerInput = (props) => {
+    return (
+      <Input
+        type="text"
+        className="popo"
+        {...props}
+        value={this.timeStampToDate(this.state.startDate)}
+      />
+    );
+  };
+  endDatePickerInput = (props) => {
+    return (
+      <Input
+        type="text"
+        className="popo"
+        {...props}
+        value={this.timeStampToDate(this.state.endDate)}
+      />
+    );
+  };
+  timeStampToDate = (timeStamp) => {
+    return timeStamp === ""
+      ? ""
+      : new Date(timeStamp * 1000).toLocaleDateString("fa-IR");
+  };
+  InputChanged = ({ currentTarget: input }) => {
+    this.setState({ [input.name]: input.value });
+  };
+  SelectChanged = (selectedOption) => {
+    this.setState({ selectedCategory: selectedOption });
+  };
+  RadioChanged = ({ currentTarget: input }) => {
+    this.setState({ eventState: input.id });
+  };
+  clearFilters = () => {
+    this.setState({
+      selectedCategory: null,
+      startDate: "",
+      endDate: "",
+      eventTitle: "",
+    });
+  };
+  acceptableDateFormat = (date) => {
+    let dateStringify = JSON.stringify(date);
+    return dateStringify.substring(1, dateStringify.length - 1);
+  };
+  handleFilter = async (sortList = false) => {
+    this.setState({ loadSpinner: true, events: [] });
+    let {
+      endDate,
+      startDate,
+      eventTitle,
+      sortStates,
+      selectedCategory,
+    } = this.state;
+    let filters = {
+      search_query: eventTitle,
+      from_datetime:
+        startDate === ""
+          ? ""
+          : this.acceptableDateFormat(new Date(startDate * 1000)),
+      end_datetime:
+        endDate === ""
+          ? ""
+          : this.acceptableDateFormat(new Date(endDate * 1000)),
+    };
+
+    if (sortList) {
+      let enabled = null;
+      for (let i = 0; i < sortList.length; i++) {
+        if (sortList[i].enabled) enabled = sortList[i].basedOn;
+      }
+      if (enabled) filters["sort"] = enabled;
+    }
+
+    console.log(filters);
+    let token = localStorage.getItem("access");
+    token = `Bearer ${token}`;
+    try {
+      let events = await axios.get("http://127.0.0.1:8000/event/get-all/", {
+        headers: { Authorization: token },
+        params: filters,
+      });
+      this.setState({ events: events.data.events, loadSpinner: false });
+    } catch (e) {
+      this.setState({ loadSpinner: false });
+    }
+  };
+  sortIcon = (x) => {
+    if (x.enabled) return <ArrowUp size={15} />;
+    return <React.Fragment></React.Fragment>;
+  };
+  handleSort = async (x, index) => {
+    let sortStates = [...this.state.sortStates];
+    for (let i = 0; i < sortStates.length; i++) {
+      let item = { ...sortStates[i] };
+      if (i === index) {
+        item.enabled = !item.enabled;
+      } else {
+        item.enabled = false;
+      }
+      sortStates[i] = item;
+    }
+    this.setState({ sortStates });
+    await this.handleFilter(sortStates);
+  };
   render() {
-    return <h1>my events</h1>;
+    return (
+      <React.Fragment>
+        <Row className="app-user-list">
+          <Col sm="12">
+            <Card className={classnames("card-action card-reload", {})}>
+              <CardHeader
+                onClick={this.toggleCollapse}
+                onMouseOver={(e) => (e.currentTarget.style.cursor = "pointer")}
+              >
+                <CardTitle>اعمال فیلتر</CardTitle>
+                <div className="actions">
+                  <ChevronDown
+                    className="collapse-icon mr-50"
+                    size={15}
+                    // onClick={this.toggleCollapse}
+                  />
+                </div>
+              </CardHeader>
+              <Collapse isOpen={this.state.collapse}>
+                <CardBody>
+                  <Row>
+                    <Col lg="3" md="6" sm="12">
+                      <FormGroup>
+                        <Label for="search-events">عنوان</Label>
+                        <Input
+                          className="search-product"
+                          placeholder="عنوان رویداد"
+                          id="search-events"
+                          value={this.state.eventTitle}
+                          onChange={this.InputChanged}
+                          name="eventTitle"
+                        />
+                      </FormGroup>
+                    </Col>
+                    <Col lg="3" md="6" sm="12">
+                      <FormGroup>
+                        <Label for="datePicker_1">تاریخ شروع</Label>
+                        <DatePicker
+                          inputComponent={this.startDatePickerInput}
+                          placeholder="انتخاب تاریخ"
+                          format="jYYYY/jMM/jDD"
+                          onChange={this.startDateSelected}
+                          id="datePicker_1"
+                          // preSelected="1396/05/15"
+                        />
+                      </FormGroup>
+                    </Col>
+                    <Col lg="3" md="6" sm="12">
+                      <FormGroup>
+                        <Label for="datePicker_2">تاریخ پایان</Label>
+                        <DatePicker
+                          inputComponent={this.endDatePickerInput}
+                          placeholder="انتخاب تاریخ"
+                          format="jYYYY/jMM/jDD"
+                          onChange={this.endDateSelected}
+                          id="datePicker_2"
+                        />
+                      </FormGroup>
+                    </Col>
+                    <Col lg="3" md="6" sm="12">
+                      <FormGroup>
+                        <Label for="asdsad">دسته‌بندی</Label>
+                        <Select
+                          id="asdsad"
+                          className="React"
+                          classNamePrefix="select"
+                          // defaultValue={colourOptions[0]}
+                          name="color"
+                          options={this.state.categories}
+                          isClearable={true}
+                          placeholder="دسته‌بندی..."
+                          value={this.state.selectedCategory}
+                          onChange={this.SelectChanged}
+                        />
+                      </FormGroup>
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col xs="12" md="5" lg="3" xl="2">
+                      <Button
+                        style={{
+                          width: "100%",
+                          margin: "6px",
+                          marginTop: "9px",
+                        }}
+                        onClick={this.clearFilters}
+                        color="warning"
+                        outline
+                      >
+                        پاکسازی فیلتر ها
+                      </Button>
+                    </Col>
+                    <Col md="2" lg="6" xl="8"></Col>
+                    <Col
+                      style={{ textAlign: "left" }}
+                      xs="12"
+                      md="5"
+                      lg="3"
+                      xl="2"
+                    >
+                      <Button
+                        style={{
+                          width: "100%",
+                          margin: "6px",
+                          marginTop: "9px",
+                        }}
+                        color="warning"
+                        onClick={this.handleFilter}
+                      >
+                        اعمال
+                      </Button>
+                    </Col>
+                  </Row>
+                </CardBody>
+              </Collapse>
+            </Card>
+          </Col>
+        </Row>
+        <Row>
+          <Col xs="12">
+            <Card className={classnames("card-action card-reload", {})}>
+              <CardHeader
+                onClick={this.eventToggleCollapse}
+                onMouseOver={(e) => (e.currentTarget.style.cursor = "pointer")}
+              >
+                <CardTitle>وضعیت رویداد</CardTitle>
+                <div className="actions">
+                  <ChevronDown
+                    className="collapse-icon mr-50"
+                    size={15}
+                    // onClick={this.toggleCollapse}
+                  />
+                </div>
+              </CardHeader>
+              <Collapse isOpen={this.state.eventCollapse}>
+                <CardBody>
+                  <Row>
+                    <Col lg="3" xs="0" md="2"></Col>
+                    <Col lg="2" xs="4" md="3">
+                      <Radio
+                        label="همه"
+                        onChange={this.RadioChanged}
+                        id="all"
+                        name="eventStatus"
+                        defaultChecked={true}
+                      />
+                    </Col>
+                    <Col lg="2" xs="4" md="3">
+                      <Radio
+                        label="در حال اجرا"
+                        onChange={this.RadioChanged}
+                        id="inProgress"
+                        name="eventStatus"
+                      />
+                    </Col>
+                    <Col lg="2" xs="4" md="3">
+                      <Radio
+                        label="اتمام رسیده"
+                        onChange={this.RadioChanged}
+                        id="finished"
+                        name="eventStatus"
+                      />
+                    </Col>
+                  </Row>
+                </CardBody>
+              </Collapse>
+            </Card>
+          </Col>
+        </Row>
+        <Row>
+          <div
+            className="dropdown actions-dropdown"
+            style={{ marginBottom: "20px", marginRight: "15px" }}
+          >
+            <UncontrolledButtonDropdown>
+              <DropdownToggle className="px-2 py-75" color="white">
+                مرتب سازی
+                <Filter className="ml-50" size={15} />
+              </DropdownToggle>
+              <DropdownMenu>
+                {this.state.sortStates.map((x, index) => (
+                  <DropdownItem
+                    key={x.basedOn}
+                    tag="a"
+                    onClick={(e) => this.handleSort(x, index)}
+                  >
+                    {this.sortIcon(x)}
+                    <span className="align-middle ml-50">{x.label}</span>
+                  </DropdownItem>
+                ))}
+              </DropdownMenu>
+            </UncontrolledButtonDropdown>
+          </div>
+        </Row>
+        <Row>
+          {this.state.loadSpinner ? (
+            <div style={{ marginTop: "700px" }}>
+              <ComponentSpinner />
+            </div>
+          ) : (
+            this.loadEventCards()
+          )}
+        </Row>
+        <Row style={{ marginBottom: "20px", marginTop: "10px" }}>
+          <Col xs="3"></Col>
+          <Col xs="6">
+            {!this.state.loadSpinner && this.state.events.length > 0 && (
+              <ReactPaginate
+                previousLabel={<ChevronLeft size="15" />}
+                nextLabel={<ChevronRight size="15" />}
+                breakLabel={"..."}
+                breakClassName={"break-me"}
+                pageCount={Math.ceil(
+                  this.state.events.length / this.state.pageCards
+                )}
+                marginPagesDisplayed={2}
+                pageRangeDisplayed={5}
+                containerClassName={
+                  "vx-pagination icon-pagination pagination-center mt-3"
+                }
+                activeClassName={"active"}
+              />
+            )}
+          </Col>
+        </Row>
+      </React.Fragment>
+    );
   }
 }
 export default MyEvents;
