@@ -135,7 +135,13 @@ class MyEvents extends React.Component {
                 </p>
               </Col>
               <Col md="7" lg="6" sm="12" xl="5">
-                <Button style={{ width: "100%" }} color="primary">
+                <Button
+                  onClick={() => {
+                    history.push(`/event-detail/${ev.id}`);
+                  }}
+                  style={{ width: "100%" }}
+                  color="primary"
+                >
                   نمایش
                 </Button>
               </Col>
@@ -245,7 +251,7 @@ class MyEvents extends React.Component {
         startDate === ""
           ? ""
           : this.acceptableDateFormat(new Date(startDate * 1000)),
-      end_datetime:
+      until_datetime:
         endDate === ""
           ? ""
           : this.acceptableDateFormat(new Date(endDate * 1000)),

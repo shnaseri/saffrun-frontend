@@ -1,5 +1,6 @@
 import React from "react";
 import urlDomain from "../../../utility/urlDomain";
+import SweetAlert from "react-bootstrap-sweetalert";
 import Wizard from "../../../components/@vuexy/wizard/WizardComponent";
 import {
   // Form,
@@ -22,8 +23,9 @@ import Select from "react-select";
 import DropzoneBasic from "../../../components/@vuexy/dropZone/dropZone";
 import { DatePicker, RangeDatePicker } from "jalali-react-datepicker";
 import "./input-datepicker.css";
-import { date } from "yup";
+import "../../../assets/scss/plugins/extensions/sweet-alerts.scss";
 import axios from "axios";
+import { history } from "../../../history";
 
 class EventCreation extends React.Component {
   state = {
@@ -40,6 +42,12 @@ class EventCreation extends React.Component {
     endDate: +new Date(),
     discount: 0,
     files: [],
+    successAlert: false,
+    errorAlert: false,
+  };
+
+  handleAlert = (state, value) => {
+    this.setState({ [state]: value });
   };
 
   imageUploaded = (files) => {
@@ -65,7 +73,9 @@ class EventCreation extends React.Component {
       };
       const formData = new FormData();
       formData.append("image", this.state.files[0]);
-      let response = await axios.post(`${urlDomain}/image/`, formData, headers);
+      let response = await axios.post(`${urlDomain}/image/`, formData, {
+        headers,
+      });
       return response;
     } catch (e) {
       console.log(e);
@@ -84,8 +94,8 @@ class EventCreation extends React.Component {
       description,
       discount,
       owner: 1,
-      start_datetime: startDate,
-      endDate: endDate,
+      start_datetime: this.acceptableDateFormat(new Date(startDate)),
+      end_datetime: this.acceptableDateFormat(new Date(endDate)),
     };
     return event;
   };
@@ -94,11 +104,12 @@ class EventCreation extends React.Component {
     var headers = {
       Authorization: token,
     };
+    console.log(this.eventObject());
     try {
       let response = await axios.post(
         `${urlDomain}/event/add/`,
-        this.eventObject(),
-        headers
+        { ...this.eventObject() },
+        { headers }
       );
       return response;
     } catch (e) {
@@ -107,37 +118,38 @@ class EventCreation extends React.Component {
     }
   };
   formSubmitted = async () => {
+    // let eventPost = await this.handleServerRequests();
+    // if (eventPost)
+    this.handleAlert("successAlert", true);
+    // else this.handleAlert("errorAlert", true);
+  };
+  handleServerRequests = async () => {
     var token = "Bearer " + localStorage.getItem("access");
     var headers = {
       Authorization: token,
     };
     let imageId = null;
-    let status = false;
     if (this.state.files.length > 0) {
       let imageResponse = await this.uploadImage();
       if (imageResponse) {
         imageId = imageResponse.data.id;
       }
     }
-    let eventResponse =  await this.postEvent();
-    if (eventResponse && imageId)
-    {
-        try 
-        {
-          let postImageEvent = await axios.post(
-            `${urlDomain}/event/add-image/`,
-            {event_id : eventResponse.data.id, image_id : imageId},
-            headers
-          );
-        }
-        catch(e) {
-          console.log(e);
-          return false;
-        }
+    let eventResponse = await this.postEvent();
+    if (eventResponse && imageId) {
+      try {
+        let postImageEvent = await axios.post(
+          `${urlDomain}/event/add-image/`,
+          { event_id: eventResponse.data.id, image_id: imageId },
+          { headers }
+        );
+      } catch (e) {
+        console.log(e);
+        return false;
+      }
     }
-    if (! eventResponse)
-      return false
-    return true
+    if (!eventResponse) return false;
+    return true;
   };
 
   stepsGenerator() {
@@ -259,8 +271,7 @@ class EventCreation extends React.Component {
       },
       {
         title: "۳",
-        buttonDisabled:
-          false,
+        buttonDisabled: false,
         content: (
           <DropzoneBasic
             imageUploaded={this.imageUploaded}
@@ -285,11 +296,33 @@ class EventCreation extends React.Component {
           <CardBody>
             <Wizard
               enableAllSteps
-              onFinish={() => alert("submitted")}
+              onFinish={this.formSubmitted}
               steps={this.stepsGenerator()}
             />
           </CardBody>
         </Card>
+        <SweetAlert
+          success
+          title="Success"
+          show={this.state.successAlert}
+          onConfirm={() => {
+            this.handleAlert("successAlert", false);
+            history.push("/my-events");
+          }}
+        >
+          <p className="sweet-alert-text">عملیات با موفقیت انجام شد.</p>
+        </SweetAlert>
+
+        <SweetAlert
+          error
+          title="Error"
+          show={this.state.errorAlert}
+          onConfirm={() => this.handleAlert("errorAlert", false)}
+        >
+          <p className="sweet-alert-text">
+            فرآیند با خطا مواجه شد دوباره تلاش کنید
+          </p>
+        </SweetAlert>
       </div>
     );
   }
