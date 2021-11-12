@@ -39,13 +39,13 @@ class RegisterJWT extends React.Component {
         history.push("/");
       } catch (e) {
         this.props.changeSpinnerState(false);
-        toast.error("JSON.stringify(e.response.data)", {
+        toast.error(JSON.stringify(e.response.data), {
           position: toast.POSITION.TOP_CENTER,
         });
       }
     } catch (e) {
       this.props.changeSpinnerState(false);
-      toast.error("JSON.stringify(e.response.data)", {
+      toast.error(JSON.stringify(e.response.data), {
         position: toast.POSITION.TOP_CENTER,
       });
     }

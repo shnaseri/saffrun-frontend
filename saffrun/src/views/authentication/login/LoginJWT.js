@@ -41,7 +41,7 @@ class LoginJWT extends React.Component {
       history.push("/");
     } catch (e) {
       this.props.changeSpinnerState(false);
-      toast.error("سلام نمایش ارور", {
+      toast.error("اطلاعات وارد شده غلط است", {
         position: toast.POSITION.TOP_CENTER,
       });
     }
