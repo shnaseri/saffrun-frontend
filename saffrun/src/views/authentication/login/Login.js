@@ -61,9 +61,6 @@ class Login extends React.Component {
                       </h2>
                     </CardTitle>
                   </CardHeader>
-                  <p className="px-2 auth-title text-center align-self-center">
-                    به وبسایت مدیریتی صَفران خوش آمدید.
-                  </p>
 
                   <TabContent>
                     <TabPane>

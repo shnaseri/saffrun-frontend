@@ -32,7 +32,7 @@ import watch from "../../../assets/img/elements/apple-watch.png"
 import mouse from "../../../assets/img/elements/magic-mouse.png"
 import "swiper/css/swiper.css"
 import "../../../assets/scss/pages/app-ecommerce-shop.scss"
-import Status from "../../../components/@vuexy/status/Status"
+import Status from "../../../components/@vuexy/status/status"
 import ShowParticipant from "./ShowParticipant"
 import Avatar from "../../../components/@vuexy/avatar/AvatarComponent"
 
