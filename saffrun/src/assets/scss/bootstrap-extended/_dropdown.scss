@@ -194,7 +194,7 @@
   .dropdown-item {
     &.active,
     &:hover {
-      background-color: darken($white, 20%);
+      // background-color: darken($red, 20%);
     }
   }
 }
