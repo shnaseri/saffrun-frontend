@@ -21,10 +21,10 @@ import axios from "axios"
 import { ContextLayout } from "../../../utility/context/Layout"
 import { AgGridReact } from "ag-grid-react"
 import {
-  Trash2, AlignCenter,
+  Trash2,
 } from "react-feather"
 import classnames from "classnames"
-import { history } from "../../../history.js"
+import { history } from "../../../history"
 import "../../../assets/scss/plugins/tables/_agGridStyleOverride.scss"
 import "../../../assets/scss/pages/users.scss"
 import { Color } from "ag-grid-community"
@@ -48,7 +48,8 @@ class UsersList extends React.Component {
       {
         headerName: "نام کاربری",
         field: "username",
-        width: 350,
+        // filter: true,
+        width: 250,
         cellRendererFramework: params => {
           return (
             <div
@@ -70,13 +71,17 @@ class UsersList extends React.Component {
       {
         headerName: "ایمیل",
         field: "email",
-        width: 350
+        // filter: true,
+        width: 250
       },
+
       {
         headerName: "شهر",
-        field: "city",        
-        width: 450
-      }
+        field: "city",
+        // filter: true,
+        
+        width: 200
+      },
       // {
       //   headerName: "حذف",
       //   field: "transactions",
@@ -93,8 +98,8 @@ class UsersList extends React.Component {
       //           }}
       //         />
       //       </div>
-          // )
-        // }
+      //     )
+      //   }
       // }
     ]
   }
@@ -105,17 +110,19 @@ class UsersList extends React.Component {
       this.setState({ rowData })
     })
   }
-  fillRows ()
+
+  onGridReady = params => {
+    this.gridApi = params.api
+    this.gridColumnApi = params.columnApi
+  }
+  showPart()
   {
     let rows = []
     rows.push({name : "اکبر" , avatar:  require("../../../assets/img/portrait/small/avatar-s-18.jpg") , city : "تهران" , email: "asqar1890@gmail.com"})
     rows.push({name : "علی" , avatar: require("../../../assets/img/portrait/small/avatar-s-7.jpg") , city : "سمنان" , email: "alialam2000@gmail.com"})
     rows.push({name : "جواد" , avatar:require("../../../assets/img/portrait/small/avatar-s-14.jpg") , city : "بابل" , email: "javadmehdi@gmail.com"})
     return rows
-  }
-  onGridReady = params => {
-    this.gridApi = params.api
-    this.gridColumnApi = params.columnApi
+    
   }
 
   filterData = (column, val) => {
@@ -183,48 +190,23 @@ class UsersList extends React.Component {
   }
 
 // all even rows assigned 'my-shaded-effect'
-  getRowClass = params => {
-    if (params.node.rowIndex % 2 === 0) {
-      return { background: 'withe' };
-  }
-};
   render() {
     const { rowData, columnDefs, defaultColDef, pageSize } = this.state
     return (
       <Row className="app-user-list">
         <Col sm="12">
-          <Card
-            className={classnames("card-action card-reload", {
-              "d-none": this.state.isVisible === false,
-              "card-collapsed": this.state.status === "Closed",
-              closing: this.state.status === "Closing...",
-              opening: this.state.status === "Opening...",
-              refreshing: this.state.reload
-            })}
-          >
-            <Collapse
-              isOpen={this.state.collapse}
-              onExited={this.onExited}
-              onEntered={this.onEntered}
-              onExiting={this.onExiting}
-              onEntering={this.onEntering}
-            >
-
-            </Collapse>
-          </Card>
-        </Col>
-        <Col sm="12">
           <Card>
             <CardBody>
-              <div className="ag-theme-material ag-grid-table" >
-              <div className="filter-actions d-flex">
+              <div className="ag-theme-material ag-grid-table">
+              {/* <div className="filter-actions d-flex"  style={{marginBottom : 25}}>
                     <Input
                       className="w-50 mr-1 mb-1 mb-sm-0"
                       type="text"
                       placeholder="جست و جو ..."
                       onChange={e => this.updateSearchQuery(e.target.value)}
                       value={this.state.searchVal}
-                    /></div>
+                    />
+                </div> */}
                 {this.state.rowData !== null ? (
                   <ContextLayout.Consumer>
                     {context => (
@@ -233,7 +215,7 @@ class UsersList extends React.Component {
                         rowSelection="multiple"
                         defaultColDef={defaultColDef}
                         columnDefs={columnDefs}
-                        rowData={this.fillRows()}
+                        rowData={this.showPart()}
                         onGridReady={this.onGridReady}
                         colResizeDefault={"shift"}
                         animateRows={true}
@@ -243,9 +225,8 @@ class UsersList extends React.Component {
                         paginationPageSize={pageSize}
                         resizable={true}
                         enableRtl={context.state.direction === "rtl"}
-                        rowStyle={ {background: '#f8b87c',AlignCenter: true}}
-                        getRowStyle={this.getRowClass}
-                        
+                        rowStyle={ {borderBlockColor: "#ff9f43"}}
+                        headerStyle={{backgroundColor: "#ff9f43"}}
                       />
                     )}
                   </ContextLayout.Consumer>

@@ -89,7 +89,7 @@ class DetailPage extends React.Component {
           1,
           3,
           4
-      ]  
+      ]  ,
     }
   }
   handleComposeSidebar = status => {
@@ -123,6 +123,59 @@ class DetailPage extends React.Component {
   handleMainAndComposeSidebar = () => {
     this.handleComposeSidebar("close")
     this.onSetSidebarOpen(false)
+  }
+  showComment()
+  {
+    return (
+      <React.Fragment>
+                <Card>
+          <CardBody>
+      <div className="media-list">
+        <Media>
+          <Media left href="#">
+          <Avatar color="info" className="mr-1" content="A" size="xl" />
+          </Media>
+          <Media body>
+            <Media heading>اصغر اکبری</Media>
+            <p>
+            گیم مستر بازی اصلا خوب نبود و بازی خوب اجرا نشد و راهنمایی ها بد بود ، روند بازی و معما هیچ ربطی به داستان نداشت ولی ترس خوبی داشت.
+            </p>
+          </Media>
+        </Media>
+<hr></hr>
+     </div> 
+     <div className="media-list">
+        <Media>
+          <Media left href="#">
+          <Avatar color="success" className="mr-1" content="K" size="xl" />
+          </Media>
+          <Media body>
+            <Media heading>کمیل اصغری</Media>
+            <p>
+            بی نظیره بهترین اتاق فراری بود که رفتم و فوق‌العاده بود.
+            </p>
+          </Media>
+        </Media>
+<hr></hr>
+     </div> 
+     <div className="media-list">
+        <Media>
+          <Media left href="#">
+          <Avatar color="danger" className="mr-1" content="A" size="xl" />
+          </Media>
+          <Media body>
+            <Media heading>امیر مهدی بهکام کیا</Media>
+            <p>
+            همه چی عالی بود به خصوص رفتار گیم مستر و افراد و کارکنان اونجا.
+            </p>
+          </Media>
+        </Media>
+<hr></hr>
+     </div> 
+     </CardBody>
+     </Card>
+      </React.Fragment>
+    )
   }
 
   toggle = tab => {
@@ -194,12 +247,12 @@ class DetailPage extends React.Component {
                 sm="12"
                 md="5"
               >
-                <img src={macbook} alt="Google Home" height="250" width="250" />
+                <img src={"https://upload.wikimedia.org/wikipedia/en/0/0d/Mafia_II_Boxart.jpg"} alt="Google Home" height="350" width="350" />
               </Col>
               <Col md="7" sm="12">
         <h3>{this.state.event.title}</h3>
                 <div className="d-flex flex-wrap">
-        <h3 className="text-primary"> تعداد نفرات شرکت کنندگان: {this.state.event.participants.length} نفر</h3>
+        <h3 className="text-primary">  شرکت کنندگان: {this.state.event.participants.length} نفر</h3>
                   
                 </div>
                 <hr />
@@ -244,24 +297,8 @@ class DetailPage extends React.Component {
        </Card>
       </TabPane>
       <TabPane tabId="2">
-        <Card>
-          <CardBody>
-      <div className="media-list">
-        <Media>
-          <Media left href="#">
-          <Avatar color="info" className="mr-1" content="A" size="xl" />
-          </Media>
-          <Media body>
-            <Media heading>اصغر اکبری</Media>
-            <p>
-            گیم مستر بازی اصلا خوب نبود و بازی خوب اجرا نشد و راهنمایی ها بد بود ، روند بازی و معما هیچ ربطی به داستان نداشت ولی ترس خوبی داشت.
-            </p>
-          </Media>
-        </Media>
-<hr></hr>
-     </div> 
-     </CardBody>
-     </Card>
+        {this.showComment()}
+
       </TabPane>
       <TabPane tabId="3">
       <ShowParticipant userData = {this.state.userData} />
