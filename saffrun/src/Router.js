@@ -92,7 +92,7 @@ class AppRouter extends React.Component {
           <AppRoute path="/my-events" component={MyEvents} />
           <AppRoute path="/about-us" component={AboutUs} />
           <AppRoute path="/received-comments" component={ReceivedComments} />
-          <AppRoute path ="/event-detail/1" component={DetailPage}/>
+          <AppRoute path ="/event-detail/:id" component={DetailPage}/>
 
           <AppRoute path="/call-us" component={CallUs} />
         </Switch>
