@@ -65,7 +65,14 @@ const UserDropdown = (props) => {
         <span className="align-middle">WishList</span>
       </DropdownItem>
       <DropdownItem divider />
-      <DropdownItem tag="a" href="/pages/login">
+      <DropdownItem
+        tag="a"
+        onClick={(e) => {
+          e.preventDefault();
+          localStorage.clear();
+          history.push("/login");
+        }}
+      >
         <Icon.Power size={14} className="mr-50" />
         <span className="align-middle">Log Out</span>
       </DropdownItem>
