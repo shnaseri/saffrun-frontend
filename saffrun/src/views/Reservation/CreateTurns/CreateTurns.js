@@ -19,6 +19,7 @@ import { ChevronDown, Check, Plus, Clock, Trash2 } from "react-feather";
 import classnames from "classnames";
 import TimeField from "react-simple-timefield";
 import axios from "axios";
+import urlDomain from "../../../utility/urlDomain";
 
 class BookingCreation extends React.Component {
   constructor(props) {
@@ -137,13 +138,14 @@ class BookingCreation extends React.Component {
       l.push({ reserve_periods: this.state.week[days[date.getDay()]] });
     }
     data["days_list"] = l;
-    let res = await axios.post("http://127.0.0.1:8000/reserve/create/", data, {
+    console.log(data);
+    let token = localStorage.getItem("access");
+    let res = await axios.post(`${urlDomain}/reserve/create/`, data, {
       headers: {
-        Authorization:
-          "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjQxNzMwNzQwLCJpYXQiOjE2MzY1NDY3NDAsImp0aSI6IjNjYTcyYTI1M2Q2YjQwY2JhZWI1YjYyMTdlZDdjNWQ2IiwidXNlcl9pZCI6MX0.lgupX15ZE66txd77Q27kAAS3-F900Nwufi2GUiwG2Rk",
+        Authorization: `Bearer ${token}`,
       },
     });
-    console.log(res);
+    // console.log(res);
   };
   formatDate = (date) => {
     var d = new Date(date),
@@ -207,7 +209,8 @@ class BookingCreation extends React.Component {
       this.state.capacity === "" ||
       (this.state.period_count === "" && this.state.duration === "") ||
       (this.state.period_count !== "" && this.state.duration !== "") ||
-      this.state.startDate === 0 || this.state.endDate === 0
+      this.state.startDate === 0 ||
+      this.state.endDate === 0
     ) {
       return true;
     } else {
@@ -523,7 +526,11 @@ class BookingCreation extends React.Component {
                       // type="submit"
                       style={{ float: "left" }}
                       className="mr-1 mb-1"
-                      disabled={this.fillInput() || (this.checkDate() || this.state.endDate === 0)}
+                      disabled={
+                        this.fillInput() ||
+                        this.checkDate() ||
+                        this.state.endDate === 0
+                      }
                       onClick={this.GoToTimeSection}
                     >
                       تایید و ادامه
@@ -562,14 +569,13 @@ class BookingCreation extends React.Component {
                         {" "}
                         <FormGroup row>
                           <Col md="1" xl="1" lg="1" xs="12" sm="12">
-                            <span >شنبه ها</span>
+                            <span>شنبه ها</span>
                           </Col>
                           <Col md="1" xl="1" lg="1" xs="2" sm="2">
                             <Plus
                               onMouseOver={(e) =>
                                 (e.currentTarget.style.cursor = "pointer")
                               }
-                              
                               onClick={() => this.addInput("saturday")}
                             ></Plus>
                           </Col>
@@ -587,20 +593,19 @@ class BookingCreation extends React.Component {
                         {" "}
                         <FormGroup row>
                           <Col md="1" xl="1" lg="1" xs="12" sm="12">
-                            <span >یکشنبه ها</span>
+                            <span>یکشنبه ها</span>
                           </Col>
                           <Col md="1" xl="1" lg="1" xs="2" sm="2">
                             <Plus
                               onMouseOver={(e) =>
                                 (e.currentTarget.style.cursor = "pointer")
                               }
-                              
                               onClick={() => this.addInput("sunday")}
                             ></Plus>
                           </Col>
                           {this.weekDayInput("sunday")}
                         </FormGroup>
-                        <div className="divider divider-left divider-warning " >
+                        <div className="divider divider-left divider-warning ">
                           <div className="divider-text">
                             <Clock />
                           </div>
@@ -612,14 +617,13 @@ class BookingCreation extends React.Component {
                         {" "}
                         <FormGroup row>
                           <Col md="1" xl="1" lg="1" xs="12" sm="12">
-                            <span >دوشنبه ها</span>
+                            <span>دوشنبه ها</span>
                           </Col>
                           <Col md="1" xl="1" lg="1" xs="2" sm="2">
                             <Plus
                               onMouseOver={(e) =>
                                 (e.currentTarget.style.cursor = "pointer")
                               }
-                              
                               onClick={() => this.addInput("monday")}
                             ></Plus>
                           </Col>
@@ -637,14 +641,13 @@ class BookingCreation extends React.Component {
                         {" "}
                         <FormGroup row>
                           <Col md="1" xl="1" lg="1" xs="12" sm="12">
-                            <span >سه شنبه ها</span>
+                            <span>سه شنبه ها</span>
                           </Col>
                           <Col md="1" xl="1" lg="1" xs="2" sm="2">
                             <Plus
                               onMouseOver={(e) =>
                                 (e.currentTarget.style.cursor = "pointer")
                               }
-                              
                               onClick={() => this.addInput("tuesday")}
                             ></Plus>
                           </Col>
@@ -662,14 +665,13 @@ class BookingCreation extends React.Component {
                         {" "}
                         <FormGroup row>
                           <Col md="1" xl="1" lg="1" xs="12" sm="12">
-                            <span >چهارشنبه ها</span>
+                            <span>چهارشنبه ها</span>
                           </Col>
                           <Col md="1" xl="1" lg="1" xs="2" sm="2">
                             <Plus
                               onMouseOver={(e) =>
                                 (e.currentTarget.style.cursor = "pointer")
                               }
-                              
                               onClick={() => this.addInput("wednesday")}
                             ></Plus>
                           </Col>
@@ -686,14 +688,13 @@ class BookingCreation extends React.Component {
                       <React.Fragment>
                         <FormGroup row>
                           <Col md="1" xl="1" lg="1" xs="12" sm="12">
-                            <span >پنجشنبه ها</span>
+                            <span>پنجشنبه ها</span>
                           </Col>
                           <Col md="1" xl="1" lg="1" xs="2" sm="2">
                             <Plus
                               onMouseOver={(e) =>
                                 (e.currentTarget.style.cursor = "pointer")
                               }
-                              
                               onClick={() => this.addInput("thursday")}
                             ></Plus>
                           </Col>
@@ -711,14 +712,13 @@ class BookingCreation extends React.Component {
                         {" "}
                         <FormGroup row>
                           <Col md="1" xl="1" lg="1" xs="12" sm="12">
-                            <span >جمعه ها</span>
+                            <span>جمعه ها</span>
                           </Col>
                           <Col md="1" xl="1" lg="1" xs="2" sm="2">
                             <Plus
                               onMouseOver={(e) =>
                                 (e.currentTarget.style.cursor = "pointer")
                               }
-                              
                               onClick={() => this.addInput("friday")}
                             ></Plus>
                           </Col>

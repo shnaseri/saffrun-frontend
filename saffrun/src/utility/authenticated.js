@@ -5,7 +5,7 @@ async function isAuthenticated() {
     let authenticatedStatus = false; 
     if (token) {
       try {
-        await axios.post(`${urlDomain}/api/auth/verify/`, {
+        await axios.post(`${urlDomain}/auth/verify/`, {
           token,
         });
         authenticatedStatus = true

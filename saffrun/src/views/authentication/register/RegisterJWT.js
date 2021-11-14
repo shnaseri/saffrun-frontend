@@ -26,12 +26,16 @@ class RegisterJWT extends React.Component {
     // }
     try {
       // register user
-      await axios.post(`${urlDomain}/api/auth/register/`, {
-        ...this.state,
-      });
+      await axios.post(
+        `${urlDomain}/auth/register/`,
+        {
+          ...this.state,
+        },
+        // { headers: { Client: "web" }}
+      );
       try {
         // then login user
-        let loginResponse = await axios.post(`${urlDomain}/api/auth/login/`, {
+        let loginResponse = await axios.post(`${urlDomain}/auth/login/`, {
           ...this.state,
         });
         localStorage.setItem("access", loginResponse.data["access"]);
@@ -44,6 +48,7 @@ class RegisterJWT extends React.Component {
         });
       }
     } catch (e) {
+      console.log();
       this.props.changeSpinnerState(false);
       toast.error(JSON.stringify(e.response.data), {
         position: toast.POSITION.TOP_CENTER,

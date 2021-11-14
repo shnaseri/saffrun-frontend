@@ -86,7 +86,7 @@ class MyEvents extends React.Component {
     let token = localStorage.getItem("access");
     token = `Bearer ${token}`;
     try {
-      let events = await axios.get("http://127.0.0.1:8000/event/get-all/", {
+      let events = await axios.get(`${urlDomain}/event/get-all/`, {
         headers: { Authorization: token },
         params: { search_query: "" },
       });
@@ -111,8 +111,7 @@ class MyEvents extends React.Component {
     return new Date(eventDateTime) > new Date();
   };
   loadImg = (img) => {
-    console.log(`${urlDomain}${img.image.full_size}`);
-    return `${urlDomain}${img.image.full_size}`;
+    return `http://localhost:8000${img.image.full_size}`;
   };
   loadEventCards = () => {
     return this.state.events.map((ev) => (
@@ -269,7 +268,7 @@ class MyEvents extends React.Component {
     let token = localStorage.getItem("access");
     token = `Bearer ${token}`;
     try {
-      let events = await axios.get("http://127.0.0.1:8000/event/get-all/", {
+      let events = await axios.get(`${urlDomain}/event/get-all/`, {
         headers: { Authorization: token },
         params: filters,
       });

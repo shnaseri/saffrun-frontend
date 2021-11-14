@@ -19,7 +19,7 @@ class LoginJWT extends React.Component {
     let token = localStorage.getItem("access");
     if (token) {
       try {
-        let loginResponse = await axios.post(`${urlDomain}/api/auth/verify/`, {
+        let loginResponse = await axios.post(`${urlDomain}/auth/verify/`, {
           token,
         });
         console.log(loginResponse.data);
@@ -33,7 +33,7 @@ class LoginJWT extends React.Component {
     e.preventDefault();
     this.props.changeSpinnerState(true);
     try {
-      let loginResponse = await axios.post(`${urlDomain}/api/auth/login/`, {
+      let loginResponse = await axios.post(`${urlDomain}/auth/login/`, {
         ...this.state,
       });
       localStorage.setItem("access", loginResponse.data["access"]);
