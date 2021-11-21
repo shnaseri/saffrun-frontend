@@ -122,12 +122,12 @@ class MyEvents extends React.Component {
               className="img-fluid mb-2"
               src={ev.image ? this.loadImg(ev.image) : img2}
               alt={ev.title}
-              style={{ width: "340px", height: "240px" }}
+              style={{ height: "240px" }}
             />
             <h5>{ev.title}</h5>
             <Row>
               <Col md="5" lg="6" sm="12" xl="7">
-                <p>
+                <p style={{ height: "42px" }}>
                   {ev.description.length >= 20
                     ? ev.description.substring(0, 20) + "..."
                     : ev.description}
