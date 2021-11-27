@@ -1,6 +1,10 @@
 import React from "react"
-import { Card, CardHeader, CardTitle, CardBody } from "reactstrap"
+import { Card, CardHeader, CardTitle, CardBody , UncontrolledDropdown,
+  DropdownMenu,
+  DropdownItem,
+  DropdownToggle, } from "reactstrap"
 import Chart from "react-apexcharts"
+import { ChevronDown } from "react-feather"
 import { Settings } from "react-feather"
 
 class Revenue extends React.Component {
@@ -55,7 +59,20 @@ class Revenue extends React.Component {
         axisTicks: {
           show: false
         },
-        categories: ["01", "05", "09", "13", "17", "21", "26", "31"],
+        categories: [
+          "فروردین",
+          "اردیبهشت",
+          "خرداد",
+          "تیر",
+          "مرداد",
+          "شهریور",
+          "مهر",
+          "آبان",
+          "آذر",
+          "دی",
+          "بهمن",
+          "اسفند"
+        ],
         axisBorder: {
           show: false
         },
@@ -68,7 +85,7 @@ class Revenue extends React.Component {
             color: this.props.strokeColor
           },
           formatter: val => {
-            return val > 999 ? (val / 1000).toFixed(1) + "k" : val
+            return val > 999 ? (val / 1000).toFixed(1) + "تومان" : val
           }
         }
       },
@@ -78,35 +95,45 @@ class Revenue extends React.Component {
     },
     series: [
       {
-        name: "This Month",
-        data: [45000, 47000, 44800, 47500, 45500, 48000, 46500, 48600]
-      },
-      {
-        name: "Last Month",
-        data: [46000, 48000, 45500, 46600, 44500, 46500, 45000, 47000]
+        name: "تراکنش",
+        data: [45000, 47000, 44800, 47500, 45500, 48000, 46500, 48600,5420,65000,25000,15400]
       }
+      // {
+      //   name: "Last Month",
+      //   data: [46000, 48000, 45500, 46600, 44500, 46500, 45000, 47000,65000,87123,36500,63000]
+      // }
     ]
   }
   render() {
     return (
       <Card>
         <CardHeader>
-          <CardTitle>Revenue</CardTitle>
-          <Settings size={20} className="cursor-pointer text-muted" />
+          <CardTitle>وضعیت مالی</CardTitle>
+          {/* <Settings size={20} className="cursor-pointer text-muted" /> */}
+          <UncontrolledDropdown>
+            <DropdownToggle className="cursor-pointer" tag="small">
+              انتخاب سال <ChevronDown size={10} />
+            </DropdownToggle>
+            <DropdownMenu right>
+              <DropdownItem>1400</DropdownItem>
+              <DropdownItem>1399</DropdownItem>
+              <DropdownItem>1398</DropdownItem>
+            </DropdownMenu>
+          </UncontrolledDropdown>
         </CardHeader>
         <CardBody>
           <div className="d-flex justify-content-start mb-1">
             <div className="mr-2">
-              <p className="mb-50 text-bold-600">This Month</p>
+              <p className="mb-50 text-bold-600">این ماه</p>
               <h2 className="text-bold-400">
-                <sup className="font-medium-1 mr-50">$</sup>
+                <sup className="font-medium-1 mr-50">تومان</sup>
                 <span className="text-success">86,589</span>
               </h2>
             </div>
             <div>
-              <p className="mb-50 text-bold-600">Last Month</p>
+              <p className="mb-50 text-bold-600">ماه قبل</p>
               <h2 className="text-bold-400">
-                <sup className="font-medium-1 mr-50">$</sup>
+                <sup className="font-medium-1 mr-50">تومان</sup>
                 <span>73,683</span>
               </h2>
             </div>
@@ -115,7 +142,7 @@ class Revenue extends React.Component {
             options={this.state.options}
             series={this.state.series}
             type="line"
-            height={260}
+            height={285}
           />
         </CardBody>
       </Card>

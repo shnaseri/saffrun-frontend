@@ -1,25 +1,13 @@
-import React from "react"
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardBody,
-  UncontrolledDropdown,
-  DropdownMenu,
-  DropdownItem,
-  DropdownToggle,
-  Row,
-  Col
-} from "reactstrap"
-import Chart from "react-apexcharts"
-import { ChevronDown } from "react-feather"
+import React from "react";
+import { Card, CardHeader, CardTitle, CardBody, Row, Col } from "reactstrap";
+import Chart from "react-apexcharts";
+import Rating from "@mui/material/Rating";
+import { Star , Users } from "react-feather";
 
 class SupportTracker extends React.Component {
   state = {
     options: {
-      chart: {
-       
-      },
+      chart: {},
       plotOptions: {
         radialBar: {
           size: 150,
@@ -27,20 +15,20 @@ class SupportTracker extends React.Component {
           startAngle: -150,
           endAngle: 150,
           hollow: {
-            size: "65%"
+            size: "65%",
           },
           track: {
             background: this.props.white,
-            strokeWidth: "100%"
+            strokeWidth: "100%",
           },
           dataLabels: {
             value: {
               offsetY: 30,
               color: "#99a2ac",
-              fontSize: "2rem"
-            }
-          }
-        }
+              fontSize: "2rem",
+            },
+          },
+        },
       },
       colors: [this.props.danger],
       fill: {
@@ -54,19 +42,19 @@ class SupportTracker extends React.Component {
           inverseColors: true,
           opacityFrom: 1,
           opacityTo: 1,
-          stops: [0, 100]
-        }
+          stops: [0, 100],
+        },
       },
       dataLabels: {
-        enabled: false
+        enabled: false,
       },
       stroke: {
-        dashArray: 8
+        dashArray: 8,
       },
-      labels: ["تکمیل پروفایل"]
+      labels: ["میزان رضایت"],
     },
-    series: [83]
-  }
+    series: [83],
+  };
   render() {
     return (
       <Card>
@@ -86,9 +74,22 @@ class SupportTracker extends React.Component {
         <CardBody className="pt-0">
           <Row>
             <Col sm="2" className="d-flex flex-column flex-wrap text-center">
+              
               <h1 className="font-large-2 text-bold-600 mt-2 mb-0">163</h1>
-              <small>رویداد های فعال</small>
+              <div className="float-left">
+                <Users size="15" className="warning" />
+                <span className="ml-50 align-middle">تعداد نظر دهندگان</span>
+              </div>
+              {/* <small>تعداد نظر دهندگان</small> */}
+              <hr></hr>
+              {/* <Rating className="  mt-2 mb-0" name="read-only" value={3} readOnly /> */}
+              <h1 className="font-large-2 text-bold-600 mt-2 mb-0">4.5</h1>
+              <div className="float-left">
+                <Star size="15" className="warning" />
+                <span className="ml-50 align-middle">امتیاز</span>
+              </div>
             </Col>
+
             <Col sm="10" className="d-flex justify-content-center">
               <Chart
                 options={this.state.options}
@@ -99,6 +100,7 @@ class SupportTracker extends React.Component {
               />
             </Col>
           </Row>
+
           <div className="chart-info d-flex justify-content-between">
             <div className="text-center">
               <p className="mb-50"> کل رویداد ها</p>
@@ -114,12 +116,12 @@ class SupportTracker extends React.Component {
             </div>
             <div className="text-center">
               <p className="mb-50">نوبت های گرفته شده</p>
-              <span className="font-large-1">1d</span>
+              <span className="font-large-1">25</span>
             </div>
           </div>
         </CardBody>
       </Card>
-    )
+    );
   }
 }
-export default SupportTracker
+export default SupportTracker;
