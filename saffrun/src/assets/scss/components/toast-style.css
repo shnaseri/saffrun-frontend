@@ -1,3 +1,7 @@
 .Toastify__toast--error {
     font-family: "Dana-FaNum", Helvetica, Arial, serif !important;
 }
+
+.Toastify__toast--warning {
+    font-family: "Dana-FaNum", Helvetica, Arial, serif !important;
+}

@@ -1,0 +1,111 @@
+let colWidthes = {
+  firstRow: {
+    end_time: {
+      md: 2,
+      xl: 2,
+      lg: 2,
+      xs: 3,
+      sm: 3,
+    },
+    start_time: {
+      md: 2,
+      xl: 2,
+      lg: 2,
+      xs: 3,
+      sm: 3,
+    },
+    duration: {
+      md: 2,
+      xl: 2,
+      lg: 2,
+      xs: 3,
+      sm: 3,
+    },
+    period_count: {
+      md: 2,
+      xl: 1,
+      lg: 2,
+      xs: 3,
+      sm: 3,
+    },
+    capacity: {
+      md: 2,
+      xl: 2,
+      lg: 2,
+      xs: 3,
+      sm: 3,
+    },
+    trash: {
+      md: 2,
+      xl: 1,
+      lg: 1,
+      xs: 1,
+      sm: 1,
+    },
+    error: {
+      md: 3,
+    },
+    lastCol: {
+      md: 1,
+      xl: 4,
+      lg: 4,
+      xs: 1,
+      sm: 1,
+    },
+  },
+  otherRows: {
+    end_time: {
+      md: 2,
+      xl: 1,
+      lg: 1,
+      xs: 4,
+      sm: 3,
+    },
+    start_time: {
+      md: 2,
+      xl: 1,
+      lg: 1,
+      xs: 4,
+      sm: 3,
+    },
+    duration: {
+      md: 2,
+      xl: 2,
+      lg: 2,
+      xs: 3,
+      sm: 3,
+    },
+    period_count: {
+      md: 2,
+      xl: 2,
+      lg: 2,
+      xs: 3,
+      sm: 3,
+    },
+    capacity: {
+      md: 2,
+      xl: 2,
+      lg: 2,
+      xs: 3,
+      sm: 3,
+    },
+    trash: {
+      md: 2,
+      xl: 1,
+      lg: 1,
+      xs: 1,
+      sm: 1,
+    },
+    error: {
+      md: 3,
+    },
+    lastCol: {
+      md: 1,
+      xl: 4,
+      lg: 4,
+      xs: 0,
+      sm: 0,
+    },
+  },
+};
+export default colWidthes;

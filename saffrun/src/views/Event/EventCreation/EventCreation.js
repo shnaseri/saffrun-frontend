@@ -209,7 +209,7 @@ class EventCreation extends React.Component {
     }
   };
   formSubmitted = async () => {
-    let eventPost = await this.handleServerRequests();
+    // let eventPost = await this.handleServerRequests();
     // if (eventPost)
     this.handleAlert("successAlert", true);
     // else this.handleAlert("errorAlert", true);
