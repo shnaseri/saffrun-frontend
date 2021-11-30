@@ -29,7 +29,6 @@ import DataListConfig from "./dayDetails";
 import { toast } from "react-toastify";
 import SweetAlert from "react-bootstrap-sweetalert";
 
-
 class BookingCreation extends React.Component {
   constructor(props) {
     super(props);
@@ -206,7 +205,8 @@ class BookingCreation extends React.Component {
   fillInput = () => {
     if (
       this.state.capacity === "" ||
-      (this.state.period_count === "" && this.state.duration === "")
+      (this.state.period_count === "" && this.state.duration === "") ||
+      parseInt(this.state.duration % 5) !== 0
     ) {
       return true;
     } else {
@@ -248,6 +248,16 @@ class BookingCreation extends React.Component {
       week[day] = tempItems;
     }
     this.setState({ week });
+  };
+  durationMod5 = () => {
+    if (parseInt(this.state.duration % 5) !== 0) {
+      return (
+        <small style={{ color: "red", fontSize: "11px" }}>
+          بازه های زمانی باید بر ۵ بخش‌پذیر باشند{" "}
+        </small>
+      );
+    }
+    return <React.Fragment></React.Fragment>;
   };
   updateItemOfDay = (day, dayList) => {
     for (let i = 0; i < dayList.length; i++) {
@@ -460,7 +470,6 @@ class BookingCreation extends React.Component {
   disabledSubmitButton = () => {
     let { week } = this.state;
     let dayNames = Object.keys(week);
-    console.log(dayNames);
     for (let i = 0; i < dayNames.length; i++) {
       let itemsOfDay = week[dayNames[i]];
       for (let j = 0; j < itemsOfDay.length; j++) {
@@ -485,20 +494,28 @@ class BookingCreation extends React.Component {
                       تعداد نفرات مجاز
                       <span style={{ color: "red" }}>*</span>
                     </Label>
-                    <UncontrolledTooltip placement="top" target="personsNum">
+                    <UncontrolledTooltip
+                      style={{
+                        backgroundColor: "rgb(245, 199, 100)",
+                        color: "black",
+                      }}
+                      placement="top"
+                      target="personsNum"
+                    >
                       تعداد افرادی که در هر نوبت می‌توانند حضور داشته‌باشند
                     </UncontrolledTooltip>
                     <Input
                       type="number"
                       name="personsNum"
-                      pattern="[1-9]"
                       id="personsNum"
                       onChange={(e) => {
-                        this.setState({ capacity: e.target.value });
-                        this.changeDayInputAfterVisible(
-                          "capacity",
-                          e.target.value
-                        );
+                        if (e.target.value.length < 5) {
+                          this.setState({ capacity: e.target.value });
+                          this.changeDayInputAfterVisible(
+                            "capacity",
+                            e.target.value
+                          );
+                        }
                       }}
                       value={this.state.capacity}
                       placeholder="عدد وارد کنید"
@@ -512,7 +529,14 @@ class BookingCreation extends React.Component {
                       تعداد نوبت‌ها
                       <span style={{ color: "red" }}>*</span>
                     </Label>
-                    <UncontrolledTooltip placement="top" target="NumOfTurns">
+                    <UncontrolledTooltip
+                      style={{
+                        backgroundColor: "rgb(245, 199, 100)",
+                        color: "black",
+                      }}
+                      placement="top"
+                      target="NumOfTurns"
+                    >
                       در بین دو بازه زمانی چه تعداد نوبت می‌خواهید ایجاد کنید
                     </UncontrolledTooltip>
                     <Input
@@ -520,11 +544,13 @@ class BookingCreation extends React.Component {
                       name="NumOfTurns"
                       id="NumOfTurns"
                       onChange={(e) => {
-                        this.setState({ period_count: e.target.value });
-                        this.changeDayInputAfterVisible(
-                          "period_count",
-                          e.target.value
-                        );
+                        if (e.target.value.length < 5) {
+                          this.setState({ period_count: e.target.value });
+                          this.changeDayInputAfterVisible(
+                            "period_count",
+                            e.target.value
+                          );
+                        }
                       }}
                       value={this.state.period_count}
                       placeholder="عدد وارد کنید"
@@ -543,15 +569,19 @@ class BookingCreation extends React.Component {
                       name="duration"
                       id="duration"
                       onChange={(e) => {
-                        this.setState({ duration: e.target.value });
-                        this.changeDayInputAfterVisible(
-                          "duration",
-                          e.target.value
-                        );
+                        if (e.target.value.length < 4) {
+                          this.setState({ duration: e.target.value });
+                          this.changeDayInputAfterVisible(
+                            "duration",
+                            e.target.value
+                          );
+                        }
                       }}
+                      maxLength={3}
                       value={this.state.duration}
                       placeholder="مدت زمان هر نوبت (به دقیقه)"
                     />
+                    {this.durationMod5()}
                   </FormGroup>
                 </Col>
                 <Col md="1" />

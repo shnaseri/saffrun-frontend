@@ -39,6 +39,15 @@ class DataListSidebar extends Component {
     let { capacity, period_count, duration, start_time, end_time } = item;
     this.setState({ capacity, period_count, duration, start_time, end_time });
   };
+  startTimeError = () => {
+    if (this.minuteMod5Disabled(this.state.start_time))
+      return (
+        <small style={{ color: "red", fontSize: "11px" }}>
+          زمان ها باید با فاصله های ۵ دقیقه باشند{" "}
+        </small>
+      );
+    return <React.Fragment />;
+  };
   timeError = () => {
     if (this.state.start_time >= this.state.end_time)
       return (
@@ -50,6 +59,12 @@ class DataListSidebar extends Component {
       return (
         <small style={{ color: "red", fontSize: "11px" }}>
           فاصله زمانی باید بیشتر از ۵ دقیقه باشد{" "}
+        </small>
+      );
+    if (this.minuteMod5Disabled(this.state.end_time))
+      return (
+        <small style={{ color: "red", fontSize: "11px" }}>
+          زمان ها باید با فاصله های ۵ دقیقه باشند{" "}
         </small>
       );
     return <React.Fragment />;
@@ -90,13 +105,40 @@ class DataListSidebar extends Component {
     }
     return false;
   };
+  updateInput = (e, name, length) => {
+    if (e.target.value.length < length)
+      this.setState({ [name]: e.target.value });
+  };
+  durationMod5 = () => {
+    if (parseInt(this.state.duration % 5) !== 0) {
+      return (
+        <small style={{ color: "red", fontSize: "11px" }}>
+          بازه های زمانی باید بر ۵ بخش‌پذیر باشند{" "}
+        </small>
+      );
+    }
+
+    return <React.Fragment></React.Fragment>;
+  };
+  minuteMod5Disabled = (time) => {
+    if (time) {
+      let startDetail = time.split(":");
+      let startMinute = parseInt(startDetail[1]);
+      return startMinute % 5 !== 0;
+    }
+
+    return false;
+  };
   disabledCondition = () => {
     let { capacity, duration, period_count, start_time, end_time } = this.state;
     return (
       capacity === "" ||
       (duration === "" && period_count === "") ||
       start_time >= end_time ||
-      this.moreThanFiveMinutes(start_time, end_time)
+      this.moreThanFiveMinutes(start_time, end_time) ||
+      parseInt(this.state.duration % 5) !== 0 ||
+      this.minuteMod5Disabled(start_time) ||
+      this.minuteMod5Disabled(end_time)
     );
   };
   render() {
@@ -132,6 +174,7 @@ class DataListSidebar extends Component {
               input={<Input />}
               colon=":"
             />
+            {this.startTimeError()}
           </FormGroup>
           <FormGroup>
             <Label>ساعت پایان</Label>
@@ -151,7 +194,7 @@ class DataListSidebar extends Component {
             <Input
               type="number"
               value={period_count}
-              onChange={(e) => this.setState({ period_count: e.target.value })}
+              onChange={(e) => this.updateInput(e, "period_count", 5)}
             />
           </FormGroup>
           <FormGroup>
@@ -162,8 +205,9 @@ class DataListSidebar extends Component {
             <Input
               type="number"
               value={duration}
-              onChange={(e) => this.setState({ duration: e.target.value })}
+              onChange={(e) => this.updateInput(e, "duration", 4)}
             />
+            {this.durationMod5()}
           </FormGroup>
           <FormGroup>
             <Label>
@@ -173,7 +217,7 @@ class DataListSidebar extends Component {
             <Input
               type="number"
               value={capacity}
-              onChange={(e) => this.setState({ capacity: e.target.value })}
+              onChange={(e) => this.updateInput(e, "capacity", 4)}
             />
           </FormGroup>
         </PerfectScrollbar>

@@ -132,7 +132,7 @@ class VuexyWizard extends React.Component {
                       <Button
                         type="submit"
                         color="primary"
-                        // disabled={item.buttonDisabled}  
+                        disabled={item.buttonDisabled}  
                         style={{ marginTop: "50px" }}
                         outline
                       >

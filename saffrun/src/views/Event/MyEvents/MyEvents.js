@@ -21,8 +21,10 @@ import {
   DropdownToggle,
   DropdownItem,
   DropdownMenu,
+  UncontrolledCarousel,
 } from "reactstrap";
 import ReactPaginate from "react-paginate";
+import "./carousel.css";
 import Radio from "../../../components/@vuexy/radio/RadioVuexy";
 import "../../../assets/scss/plugins/extensions/react-paginate.scss";
 import {
@@ -51,6 +53,9 @@ import ComponentSpinner from "../../../components/@vuexy/spinner/Loading-spinner
 import "../../../assets/scss/plugins/tables/_agGridStyleOverride.scss";
 import "../../../assets/scss/pages/users.scss";
 import urlDomain from "../../../utility/urlDomain";
+import sliderImage1 from "../../../assets/img/slider/03.jpg";
+import sliderImage2 from "../../../assets/img/slider/04.jpg";
+import sliderImage3 from "../../../assets/img/slider/05.jpg";
 
 class MyEvents extends React.Component {
   state = {
@@ -79,6 +84,20 @@ class MyEvents extends React.Component {
       { value: "سلمونی", label: "سلمونی" },
     ],
     selectedCategory: null,
+    images: [
+      {
+        src: sliderImage1,
+        id: 1,
+      },
+      {
+        src: sliderImage2,
+        id: 2,
+      },
+      {
+        src: sliderImage3,
+        id: 3,
+      },
+    ],
   };
   async componentDidMount() {
     let authenticated = await isAuthenticated();
@@ -113,23 +132,47 @@ class MyEvents extends React.Component {
   loadImg = (img) => {
     return `http://localhost:8000${img.image.full_size}`;
   };
+  loadImages = (event) => {
+    let images = event.images;
+    let correctFormat = [];
+    for (let i = 0 ; i < images.length ; i++)
+    {
+      correctFormat.push({id : i , src : this.loadImg(images[i])});
+    }
+    return correctFormat;
+  }
+  dateRound = (event) => {
+    let totalDate = `${new Date(event.end_datetime).toLocaleString("fa-IR")}`;
+    let splitted = totalDate.split("،");
+    console.log(splitted);
+    console.log(splitted[0].split(":")[0]);
+    return `${splitted[0]}،${splitted[1].split(":")[0]}:${
+      splitted[1].split(":")[1]
+    }`;
+  };
+  moreThan1000 = (num) => {
+    if (num > 1000000) {
+      num = `${num / 1000000}`;
+      return `${num.substring(0, 3)}M`;
+    }
+    if (num > 1000) {
+      num = `${num / 1000}`;
+      return `${num.substring(0, 3)}K`;
+    }
+    return num;
+  };
   loadEventCards = () => {
     return this.state.events.map((ev) => (
-      <Col key={ev.id} lg="4" md="6" sm="12">
+      <Col key={ev.id} xl={4} md="6" sm="12">
         <Card>
           <CardBody>
-            <CardImg
-              className="img-fluid mb-2"
-              src={ev.image ? this.loadImg(ev.image) : img2}
-              alt={ev.title}
-              style={{ height: "240px" }}
-            />
+            <UncontrolledCarousel items={this.loadImages(ev)} />
             <h5>{ev.title}</h5>
             <Row>
               <Col md="5" lg="6" sm="12" xl="7">
                 <p style={{ height: "42px" }}>
-                  {ev.description.length >= 20
-                    ? ev.description.substring(0, 20) + "..."
+                  {ev.description.length >= 40
+                    ? ev.description.substring(0, 40) + "..."
                     : ev.description}
                 </p>
               </Col>
@@ -148,7 +191,7 @@ class MyEvents extends React.Component {
             <hr className="my-1" />
             <div style={{ height: "30px" }} className="card-btns  mt-2">
               <Row>
-                <Col xs="4">
+                <Col xs="3">
                   <div className="fonticon-wrap">
                     <Status
                       currentState={
@@ -157,23 +200,24 @@ class MyEvents extends React.Component {
                           : "danger"
                       }
                     />
-                    <span>
+                    <span style={{ fontSize: "12px", fontWeight: "bold" }}>
                       {this.compareDateTimes(ev.end_datetime)
                         ? "فعال"
                         : "غیرفعال"}
                     </span>
                   </div>
                 </Col>
-                <Col xs="3">
-                  <div className="fonticon-wrap">
-                    <Icon.Users size={30} className="mr-4 fonticon-wrap" />
-                    <p>{ev.participants.length}</p>
-                  </div>
+                <Col style={{ textAlign: "left" }} xs="3">
+                  {/* <div className="fonticon-wrap"> */}
+                  <span style={{ marginLeft: "4px" }}>
+                    {this.moreThan1000(ev.participants.length)}
+                  </span>
+                  <Icon.Users size={24} />
+
+                  {/* </div> */}
                 </Col>
-                <Col style={{ textAlign: "left" }} xs="5">
-                  <div className="fonticon-wrap">{`${new Date(
-                    ev.end_datetime
-                  ).toLocaleString("fa-IR")}`}</div>
+                <Col style={{ textAlign: "left" }} xs="6">
+                  <div className="fonticon-wrap">{this.dateRound(ev)}</div>
                 </Col>
               </Row>
             </div>
@@ -214,8 +258,14 @@ class MyEvents extends React.Component {
       ? ""
       : new Date(timeStamp * 1000).toLocaleDateString("fa-IR");
   };
-  InputChanged = ({ currentTarget: input }) => {
-    this.setState({ [input.name]: input.value });
+  InputChanged = (e) => {
+    this.toggleDirection(e);
+    this.setState({ [e.currentTarget.name]: e.target.value });
+  };
+  toggleDirection = (e) => {
+    if (e.target.value && e.target.value[0].match(/[a-z]/i))
+      e.target.style.direction = "ltr";
+    else e.target.style.direction = "rtl";
   };
   SelectChanged = (selectedOption) => {
     this.setState({ selectedCategory: selectedOption });

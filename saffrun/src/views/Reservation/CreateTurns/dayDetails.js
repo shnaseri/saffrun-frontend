@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Button, Progress, UncontrolledTooltip } from "reactstrap";
+import { Button, UncontrolledTooltip } from "reactstrap";
 import DataTable from "react-data-table-component";
 import classnames from "classnames";
 import { Edit, Trash, Plus } from "react-feather";
@@ -19,8 +19,8 @@ const chipColors = {
 const selectedStyle = {
   rows: {
     selectedHighlighStyle: {
-      backgroundColor: "rgba(0,0,0,.05)",
-      color: "#2648F0 !important",
+      backgroundColor: "rgba(115,103,240,.05)",
+      color: "#7367F0 !important",
       boxShadow: "0 0 1px 0 #7367F0 !important",
       "&:hover": {
         transform: "translateY(0px) !important",
@@ -32,37 +32,47 @@ const selectedStyle = {
 const ActionsComponent = (props) => {
   return (
     <div className="data-list-action">
-      <UncontrolledTooltip placement="top" target="edit-icon">
+      <UncontrolledTooltip
+        placement="top"
+        target="edit-icon"
+        style={{ backgroundColor: "rgb(245, 199, 100)", color: "black" }}
+      >
         ویرایش
       </UncontrolledTooltip>
-      <Edit
-        onMouseOver={(e) => {
-          e.currentTarget.style.color = "orange";
-        }}
-        onMouseOut={(e) => (e.currentTarget.style.color = null)}
-        id="edit-icon"
-        className="cursor-pointer mr-1"
-        size={20}
-        onClick={() => {
-          // return props.currentData(props.row);
-          props.editItem(props.row);
-        }}
-      />
-      <UncontrolledTooltip placement="top" target="delete-icon">
+      <span id="edit-icon">
+        <Edit
+          onMouseOver={(e) => {
+            e.currentTarget.style.color = "orange";
+          }}
+          onMouseOut={(e) => (e.currentTarget.style.color = null)}
+          className="cursor-pointer mr-1"
+          size={20}
+          onClick={() => {
+            // return props.currentData(props.row);
+            props.editItem(props.row);
+          }}
+        />
+      </span>
+      <UncontrolledTooltip
+        style={{ backgroundColor: "rgb(245, 199, 100)", color: "black" }}
+        placement="top"
+        target="delete-icon"
+      >
         حذف
       </UncontrolledTooltip>
-      <Trash
-        onMouseOver={(e) => {
-          e.currentTarget.style.color = "red";
-        }}
-        onMouseOut={(e) => (e.currentTarget.style.color = null)}
-        id="delete-icon"
-        className="cursor-pointer"
-        size={20}
-        onClick={() => {
-          props.deleteRow(props.row);
-        }}
-      />
+      <span id="delete-icon">
+        <Trash
+          onMouseOver={(e) => {
+            e.currentTarget.style.color = "red";
+          }}
+          onMouseOut={(e) => (e.currentTarget.style.color = null)}
+          className="cursor-pointer"
+          size={20}
+          onClick={() => {
+            props.deleteRow(props.row);
+          }}
+        />
+      </span>
     </div>
   );
 };
