@@ -28,7 +28,7 @@ const EventCreation = lazy(() =>
 
 const AboutUs = lazy(() => import("./views/Support/AboutUs"));
 const ReceivedComments = lazy(() =>
-  import("./views/UserReceivedComments/Comments")
+  import("./views/UserReceivedComments/receivedComment")
 );
 const DetailPage = lazy(() => import("./views/Event/MyEvents/EventDetailPage"));
 
