@@ -10,27 +10,26 @@ import {
 } from "reactstrap";
 import Dropzone from "react-dropzone";
 import "../../../assets/scss/plugins/extensions/dropzone.scss";
+import { DropzoneArea } from "material-ui-dropzone";
+import "./dropzone.css";
+import { UploadCloud } from "react-feather";
+import { toast } from "react-toastify";
 
 class DropzoneBasic extends React.Component {
   state = {
     files: [],
   };
-  onDrop = (files) => {
-    files = files.map((file) =>
-      Object.assign(file, {
-        preview: URL.createObjectURL(file),
-      })
-    );
-    this.props.imageUploaded(files);
-  };
-  thumbs = () => {
-    return this.props.files.map((file) => (
-      <div className="dz-thumb" key={file.name}>
-        <div className="dz-thumb-inner">
-          <img src={file.preview} className="dz-img" alt={file.name} />
-        </div>
-      </div>
-    ));
+  errorMessage = (message, variant) => {
+    if (variant === "error") {
+      if (message.includes("allowed number"))
+        toast.error("حداکثر تعداد فایل قابل بارگذاری ۶ عدد می‌باشد.", {
+          position: toast.POSITION.TOP_CENTER,
+        });
+      else
+        toast.error("حداکثر حجم فایل قابل قبول ۶ مگابایت می‌باشد.", {
+          position: toast.POSITION.TOP_CENTER,
+        });
+    }
   };
   render() {
     return (
@@ -39,32 +38,22 @@ class DropzoneBasic extends React.Component {
           <CardTitle>آپلود عکس</CardTitle>
         </CardHeader>
         <CardBody>
-          <Row>
-            <Col sm="10" xs="9">
-              <Dropzone multiple={false} onDrop={this.onDrop}>
-                {({ getRootProps, getInputProps }) => (
-                  <section>
-                    <div {...getRootProps({ className: "dropzone" })}>
-                      <input {...getInputProps()} />
-                      <p className="mx-1">
-                        عکس های خود را یا انتخاب و یا به روی مکان بارگذاری بکشید
-                      </p>
-                    </div>
-                  </section>
-                )}
-              </Dropzone>
-            </Col>
-            <Col sm="2" xs="3">
-              <Button
-                style={{ marginTop: "20px" }}
-                onClick={this.props.deleteImage}
-                color="danger"
-              >
-                حذف عکس
-              </Button>
-            </Col>
-          </Row>
-          <div className="thumb-container">{this.thumbs()}</div>
+          <DropzoneArea
+            dropzoneText="عکس مورد نظر را انتخاب یا به روی مکان زیر بکشید"
+            onChange={(files) => this.props.imageUploaded(files)}
+            dropzoneClass="my-dropzone-style"
+            dropzoneParagraphClass="my-dropzone-font"
+            Icon={UploadCloud}
+            onAlert={(message, variant) => this.errorMessage(message, variant)}
+            showAlerts={false}
+            previewGridClasses={{
+              item:
+                "MuiGrid-root MuiDropzonePreviewList-imageContainer MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 MuiGrid-grid-md-4",
+            }}
+            acceptedFiles={["image/*"]}
+            filesLimit={6}
+            maxFileSize={6500000}
+          />
         </CardBody>
       </Card>
     );

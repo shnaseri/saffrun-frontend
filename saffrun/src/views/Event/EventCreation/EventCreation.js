@@ -25,6 +25,7 @@ import { DatePicker, RangeDatePicker } from "jalali-react-datepicker";
 import "./input-datepicker.css";
 import "../../../assets/scss/plugins/extensions/sweet-alerts.scss";
 import axios from "axios";
+import theme from "../../../assets/datePickerTheme/theme";
 import { history } from "../../../history";
 
 class EventCreation extends React.Component {
@@ -40,12 +41,39 @@ class EventCreation extends React.Component {
     ],
     startDate: +new Date(),
     endDate: +new Date(),
+    startHour: { value: 0, label: "00" },
+    endHour: { value: 0, label: "00" },
+    startMinute: { value: 0, label: "00" },
+    endMinute: { value: 0, label: "00" },
     discount: 0,
     files: [],
     successAlert: false,
     errorAlert: false,
   };
 
+  hoursGenerator = () => {
+    let options = [];
+    for (let i = 0; i < 24; i++)
+      options.push({ value: i, label: String(i).padStart(2, "0") });
+    return options;
+  };
+  minutesGenerator = () => {
+    let options = [];
+    for (let i = 0; i < 60; i += 5)
+      options.push({ value: i, label: String(i).padStart(2, "0") });
+    return options;
+  };
+  roundedTimeStamp = (timeStamp) => {
+    let selectedDatetime = new Date(timeStamp);
+    console.log(selectedDatetime);
+    let minute = selectedDatetime.getMinutes();
+    if (minute % 5 !== 0) {
+      minute = minute - (minute % 5) + 5;
+      selectedDatetime.setMinutes(minute);
+    }
+    console.log(selectedDatetime);
+    return selectedDatetime.getTime();
+  };
   handleAlert = (state, value) => {
     this.setState({ [state]: value });
   };
@@ -60,9 +88,68 @@ class EventCreation extends React.Component {
     let dateStringify = JSON.stringify(date);
     return dateStringify.substring(1, dateStringify.length - 1);
   };
-
+  createDate = (identifier) => {
+    let {
+      startDate,
+      endDate,
+      startHour,
+      startMinute,
+      endHour,
+      endMinute,
+    } = this.state;
+    let startDateObj = new Date(startDate);
+    let endDateobj = new Date(endDate);
+    startDateObj.setHours(startHour.value, startMinute.value);
+    endDateobj.setHours(endHour.value, endMinute.value);
+    if (identifier === "to") return endDateobj;
+    return startDateObj;
+  };
   compareDates = () => {
-    return this.state.endDate > this.state.startDate;
+    let endDateobj = this.createDate("to");
+    let startDateObj = this.createDate("from");
+    return endDateobj > startDateObj;
+  };
+  greaterThanToday = (identifier) => {
+    return this.createDate(identifier) < new Date();
+  };
+  updateInput = (e, name) => {
+    this.toggleDirection(e);
+    this.setState({ [name]: e.target.value });
+  };
+  toggleDirection = (e) => {
+    if (e.target.value && e.target.value[0].match(/[a-z]/i))
+      e.target.style.direction = "ltr";
+    else e.target.style.direction = "rtl";
+  };
+  showDateErrorStart = () => {
+    if (!this.compareDates())
+      return (
+        <small style={{ color: "red", fontSize: "11px" }}>
+          تاریخ شروع باید از تاریخ پایان بزرگتر باشد
+        </small>
+      );
+    else if (this.createDate("from") < new Date())
+      return (
+        <small style={{ color: "red", fontSize: "11px" }}>
+          تاریخ انتخاب شده نمی‌تواند قبل از امروز باشد
+        </small>
+      );
+    return <React.Fragment></React.Fragment>;
+  };
+  showDateErrorEnd = () => {
+    if (!this.compareDates())
+      return (
+        <small style={{ color: "red", fontSize: "11px" }}>
+          تاریخ پایان باید از تاریخ شروع بزرگتر باشد
+        </small>
+      );
+    else if (this.createDate("to") < new Date())
+      return (
+        <small style={{ color: "red", fontSize: "11px" }}>
+          تاریخ انتخاب شده نمی‌تواند قبل از امروز باشد
+        </small>
+      );
+    return <React.Fragment></React.Fragment>;
   };
   uploadImage = async () => {
     try {
@@ -73,9 +160,13 @@ class EventCreation extends React.Component {
       };
       const formData = new FormData();
       formData.append("image", this.state.files[0]);
-      let response = await axios.post(`${urlDomain}/image/`, formData, {
-        headers,
-      });
+      let response = await axios.post(
+        `${urlDomain}/core/image/upload/`,
+        formData,
+        {
+          headers,
+        }
+      );
       return response;
     } catch (e) {
       console.log(e);
@@ -135,30 +226,33 @@ class EventCreation extends React.Component {
         imageId = imageResponse.data.id;
       }
     }
-    let eventResponse = await this.postEvent();
-    if (eventResponse && imageId) {
-      try {
-        let postImageEvent = await axios.post(
-          `${urlDomain}/event/add-image/`,
-          { event_id: eventResponse.data.id, image_id: imageId },
-          { headers }
-        );
-      } catch (e) {
-        console.log(e);
-        return false;
-      }
-    }
-    if (!eventResponse) return false;
-    return true;
+    // let eventResponse = await this.postEvent();
+    // if (eventResponse && imageId) {
+    //   try {
+    //     let postImageEvent = await axios.post(
+    //       `${urlDomain}/event/add-image/`,
+    //       { event_id: eventResponse.data.id, image_id: imageId },
+    //       { headers }
+    //     );
+    //   } catch (e) {
+    //     console.log(e);
+    //     return false;
+    //   }
+    // }
+    // if (!eventResponse) return false;
+    // return true;
   };
 
   stepsGenerator() {
-    let { description, title, discount, startDate, endDate } = this.state;
+    let { description, title, discount } = this.state;
     let jobSelect = this.state.jobCategory ? this.state.jobCategory.value : "";
     return [
       {
         title: "۱",
         buttonDisabled:
+          discount < 0 ||
+          discount > 100 ||
+          discount === "" ||
           description.length === 0 ||
           title.length === 0 ||
           jobSelect.length === 0,
@@ -173,7 +267,7 @@ class EventCreation extends React.Component {
                 <Input
                   type="text"
                   value={this.state.title}
-                  onChange={(e) => this.setState({ title: e.target.value })}
+                  onChange={(e) => this.updateInput(e, "title")}
                 />
               </FormGroup>
               <FormGroup>
@@ -192,65 +286,6 @@ class EventCreation extends React.Component {
                   onChange={this.onSelectJob.bind(this)}
                 />
               </FormGroup>
-            </Col>
-            <Col md="6" sm="12">
-              <FormGroup>
-                <Label>
-                  {" "}
-                  توضیحات
-                  <span style={{ color: "red" }}>*</span>
-                </Label>
-                <Input
-                  value={this.state.description}
-                  onChange={(e) =>
-                    this.setState({ description: e.target.value })
-                  }
-                  type="textarea"
-                  rows="5"
-                  placeholder="توضیحات درمورد رویداد"
-                />
-              </FormGroup>
-            </Col>
-          </Row>
-        ),
-      },
-      {
-        title: "۲",
-        buttonDisabled:
-          !this.compareDates() ||
-          discount < 0 ||
-          discount > 100 ||
-          discount === "",
-        content: (
-          <Row>
-            <Col lg="4" md="6" sm="12">
-              <FormGroup>
-                <DatePicker
-                  label="تاریخ شروع"
-                  className="my-datepicker-style"
-                  onClickSubmitButton={(selectedTime) =>
-                    this.DateTimeChanged(selectedTime, "startDate")
-                  }
-                />
-              </FormGroup>
-            </Col>
-            <Col lg="4" md="6" sm="12">
-              <FormGroup>
-                <DatePicker
-                  label="تاریخ پایان"
-                  className="my-datepicker-style"
-                  onClickSubmitButton={(selectedTime) =>
-                    this.DateTimeChanged(selectedTime, "endDate")
-                  }
-                />
-                {!this.compareDates() && (
-                  <small style={{ color: "red", fontSize: "11px" }}>
-                    تاریخ پایان باید از تاریخ شروع بزرگتر باشد
-                  </small>
-                )}
-              </FormGroup>
-            </Col>
-            <Col lg="3" md="4" sm="12">
               <FormGroup>
                 <Label> تخفیف </Label>
                 <Input
@@ -265,6 +300,125 @@ class EventCreation extends React.Component {
                   </small>
                 )}
               </FormGroup>
+            </Col>
+            <Col md="6" sm="12">
+              <FormGroup>
+                <Label>
+                  {" "}
+                  توضیحات
+                  <span style={{ color: "red" }}>*</span>
+                </Label>
+                <Input
+                  value={this.state.description}
+                  onChange={(e) => this.updateInput(e, "description")}
+                  type="textarea"
+                  rows="8"
+                  placeholder="توضیحات درمورد رویداد"
+                  maxLength={500}
+                  // style={{ direction: "ltr" }}
+                />
+              </FormGroup>
+            </Col>
+          </Row>
+        ),
+      },
+      {
+        title: "۲",
+        buttonDisabled:
+          !this.compareDates() ||
+          this.greaterThanToday("from") ||
+          this.greaterThanToday("to"),
+        content: (
+          <Row>
+            <Col lg="4" md="4" xs="12">
+              <FormGroup>
+                <DatePicker
+                  label="تاریخ شروع"
+                  className="my-datepicker-style"
+                  onClickSubmitButton={(selectedTime) =>
+                    this.DateTimeChanged(selectedTime, "startDate")
+                  }
+                  theme={theme}
+                  timePicker={false}
+                />
+                {this.showDateErrorStart()}
+              </FormGroup>
+            </Col>
+            <Col lg="4" md="4" xs="6">
+              <Label>
+                ساعت شروع
+                <span style={{ color: "red" }}>*</span>
+              </Label>
+              <Select
+                className="React hour-minute-style"
+                classNamePrefix="select"
+                name="clear"
+                options={this.hoursGenerator()}
+                placeholder=""
+                value={this.state.startHour}
+                onChange={(value) => this.setState({ startHour: value })}
+              />
+            </Col>
+            <Col lg="4" md="4" xs="6">
+              <Label>
+                دقیقه شروع
+                <span style={{ color: "red" }}>*</span>
+              </Label>
+              <Select
+                className="React hour-minute-style"
+                classNamePrefix="select"
+                name="clear"
+                options={this.minutesGenerator()}
+                placeholder=""
+                value={this.state.startMinute}
+                onChange={(value) => this.setState({ startMinute: value })}
+              />
+            </Col>
+            <Col lg="4" md="4" xs="12">
+              <FormGroup>
+                <DatePicker
+                  label="تاریخ پایان"
+                  className="my-datepicker-style"
+                  onClickSubmitButton={(selectedTime) =>
+                    this.DateTimeChanged(selectedTime, "endDate")
+                  }
+                  timePicker={false}
+                  theme={theme}
+                />
+                {this.showDateErrorEnd()}
+              </FormGroup>
+            </Col>
+            <Col lg="4" md="4" xs="6">
+              <Label>
+                ساعت پایان
+                <span style={{ color: "red" }}>*</span>
+              </Label>
+              <Select
+                className="React hour-minute-style"
+                classNamePrefix="select"
+                name="clear"
+                options={this.hoursGenerator()}
+                placeholder=""
+                value={this.state.endHour}
+                onChange={(value) => this.setState({ endHour: value })}
+                maxMenuHeight="150px"
+              />
+            </Col>
+            <Col lg="4" md="4" xs="6">
+              <Label>
+                دقیقه پایان
+                <span style={{ color: "red" }}>*</span>
+              </Label>
+              <Select
+                className="React hour-minute-style"
+                classNamePrefix="select"
+                name="clear"
+                options={this.minutesGenerator()}
+                placeholder=""
+                value={this.state.endMinute}
+                onChange={(value) => this.setState({ endMinute: value })}
+                maxMenuHeight="150px"
+              />
             </Col>
           </Row>
         ),

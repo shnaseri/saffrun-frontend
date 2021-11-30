@@ -74,7 +74,7 @@ class Layout extends React.Component {
     let dir = this.state.direction
     
     if (dir === "rtl"){
-
+      
       document.getElementsByTagName("html")[0].setAttribute("dir", "rtl")}
     else document.getElementsByTagName("html")[0].setAttribute("dir", "ltr")
     

@@ -1,0 +1,48 @@
+.my-dropzone-style {
+  direction: ltr;
+  border: 2px dashed #ff9f43;
+  border-radius: 10px;
+  font-family: "Dana-FaNum", Helvetica, Arial, serif;
+}
+.my-dropzone-font {
+  font-family: "Dana-FaNum", Helvetica, Arial, serif !important;
+  margin-top: 5px;
+  font-weight: bold;
+  padding: 3px;
+}
+
+.MuiDropzonePreviewList-removeButton {
+  margin-left: 45px;
+}
+.MuiDropzonePreviewList-image {
+  margin-top: 12px;
+  /* margin-right: 3px;
+  margin-left: 3px; */
+  margin-bottom: 5px;
+  /* object-fit: contain; */
+  box-shadow: none;
+  border-radius: 15px !important;
+  padding: 3px;
+}
+.MuiDropzoneArea-icon {
+  color: coral !important;
+}
+
+/* @media screen and (max-width: 800px) {
+  .MuiDropzonePreviewList-image {
+    width: 80% !important;
+  }
+  .MuiGrid-spacing-xs-8 > .MuiGrid-item {
+    padding: 64px 113px;
+    text-shadow: 0px 0px;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .MuiDropzonePreviewList-image {
+    width: 90% !important;
+  }
+  .MuiGrid-spacing-xs-8 > .MuiGrid-item {
+    padding: 32px 3px;
+  }
+} */

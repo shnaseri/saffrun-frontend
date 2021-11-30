@@ -1,0 +1,19 @@
+.Toastify__toast--error {
+  font-family: "Dana-FaNum", Helvetica, Arial, serif !important;
+}
+
+.Toastify__toast--warning {
+  font-family: "Dana-FaNum", Helvetica, Arial, serif !important;
+}
+
+.Toastify__toast--warning:hover {
+  box-sizing: 0 !important;
+  box-shadow: none !important;
+}
+
+.Toastify__toast--error:hover {
+  box-sizing: 0 !important;
+  box-shadow: none !important;
+  color: rgb(245, 199, 100);
+}
+

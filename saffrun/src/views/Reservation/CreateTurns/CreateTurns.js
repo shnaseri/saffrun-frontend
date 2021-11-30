@@ -12,19 +12,26 @@ import {
   Button,
   Label,
   Collapse,
+  UncontrolledTooltip,
 } from "reactstrap";
-import { DatePicker } from "react-advance-jalaali-datepicker";
+import { DatePicker, RangeDatePicker } from "jalali-react-datepicker";
 import Checkbox from "../../../components/@vuexy/checkbox/CheckboxesVuexy";
 import { ChevronDown, Check, Plus, Clock, Trash2 } from "react-feather";
 import classnames from "classnames";
 import TimeField from "react-simple-timefield";
 import axios from "axios";
 import urlDomain from "../../../utility/urlDomain";
+import "../../Event/EventCreation/input-datepicker.css";
+import theme from "../../../assets/datePickerTheme/theme";
+import colWidthes from "./dayColumnsWidth";
+import { object } from "prop-types";
+import DataListConfig from "./dayDetails";
+import { toast } from "react-toastify";
+import SweetAlert from "react-bootstrap-sweetalert";
 
 class BookingCreation extends React.Component {
   constructor(props) {
     super(props);
-    this.myRef = React.createRef();
   }
 
   state = {
@@ -34,118 +41,144 @@ class BookingCreation extends React.Component {
     endBeforStart: false,
     collapse: true,
     display: false,
-    basic: new Date(),
     ReservedName: "",
     capacity: "",
     period_count: "",
     duration: "",
+    successAlert: false,
+    errorAlert: false,
     week: {
       saturday: [
         {
+          index: 0,
           start_time: "08:00",
           end_time: "17:00",
           duration: 0,
           period_count: 0,
           capacity: 0,
+          interfere: false,
         },
       ],
       sunday: [
         {
+          index: 0,
           start_time: "08:00",
           end_time: "17:00",
           duration: 0,
           period_count: 0,
           capacity: 0,
+          interfere: false,
         },
       ],
       monday: [
         {
+          index: 0,
           start_time: "08:00",
           end_time: "17:00",
           duration: 0,
           period_count: 0,
           capacity: 0,
+          interfere: false,
         },
       ],
       tuesday: [
         {
+          index: 0,
           start_time: "08:00",
           end_time: "17:00",
           duration: 0,
           period_count: 0,
           capacity: 0,
+          interfere: false,
         },
       ],
       wednesday: [
         {
+          index: 0,
           start_time: "08:00",
           end_time: "17:00",
           duration: 0,
           period_count: 0,
           capacity: 0,
+          interfere: false,
         },
       ],
       thursday: [
         {
+          index: 0,
           start_time: "08:00",
           end_time: "17:00",
           duration: 0,
           period_count: 0,
           capacity: 0,
+          interfere: false,
         },
       ],
       friday: [
         {
+          index: 0,
           start_time: "08:00",
           end_time: "17:00",
           duration: 0,
           period_count: 0,
           capacity: 0,
+          interfere: false,
         },
       ],
     },
   };
+  componentDidMount() {
+    let startDate = new Date();
+    let endDate = new Date();
+    startDate.setHours(0, 0, 0, 0);
+    endDate.setHours(0, 0, 0, 0);
+    startDate = startDate.getTime();
+    endDate = endDate.getTime();
+    this.setState({ startDate, endDate });
+  }
+  DateTimeChanged = ({ value }, name) => {
+    this.setState({ [name]: value["_d"].getTime() });
+  };
   PostToServer = async () => {
-    var days = {
-      0: "sunday",
-      1: "monday",
-      2: "tuesday",
-      3: "wednesday",
-      4: "thursday",
-      5: "friday",
-      6: "saturday",
-    };
+    this.handleAlert("successAlert", true);
+    // var days = {
+    //   0: "sunday",
+    //   1: "monday",
+    //   2: "tuesday",
+    //   3: "wednesday",
+    //   4: "thursday",
+    //   5: "friday",
+    //   6: "saturday",
+    // };
 
-    let startDate = new Date(this.state.startDate * 1000);
-    let endDate = new Date(this.state.endDate * 1000);
+    // let startDate = new Date(this.state.startDate);
+    // let endDate = new Date(this.state.endDate);
 
-    let data = {
-      start_date: this.formatDate(startDate),
-      end_date: this.formatDate(endDate),
-      days_list: [],
-    };
-    let l = [];
+    // let data = {
+    //   start_date: this.formatDate(startDate),
+    //   end_date: this.formatDate(endDate),
+    //   days_list: [],
+    // };
+    // let l = [];
 
-    const diffTime = Math.abs(
-      new Date(this.state.endDate * 1000) -
-        new Date(this.state.startDate * 1000)
-    );
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    for (let index = 0; index < diffDays + 1; index++) {
-      if (index === 7) break;
-      let date = new Date(this.state.startDate * 1000);
-      date.setDate(date.getDate() + index);
-      l.push({ reserve_periods: this.state.week[days[date.getDay()]] });
-    }
-    data["days_list"] = l;
-    console.log(data);
-    let token = localStorage.getItem("access");
-    let res = await axios.post(`${urlDomain}/reserve/create/`, data, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    // console.log(res);
+    // const diffTime = Math.abs(
+    //   new Date(this.state.endDate) - new Date(this.state.startDate)
+    // );
+    // const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    // for (let index = 0; index < diffDays + 1; index++) {
+    //   if (index === 7) break;
+    //   let date = new Date(this.state.startDate);
+    //   date.setDate(date.getDate() + index);
+    //   l.push({ reserve_periods: this.state.week[days[date.getDay()]] });
+    // }
+    // data["days_list"] = l;
+    // console.log(data);
+    // let token = localStorage.getItem("access");
+    // let res = await axios.post(`${urlDomain}/reserve/create/`, data, {
+    //   headers: {
+    //     Authorization: `Bearer ${token}`,
+    //   },
+    // });
   };
   formatDate = (date) => {
     var d = new Date(date),
@@ -159,70 +192,28 @@ class BookingCreation extends React.Component {
     return [year, month, day].join("-");
   };
 
-  DatePickerInputFrom = (props) => {
-    return (
-      <React.Fragment>
-        <FormGroup className="form-label-group">
-          <Input
-            type="text"
-            name="from"
-            id="from"
-            placeholder="از تاریخ"
-            {...props}
-          />
-          <Label for="from">از تاریخ</Label>
-        </FormGroup>
-      </React.Fragment>
-    );
-  };
-
-  DatePickerInputEnd = (props) => {
-    return (
-      <React.Fragment>
-        <FormGroup className="form-label-group">
-          <Input
-            type="text"
-            name="End"
-            id="End"
-            placeholder="از تاریخ"
-            {...props}
-            disabled={this.state.disableEndTime}
-          />
-          <Label for="End">تا تاریخ</Label>
-          {this.checkDate() && (
-            <small style={{ color: "red", fontSize: "11px" }}>
-              تاریخ شروع نباید بعد از پایان باشد.
-            </small>
-          )}
-        </FormGroup>
-      </React.Fragment>
-    );
-  };
-
   checkDate = () => {
-    if (this.state.startDate > this.state.endDate) return true;
-    else return false;
+    let { startDate, endDate } = this.state;
+    let todayDate = new Date();
+    todayDate.setHours(0, 0, 0, 0);
+    return (
+      startDate > endDate ||
+      todayDate.getTime() > startDate ||
+      todayDate.getDate() > endDate
+    );
   };
   fillInput = () => {
     if (
-      this.state.ReservedName === "" ||
       this.state.capacity === "" ||
       (this.state.period_count === "" && this.state.duration === "") ||
-      (this.state.period_count !== "" && this.state.duration !== "") ||
-      this.state.startDate === 0 ||
-      this.state.endDate === 0
+      parseInt(this.state.duration % 5) !== 0
     ) {
       return true;
     } else {
       return false;
     }
   };
-  changeStart = (unix, formatted) => {
-    this.setState({ disableEndTime: false, startDate: unix });
-  };
-  changeEnd = (unix, formatted) => {
-    this.setState({ endDate: unix });
-  };
+
   toggleCollapse = () => {
     this.setState({ collapse: !this.state.collapse });
   };
@@ -236,41 +227,60 @@ class BookingCreation extends React.Component {
       "friday",
       "saturday",
     ];
+    let week = { ...this.state.week };
+    let { duration, period_count, capacity } = this.state;
     for (let index = 0; index < days.length; index++) {
-      this.state.week[days[index]][0]["duration"] = parseInt(
-        this.state.duration === "" ? 0 : this.state.duration
-      );
-      this.state.week[days[index]][0]["period_count"] = parseInt(
-        this.state.period_count === "" ? 0 : this.state.period_count
-      );
-      this.state.week[days[index]][0]["capacity"] = parseInt(
-        this.state.capacity === "" ? 0 : this.state.capacity
-      );
+      week[days[index]] = [
+        { ...week[days[index]][0], duration, period_count, capacity },
+      ];
     }
-    let week = this.state.week;
-    console.log(week);
     this.setState({ display: true, week });
   };
-  checkOverlapTime = (day, index) => {
-    let dayList = [...this.state.week[day]];
-    // console.log(index);
-    // console.log(day);
-    for (let i = 0; i < dayList.length; i++) {
-      if (i === index) continue;
-      if (
-        dayList[index]["start_time"] < dayList[i]["start_time"] &&
-        dayList[index]["end_time"] > dayList[i]["start_time"]
-      ) {
-        return true;
+  changeDayInputAfterVisible = (name, value) => {
+    let days = this.state.week;
+    let week = {};
+    for (var day in days) {
+      let itemsOfDay = days[day];
+      let tempItems = [];
+      for (var i = 0; i < itemsOfDay.length; i++) {
+        tempItems.push({ ...itemsOfDay[i], [name]: value });
       }
-      if (
-        dayList[index]["start_time"] > dayList[i]["start_time"] &&
-        dayList[index]["start_time"] < dayList[i]["end_time"]
-      ) {
-        return true;
-      }
+      week[day] = tempItems;
     }
-    return false;
+    this.setState({ week });
+  };
+  durationMod5 = () => {
+    if (parseInt(this.state.duration % 5) !== 0) {
+      return (
+        <small style={{ color: "red", fontSize: "11px" }}>
+          بازه های زمانی باید بر ۵ بخش‌پذیر باشند{" "}
+        </small>
+      );
+    }
+    return <React.Fragment></React.Fragment>;
+  };
+  updateItemOfDay = (day, dayList) => {
+    for (let i = 0; i < dayList.length; i++) {
+      let interfere = false;
+      for (let j = 0; j < dayList.length; j++) {
+        if (i == j) continue;
+        if (
+          dayList[j]["start_time"] <= dayList[i]["start_time"] &&
+          dayList[j]["end_time"] > dayList[i]["start_time"]
+        ) {
+          interfere = true;
+        }
+        if (
+          dayList[j]["start_time"] >= dayList[i]["start_time"] &&
+          dayList[j]["start_time"] < dayList[i]["end_time"]
+        ) {
+          interfere = true;
+        }
+      }
+      if (interfere) dayList[i] = { ...dayList[i], interfere: true };
+      else dayList[i] = { ...dayList[i], interfere: false };
+    }
+    this.setState({ week: { ...this.state.week, [day]: dayList } });
   };
   handleDeleteTime = (day, index) => {
     let dayList = [...this.state.week[day]];
@@ -283,7 +293,6 @@ class BookingCreation extends React.Component {
   handleChangeTime = (event, value, day, index, offset) => {
     let dayList = [...this.state.week[day]];
     let copyItem = { ...dayList[index] };
-
     copyItem[offset] = value;
     dayList[index] = copyItem;
     let week = { ...this.state.week, [day]: dayList };
@@ -291,24 +300,23 @@ class BookingCreation extends React.Component {
   };
   check7Day = (day) => {
     const diffTime = Math.abs(
-      new Date(this.state.endDate * 1000) -
-        new Date(this.state.startDate * 1000)
+      new Date(this.state.endDate) - new Date(this.state.startDate)
     );
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
     if (diffDays > 6) return true;
     var days = [
-      "Sunday",
-      "Monday",
-      "Tuesday",
-      "Wednesday",
-      "Thursday",
-      "Friday",
-      "Saturday",
+      "sunday",
+      "monday",
+      "tuesday",
+      "wednesday",
+      "thursday",
+      "friday",
+      "saturday",
     ];
     let ind = days.indexOf(day);
     let DayOfWeek = [];
     for (let i = 0; i < diffDays + 1; i++) {
-      let date = new Date(this.state.startDate * 1000);
+      let date = new Date(this.state.startDate);
       date.setDate(date.getDate() + i);
       DayOfWeek.push(date.getDay());
     }
@@ -322,7 +330,7 @@ class BookingCreation extends React.Component {
           زمان شروع نباید قبل از پایان باشد
         </small>
       );
-    } else if (this.checkOverlapTime(day, index)) {
+    } else if (this.updateItemOfDay(day, index)) {
       return (
         <small style={{ color: "red", fontSize: "11px" }}>
           بازه های زمانی وارد شده با یکدیگر تداخل دارند
@@ -331,87 +339,11 @@ class BookingCreation extends React.Component {
     }
     return <React.Fragment></React.Fragment>;
   };
-  weekDayInput = (day) => {
-    return this.state.week[day].map((item, index) => (
-      <React.Fragment>
-        {index === 0 ? (
-          <React.Fragment>
-            <Col style={{ marginTop: 9 }} md="2" xl="1" lg="1" xs="4" sm="3">
-              <TimeField
-                value={item["end_time"]}
-                onChange={(event, value) =>
-                  this.handleChangeTime(event, value, day, index, "to")
-                }
-                input={<Input />}
-                colon=":"
-              />
-            </Col>
 
-            <Col style={{ marginTop: 9 }} md="2" xl="1" lg="1" xs="4" sm="3">
-              <TimeField
-                value={item["start_time"]}
-                onChange={(event, value) =>
-                  this.handleChangeTime(event, value, day, index, "start_time")
-                }
-                input={<Input />}
-                colon=":"
-              />
-            </Col>
-            <Col md="2" xl="1" lg="1" xs="1" sm="1">
-              <Trash2
-                onMouseOver={(e) => (e.currentTarget.style.cursor = "pointer")}
-                onClick={() => this.handleDeleteTime(day, index)}
-                size={18}
-                style={{ marginTop: 18 }}
-                color="red"
-              />
-            </Col>
-            <Col md="3" xl="3" lg="3">
-              {this.ShowError(day, index, item)}
-            </Col>
-            <Col md="1" xl="4" lg="4" xs="0" sm="0"></Col>
-          </React.Fragment>
-        ) : (
-          <React.Fragment>
-            <Col md="2" xl="2" lg="2" xs="2" sm="2"></Col>
-
-            <Col style={{ marginTop: 9 }} md="2" xl="1" lg="1" xs="4" sm="3">
-              <TimeField
-                value={item["end_time"]}
-                onChange={(event, value) =>
-                  this.handleChangeTime(event, value, day, index, "end_time")
-                }
-                input={<Input style={{ border: "2px solid red" }} />}
-                colon=":"
-              />
-            </Col>
-            <Col style={{ marginTop: 9 }} md="2" xl="1" lg="1" xs="4" sm="3">
-              <TimeField
-                value={item["start_time"]}
-                onChange={(event, value) =>
-                  this.handleChangeTime(event, value, day, index, "start_time")
-                }
-                input={<Input style={{ border: "1px solid red" }} />}
-                colon=":"
-              />
-            </Col>
-            <Col md="2" xl="1" lg="1" xs="1" sm="1">
-              <Trash2
-                onMouseOver={(e) => (e.currentTarget.style.cursor = "pointer")}
-                onClick={() => this.handleDeleteTime(day, index)}
-                size={18}
-                style={{ marginTop: 18 }}
-                color="red"
-              />
-            </Col>
-            <Col md="3" xl="3" lg="3">
-              {this.ShowError(day, index, item)}
-            </Col>
-            <Col md="1" xl="4" lg="4" xs="0" sm="0"></Col>
-          </React.Fragment>
-        )}
-      </React.Fragment>
-    ));
+  specificWidth = (colName, index) => {
+    return index === 0
+      ? colWidthes.firstRow[colName]
+      : colWidthes.otherRows[colName];
   };
   addInput = (day) => {
     let tempDay = [...this.state.week[day]];
@@ -428,6 +360,124 @@ class BookingCreation extends React.Component {
       this.setState({ week });
     }
   };
+  addItemToDay = (newAddedItem, day) => {
+    let week = { ...this.state.week };
+    let items = [...week[day], { ...newAddedItem, interfere: false }];
+    this.updateItemOfDay(day, items);
+  };
+  updateItem = (item, day) => {
+    let week = { ...this.state.week };
+    let items = [...week[day]];
+    let foundItemIndex = items.findIndex((x) => x.index === item.index);
+    items[foundItemIndex] = item;
+    this.updateItemOfDay(day, items);
+  };
+  deleteItem = (item, day) => {
+    let week = { ...this.state.week };
+    let items = [...week[day]];
+    if (items.length === 1) {
+      toast.warn("نمی‌توانید تنها آیتم موجود را حذف کنید.", {
+        position: toast.POSITION.TOP_CENTER,
+      });
+      return;
+    }
+    items = items.filter((x) => x.index !== item.index);
+    this.updateItemOfDay(day, items);
+  };
+  weekDayInput = (day) => {
+    let { duration, capacity, period_count } = this.state;
+    return (
+      <DataListConfig
+        items={this.state.week[day]}
+        duration={duration}
+        capacity={capacity}
+        period_count={period_count}
+        day={day}
+        addItemToDay={this.addItemToDay}
+        updateItem={this.updateItem}
+        deleteItem={this.deleteItem}
+      />
+    );
+  };
+  handleAlert = (state, value) => {
+    this.setState({ [state]: value });
+  };
+
+  generateRowOfWeeks = () => {
+    let daysList = [
+      ["saturday", "شنبه‌ها"],
+      ["sunday", "یک‌شنبه‌ها"],
+      ["monday", "دو‌شنبه‌ها"],
+      ["tuesday", "سه‌شنبه‌ها"],
+      ["wednesday", "چهار‌شنبه‌ها"],
+      ["thursday", "پنج‌شنبه‌ها"],
+      ["friday", "جمعه‌ها"],
+    ];
+    return daysList.map(
+      (x) =>
+        this.check7Day(x[0]) && (
+          <React.Fragment key={x[0]}>
+            {" "}
+            <FormGroup style={{ marginTop: "10px" }} row>
+              <Col xs="12">
+                <span>{x[1]} : </span>
+              </Col>
+              {this.weekDayInput(x[0])}
+            </FormGroup>
+            <div className="divider divider-left divider-warning">
+              <div className="divider-text">
+                <Clock />
+              </div>
+            </div>
+          </React.Fragment>
+        )
+    );
+  };
+  showDateErrorStart = () => {
+    let todayDate = new Date();
+    todayDate.setHours(0, 0, 0, 0);
+    if (this.state.endDate < this.state.startDate)
+      return (
+        <small style={{ color: "red", fontSize: "11px" }}>
+          تاریخ شروع باید از تاریخ پایان بزرگتر باشد
+        </small>
+      );
+    else if (this.state.startDate < todayDate.getTime())
+      return (
+        <small style={{ color: "red", fontSize: "11px" }}>
+          تاریخ انتخاب شده نمی‌تواند قبل از امروز باشد
+        </small>
+      );
+    return <React.Fragment></React.Fragment>;
+  };
+  showDateErrorEnd = () => {
+    let todayDate = new Date();
+    todayDate.setHours(0, 0, 0, 0);
+    if (this.state.endDate < this.state.startDate)
+      return (
+        <small style={{ color: "red", fontSize: "11px" }}>
+          تاریخ پایان باید از تاریخ شروع بزرگتر باشد
+        </small>
+      );
+    else if (this.state.endDate < todayDate.getTime())
+      return (
+        <small style={{ color: "red", fontSize: "11px" }}>
+          تاریخ انتخاب شده نمی‌تواند قبل از امروز باشد
+        </small>
+      );
+    return <React.Fragment></React.Fragment>;
+  };
+  disabledSubmitButton = () => {
+    let { week } = this.state;
+    let dayNames = Object.keys(week);
+    for (let i = 0; i < dayNames.length; i++) {
+      let itemsOfDay = week[dayNames[i]];
+      for (let j = 0; j < itemsOfDay.length; j++) {
+        if (itemsOfDay[j].interfere) return true;
+      }
+    }
+    return false;
+  };
   render() {
     return (
       <React.Fragment>
@@ -438,99 +488,139 @@ class BookingCreation extends React.Component {
           <CardBody>
             <Form className="mt-2">
               <Row>
-                <Col style={{ padding: 5 }} md="6" sm="12">
-                  <FormGroup className="form-label-group">
-                    <Input
-                      type="text"
-                      name="name"
-                      id="TurnName"
-                      onChange={(e) =>
-                        this.setState({ ReservedName: e.target.value })
-                      }
-                      value={this.state.ReservedName}
-                      placeholder="نام نوبت"
-                    />
-                    <Label for="TurnName">نام نوبت</Label>
-                  </FormGroup>
-                </Col>
-                <Col style={{ padding: 5 }} md="6" sm="12">
-                  <FormGroup className="form-label-group">
+                <Col md="3" sm="12">
+                  <FormGroup>
+                    <Label for="personsNum">
+                      تعداد نفرات مجاز
+                      <span style={{ color: "red" }}>*</span>
+                    </Label>
+                    <UncontrolledTooltip
+                      style={{
+                        backgroundColor: "rgb(245, 199, 100)",
+                        color: "black",
+                      }}
+                      placement="top"
+                      target="personsNum"
+                    >
+                      تعداد افرادی که در هر نوبت می‌توانند حضور داشته‌باشند
+                    </UncontrolledTooltip>
                     <Input
                       type="number"
                       name="personsNum"
-                      pattern="[1-9]"
                       id="personsNum"
-                      onChange={(e) =>
-                        this.setState({ capacity: e.target.value })
-                      }
+                      onChange={(e) => {
+                        if (e.target.value.length < 5) {
+                          this.setState({ capacity: e.target.value });
+                          this.changeDayInputAfterVisible(
+                            "capacity",
+                            e.target.value
+                          );
+                        }
+                      }}
                       value={this.state.capacity}
-                      placeholder="تعداد نفرات مجاز"
+                      placeholder="عدد وارد کنید"
                     />
-                    <Label for="personsNum">تعداد نفرات مجاز</Label>
                   </FormGroup>
                 </Col>
-                <Col style={{ padding: 5 }} md="6" sm="12">
-                  <DatePicker
-                    inputComponent={this.DatePickerInputFrom}
-                    placeholder=" از تاریخ"
-                    format="jYYYY/jMM/jDD"
-                    onChange={this.changeStart}
-                    id="datePicker"
-                    lab
-                  />
-                </Col>
-                <Col style={{ padding: 5 }} md="6" sm="12">
-                  <DatePicker
-                    inputComponent={this.DatePickerInputEnd}
-                    placeholder="تا تاریخ"
-                    format="jYYYY/jMM/jDD"
-                    onChange={this.changeEnd}
-                    id="datePicker"
-                    // preSelected="1396/05/15"
-                  />
-                </Col>
-                <Col style={{ padding: 5 }} md="6" sm="12">
-                  <FormGroup className="form-label-group">
+                <Col md="1" />
+                <Col md="3" sm="12">
+                  <FormGroup>
+                    <Label>
+                      تعداد نوبت‌ها
+                      <span style={{ color: "red" }}>*</span>
+                    </Label>
+                    <UncontrolledTooltip
+                      style={{
+                        backgroundColor: "rgb(245, 199, 100)",
+                        color: "black",
+                      }}
+                      placement="top"
+                      target="NumOfTurns"
+                    >
+                      در بین دو بازه زمانی چه تعداد نوبت می‌خواهید ایجاد کنید
+                    </UncontrolledTooltip>
                     <Input
-                      type="text"
+                      type="number"
                       name="NumOfTurns"
                       id="NumOfTurns"
-                      onChange={(e) =>
-                        this.setState({ period_count: e.target.value })
-                      }
+                      onChange={(e) => {
+                        if (e.target.value.length < 5) {
+                          this.setState({ period_count: e.target.value });
+                          this.changeDayInputAfterVisible(
+                            "period_count",
+                            e.target.value
+                          );
+                        }
+                      }}
                       value={this.state.period_count}
-                      placeholder="تعداد نوبت ها"
+                      placeholder="عدد وارد کنید"
                     />
-                    <Label for="NumOfTurns">تعداد نوبت ها </Label>
                   </FormGroup>
                 </Col>
-                <Col style={{ padding: 5 }} md="6" sm="12">
-                  <FormGroup className="form-label-group">
+                <Col md="1" />
+                <Col md="3" sm="12">
+                  <FormGroup>
+                    <Label for="duration">
+                      بازه یک نوبت
+                      <span style={{ color: "red" }}>*</span>
+                    </Label>
                     <Input
-                      type="text"
+                      type="number"
                       name="duration"
                       id="duration"
-                      onChange={(e) =>
-                        this.setState({ duration: e.target.value })
-                      }
+                      onChange={(e) => {
+                        if (e.target.value.length < 4) {
+                          this.setState({ duration: e.target.value });
+                          this.changeDayInputAfterVisible(
+                            "duration",
+                            e.target.value
+                          );
+                        }
+                      }}
+                      maxLength={3}
                       value={this.state.duration}
                       placeholder="مدت زمان هر نوبت (به دقیقه)"
                     />
-                    <Label for="duration">مدت رمان هر نوبت (به دقیقه)</Label>
+                    {this.durationMod5()}
                   </FormGroup>
                 </Col>
-                <Col sm="12">
+                <Col md="1" />
+              </Row>
+              <Row style={{ marginTop: "5px", marginBottom: "20px" }}>
+                <Col md="3" sm="12">
+                  <DatePicker
+                    label="تاریخ شروع"
+                    className="my-datepicker-style"
+                    onClickSubmitButton={(selectedTime) =>
+                      this.DateTimeChanged(selectedTime, "startDate")
+                    }
+                    theme={theme}
+                    timePicker={false}
+                  />
+                  {this.showDateErrorStart()}
+                </Col>
+                <Col md="1" />
+                <Col md="3" sm="12">
+                  <DatePicker
+                    label="تاریخ پایان"
+                    className="my-datepicker-style"
+                    onClickSubmitButton={(selectedTime) =>
+                      this.DateTimeChanged(selectedTime, "endDate")
+                    }
+                    timePicker={false}
+                    theme={theme}
+                  />
+                  {this.showDateErrorEnd()}
+                </Col>
+              </Row>
+              <Row>
+                <Col md="10" />
+                <Col md="2" sm="12">
                   <FormGroup className="form-label-group">
                     <Button
                       color="primary"
-                      // type="submit"
-                      style={{ float: "left" }}
-                      className="mr-1 mb-1"
-                      disabled={
-                        this.fillInput() ||
-                        this.checkDate() ||
-                        this.state.endDate === 0
-                      }
+                      style={{ float: "left", width: "100%" }}
+                      disabled={this.fillInput() || this.checkDate()}
                       onClick={this.GoToTimeSection}
                     >
                       تایید و ادامه
@@ -541,11 +631,8 @@ class BookingCreation extends React.Component {
             </Form>
           </CardBody>
         </Card>
-        {this.state.display && (
-          <Card
-            ref={this.myRef}
-            className={classnames("card-action card-reload", {})}
-          >
+        {this.state.display && !this.fillInput() && !this.checkDate() && (
+          <Card className={classnames("card-action card-reload", {})}>
             <CardHeader
               onClick={this.toggleCollapse}
               onMouseOver={(e) => (e.currentTarget.style.cursor = "pointer")}
@@ -564,174 +651,7 @@ class BookingCreation extends React.Component {
               <Card>
                 <CardBody>
                   <Form>
-                    {this.check7Day("Saturday") && (
-                      <React.Fragment>
-                        {" "}
-                        <FormGroup row>
-                          <Col md="1" xl="1" lg="1" xs="12" sm="12">
-                            <span>شنبه ها</span>
-                          </Col>
-                          <Col md="1" xl="1" lg="1" xs="2" sm="2">
-                            <Plus
-                              onMouseOver={(e) =>
-                                (e.currentTarget.style.cursor = "pointer")
-                              }
-                              onClick={() => this.addInput("saturday")}
-                            ></Plus>
-                          </Col>
-                          {this.weekDayInput("saturday")}
-                        </FormGroup>
-                        <div className="divider divider-left divider-warning">
-                          <div className="divider-text">
-                            <Clock />
-                          </div>
-                        </div>
-                      </React.Fragment>
-                    )}
-                    {this.check7Day("Sunday") && (
-                      <React.Fragment>
-                        {" "}
-                        <FormGroup row>
-                          <Col md="1" xl="1" lg="1" xs="12" sm="12">
-                            <span>یکشنبه ها</span>
-                          </Col>
-                          <Col md="1" xl="1" lg="1" xs="2" sm="2">
-                            <Plus
-                              onMouseOver={(e) =>
-                                (e.currentTarget.style.cursor = "pointer")
-                              }
-                              onClick={() => this.addInput("sunday")}
-                            ></Plus>
-                          </Col>
-                          {this.weekDayInput("sunday")}
-                        </FormGroup>
-                        <div className="divider divider-left divider-warning ">
-                          <div className="divider-text">
-                            <Clock />
-                          </div>
-                        </div>
-                      </React.Fragment>
-                    )}
-                    {this.check7Day("Monday") && (
-                      <React.Fragment>
-                        {" "}
-                        <FormGroup row>
-                          <Col md="1" xl="1" lg="1" xs="12" sm="12">
-                            <span>دوشنبه ها</span>
-                          </Col>
-                          <Col md="1" xl="1" lg="1" xs="2" sm="2">
-                            <Plus
-                              onMouseOver={(e) =>
-                                (e.currentTarget.style.cursor = "pointer")
-                              }
-                              onClick={() => this.addInput("monday")}
-                            ></Plus>
-                          </Col>
-                          {this.weekDayInput("monday")}
-                        </FormGroup>
-                        <div className="divider divider-left divider-warning">
-                          <div className="divider-text">
-                            <Clock />
-                          </div>
-                        </div>
-                      </React.Fragment>
-                    )}
-                    {this.check7Day("Tuesday") && (
-                      <React.Fragment>
-                        {" "}
-                        <FormGroup row>
-                          <Col md="1" xl="1" lg="1" xs="12" sm="12">
-                            <span>سه شنبه ها</span>
-                          </Col>
-                          <Col md="1" xl="1" lg="1" xs="2" sm="2">
-                            <Plus
-                              onMouseOver={(e) =>
-                                (e.currentTarget.style.cursor = "pointer")
-                              }
-                              onClick={() => this.addInput("tuesday")}
-                            ></Plus>
-                          </Col>
-                          {this.weekDayInput("tuesday")}
-                        </FormGroup>
-                        <div className="divider divider-left divider-warning">
-                          <div className="divider-text">
-                            <Clock />
-                          </div>
-                        </div>
-                      </React.Fragment>
-                    )}
-                    {this.check7Day("Wednesday") && (
-                      <React.Fragment>
-                        {" "}
-                        <FormGroup row>
-                          <Col md="1" xl="1" lg="1" xs="12" sm="12">
-                            <span>چهارشنبه ها</span>
-                          </Col>
-                          <Col md="1" xl="1" lg="1" xs="2" sm="2">
-                            <Plus
-                              onMouseOver={(e) =>
-                                (e.currentTarget.style.cursor = "pointer")
-                              }
-                              onClick={() => this.addInput("wednesday")}
-                            ></Plus>
-                          </Col>
-                          {this.weekDayInput("wednesday")}
-                        </FormGroup>
-                        <div className="divider divider-left divider-warning">
-                          <div className="divider-text">
-                            <Clock />
-                          </div>
-                        </div>
-                      </React.Fragment>
-                    )}
-                    {this.check7Day("Thursday") && (
-                      <React.Fragment>
-                        <FormGroup row>
-                          <Col md="1" xl="1" lg="1" xs="12" sm="12">
-                            <span>پنجشنبه ها</span>
-                          </Col>
-                          <Col md="1" xl="1" lg="1" xs="2" sm="2">
-                            <Plus
-                              onMouseOver={(e) =>
-                                (e.currentTarget.style.cursor = "pointer")
-                              }
-                              onClick={() => this.addInput("thursday")}
-                            ></Plus>
-                          </Col>
-                          {this.weekDayInput("thursday")}
-                        </FormGroup>
-                        <div className="divider divider-left divider-warning">
-                          <div className="divider-text">
-                            <Clock />
-                          </div>
-                        </div>
-                      </React.Fragment>
-                    )}
-                    {this.check7Day("Friday") && (
-                      <React.Fragment>
-                        {" "}
-                        <FormGroup row>
-                          <Col md="1" xl="1" lg="1" xs="12" sm="12">
-                            <span>جمعه ها</span>
-                          </Col>
-                          <Col md="1" xl="1" lg="1" xs="2" sm="2">
-                            <Plus
-                              onMouseOver={(e) =>
-                                (e.currentTarget.style.cursor = "pointer")
-                              }
-                              onClick={() => this.addInput("friday")}
-                            ></Plus>
-                          </Col>
-                          {this.weekDayInput("friday")}
-                        </FormGroup>
-                        <div className="divider divider-left divider-warning">
-                          <div className="divider-text">
-                            <Clock />
-                          </div>
-                        </div>
-                      </React.Fragment>
-                    )}
-
+                    {this.generateRowOfWeeks()}
                     <FormGroup row>
                       <Col md={{ size: 8, offset: 4 }}>
                         <Button
@@ -740,6 +660,7 @@ class BookingCreation extends React.Component {
                           // type="submit"
                           className="mr-1 mb-1"
                           onClick={this.PostToServer}
+                          disabled={this.disabledSubmitButton()}
                         >
                           ثبت
                         </Button>
@@ -751,6 +672,27 @@ class BookingCreation extends React.Component {
             </Collapse>
           </Card>
         )}
+        <SweetAlert
+          success
+          title="Success"
+          show={this.state.successAlert}
+          onConfirm={() => {
+            this.handleAlert("successAlert", false);
+          }}
+        >
+          <p className="sweet-alert-text">عملیات با موفقیت انجام شد.</p>
+        </SweetAlert>
+
+        <SweetAlert
+          error
+          title="Error"
+          show={this.state.errorAlert}
+          onConfirm={() => this.handleAlert("errorAlert", false)}
+        >
+          <p className="sweet-alert-text">
+            فرآیند با خطا مواجه شد دوباره تلاش کنید
+          </p>
+        </SweetAlert>
       </React.Fragment>
     );
   }
