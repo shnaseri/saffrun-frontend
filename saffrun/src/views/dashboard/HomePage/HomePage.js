@@ -120,7 +120,7 @@ class Home extends React.Component {
                     <small className="">20 دقیه قبل</small>
                   </li>
                 </ul>
-                <hr className="my-2" />
+                {/* <hr className="my-2" />
                 <div className="card-btns d-flex justify-content-between">
                   <div className="float-left">
                     <Star size="15" className="warning" />
@@ -130,7 +130,7 @@ class Home extends React.Component {
                     <Users size="15" className="primary" />
                     <span className="ml-50 align-middle">150</span>
                   </div>
-                </div>
+                </div> */}
               </CardBody>
             </Card>
           </Col>
