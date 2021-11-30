@@ -14,6 +14,8 @@ import {
   DateRangePicker,
   DateTimeRangePicker,
 } from "react-advance-jalaali-datepicker";
+import Radio from "../../components/@vuexy/radio/RadioVuexy";
+
 import Select from "react-select";
 import classnames from "classnames";
 import "../../assets/scss/plugins/forms/react-select/_react-select.scss";
@@ -52,21 +54,21 @@ class Comments extends Component {
     page: 1,
     totalCount: 0,
     pageSize: 10,
+    eventCollapse : true,
+    collapse : false,
     data: [
       {
         creationDate: "1399-09-05T12:29:53.000Z",
         isActive: true,
-        message:
-          "بسیار خوب بود.",
+        message: "بسیار خوب بود.",
         modificationDate: null,
         parent: {
           creationDate: "1399-09-04T12:29:53.000Z",
           isActive: true,
-          message:
-            " بسیار خوب بود.",
+          message: " بسیار خوب بود.",
           modificationDate: null,
           parent: null,
-          answer:"",
+          answer: "",
           productTitle: "هالوژن گرد",
           uid: "255423d4-af61-4c7a-9c51-a5cb03e83f4e",
           userFullName: "Hosein Naseri",
@@ -79,19 +81,17 @@ class Comments extends Component {
       {
         creationDate: "1399-09-05T12:29:53.000Z",
         isActive: true,
-        message:
-          "بد نبود میتونست بهتر باشه.",
+        message: "بد نبود میتونست بهتر باشه.",
         modificationDate: null,
         parent: {
           creationDate: "1399-09-04T12:29:53.000Z",
           isActive: true,
-          message:
-            "بد نبود میتونست بهتر باشه.",
+          message: "بد نبود میتونست بهتر باشه.",
           modificationDate: null,
           parent: null,
           productTitle: "هالوژن گرد",
           uid: "255423d4-af61-4c7a-9c51-a5cb03e83f4e",
-          answer:"",
+          answer: "",
           userFullName: "ali moradian",
           userPhoneNumber: "09381454033",
         },
@@ -139,14 +139,14 @@ uid: "255423d4-af62-4c7a-9c51-a5cb03e83f4e"
       />
     );
   };
-  handleDelete=(cid) =>{
+  handleDelete = (cid) => {
     let data = [...this.state.data];
-    console.log(cid)
-    console.log(data)
+    console.log(cid);
+    console.log(data);
     //javad dorost kon
-    data =data.splice(cid,1)
-    this.setState({data});
-  }
+    data.splice(cid, 1);
+    this.setState({ data });
+  };
 
   endDatePickerInput = (props) => {
     return (
@@ -241,17 +241,15 @@ uid: "255423d4-af62-4c7a-9c51-a5cb03e83f4e"
     }));
   };
 
-  toggleAnswered =(answer,cid)=>
-  {
+  toggleAnswered = (answer, cid) => {
     let comments = [...this.state.data];
-    let comment = {...comments[cid]};
-    let parent = {...comment.parent};
-    parent.answer = answer; 
+    let comment = { ...comments[cid] };
+    let parent = { ...comment.parent };
+    parent.answer = answer;
     comment.parent = parent;
     comments[cid] = comment;
-    this.setState({data:comments});
-  }
-  
+    this.setState({ data: comments });
+  };
 
   handleSearch = async () => await this.paginationChange(1);
 
@@ -298,7 +296,18 @@ uid: "255423d4-af62-4c7a-9c51-a5cb03e83f4e"
       </Pagination>
     );
   };
-
+  toggleCollapse = () => {
+    this.setState((state) => ({
+      collapse: !state.collapse,
+      eventCollapse: false,
+    }));
+  };
+  eventToggleCollapse = () => {
+    this.setState((state) => ({
+      eventCollapse: !state.eventCollapse,
+      collapse: false,
+    }));
+  };
   render() {
     const {
       data,
@@ -310,7 +319,7 @@ uid: "255423d4-af62-4c7a-9c51-a5cb03e83f4e"
     } = this.state;
     return (
       <React.Fragment>
-                <Row className="app-user-list">
+        <Row className="app-user-list">
           <Col sm="12">
             <Card className={classnames("card-action card-reload", {})}>
               <CardHeader
@@ -329,12 +338,12 @@ uid: "255423d4-af62-4c7a-9c51-a5cb03e83f4e"
               <Collapse isOpen={this.state.collapse}>
                 <CardBody>
                   <Row>
-                    <Col lg="3" md="6" sm="12">
+                    <Col md="4" sm="12">
                       <FormGroup>
-                        <Label for="search-events">عنوان</Label>
+                        <Label for="search-events">جستجو در متن</Label>
                         <Input
                           className="search-product"
-                          placeholder="عنوان رویداد"
+                          placeholder=" جستجو در متن"
                           id="search-events"
                           value={this.state.eventTitle}
                           onChange={this.InputChanged}
@@ -342,7 +351,7 @@ uid: "255423d4-af62-4c7a-9c51-a5cb03e83f4e"
                         />
                       </FormGroup>
                     </Col>
-                    <Col lg="3" md="6" sm="12">
+                    <Col md="4" sm="12">
                       <FormGroup>
                         <Label for="datePicker_1">تاریخ شروع</Label>
                         <DatePicker
@@ -351,11 +360,11 @@ uid: "255423d4-af62-4c7a-9c51-a5cb03e83f4e"
                           format="jYYYY/jMM/jDD"
                           onChange={this.startDateSelected}
                           id="datePicker_1"
-                          // preSelected="1396/05/15" eyval ndadm 
+                          // preSelected="1396/05/15" eyval ndadm
                         />
                       </FormGroup>
                     </Col>
-                    <Col lg="3" md="6" sm="12">
+                    <Col md="4" sm="12">
                       <FormGroup>
                         <Label for="datePicker_2">تاریخ پایان</Label>
                         <DatePicker
@@ -364,23 +373,6 @@ uid: "255423d4-af62-4c7a-9c51-a5cb03e83f4e"
                           format="jYYYY/jMM/jDD"
                           onChange={this.endDateSelected}
                           id="datePicker_2"
-                        />
-                      </FormGroup>
-                    </Col>
-                    <Col lg="3" md="6" sm="12">
-                      <FormGroup>
-                        <Label for="asdsad">دسته‌بندی</Label>
-                        <Select
-                          id="asdsad"
-                          className="React"
-                          classNamePrefix="select"
-                          // defaultValue={colourOptions[0]}
-                          name="color"
-                          options={this.state.categories}
-                          isClearable={true}
-                          placeholder="دسته‌بندی..."
-                          value={this.state.selectedCategory}
-                          onChange={this.SelectChanged}
                         />
                       </FormGroup>
                     </Col>
@@ -425,39 +417,88 @@ uid: "255423d4-af62-4c7a-9c51-a5cb03e83f4e"
               </Collapse>
             </Card>
           </Col>
+          <Col xs="12">
+            <Card className={classnames("card-action card-reload", {})}>
+              <CardHeader
+                onClick={this.eventToggleCollapse}
+                onMouseOver={(e) => (e.currentTarget.style.cursor = "pointer")}
+              >
+                <CardTitle>وضعیت رویداد</CardTitle>
+                <div className="actions">
+                  <ChevronDown
+                    className="collapse-icon mr-50"
+                    size={15}
+                    // onClick={this.toggleCollapse}
+                  />
+                </div>
+              </CardHeader>
+              <Collapse isOpen={this.state.eventCollapse}>
+                <CardBody>
+                  <Row>
+                    <Col lg="3" xs="0" md="2"></Col>
+                    <Col lg="2" xs="4" md="3">
+                      <Radio
+                        label="همه"
+                        onChange={this.RadioChanged}
+                        id="all"
+                        name="eventStatus"
+                        defaultChecked={true}
+                      />
+                    </Col>
+                    <Col lg="2" xs="4" md="3">
+                      <Radio
+                        label="در حال اجرا"
+                        onChange={this.RadioChanged}
+                        id="inProgress"
+                        name="eventStatus"
+                      />
+                    </Col>
+                    <Col lg="2" xs="4" md="3">
+                      <Radio
+                        label="اتمام رسیده"
+                        onChange={this.RadioChanged}
+                        id="finished"
+                        name="eventStatus"
+                      />
+                    </Col>
+                  </Row>
+                </CardBody>
+              </Collapse>
+            </Card>
+          </Col>
         </Row>
-      <Row>
-        <Col lg="12">
-          <Card>
-            <CardHeader>
-              <CardTitle>نظرات کاربران</CardTitle>
-              {error && <Alert color="danger"> {error} </Alert>}
-            </CardHeader>
-            <CardBody>
-              {data.length > 0 ? (
-                <div className="comment-container">
-                  {data.map((x,ind) => (
-                    <Comment
-                      data={x}
-                      key={x.uid}
-                      reload={this.reloadData}
-                      onError={this.setError}
-                      cid={ind}
-                      toggleAnswered = {this.toggleAnswered}
-                      handleDelete={this.handleDelete}
-                    />
-                  ))}
-                </div>
-              ) : (
-                <div style={{ textAlign: "center", width: "100%" }}>
-                  موردی جهت نمایش وجود ندارد
-                </div>
-              )}
-              {this.renderPagination()}
-            </CardBody>
-          </Card>
-        </Col>
-      </Row>
+        <Row>
+          <Col lg="12">
+            <Card>
+              <CardHeader>
+                <CardTitle>نظرات کاربران</CardTitle>
+                {error && <Alert color="danger"> {error} </Alert>}
+              </CardHeader>
+              <CardBody>
+                {data.length > 0 ? (
+                  <div className="comment-container">
+                    {data.map((x, ind) => (
+                      <Comment
+                        data={x}
+                        key={x.uid}
+                        reload={this.reloadData}
+                        onError={this.setError}
+                        cid={ind}
+                        toggleAnswered={this.toggleAnswered}
+                        handleDelete={this.handleDelete}
+                      />
+                    ))}
+                  </div>
+                ) : (
+                  <div style={{ textAlign: "center", width: "100%" }}>
+                    موردی جهت نمایش وجود ندارد
+                  </div>
+                )}
+                {this.renderPagination()}
+              </CardBody>
+            </Card>
+          </Col>
+        </Row>
       </React.Fragment>
     );
   }
