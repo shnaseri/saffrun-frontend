@@ -4,6 +4,11 @@
   "private": true,
   "dependencies": {
     "@auth0/auth0-spa-js": "^1.6.3",
+    "@emotion/react": "^11.6.0",
+    "@emotion/styled": "^11.6.0",
+    "@mui/icons-material": "^5.1.1",
+    "@mui/material": "^5.1.1",
+    "@mui/styled-engine-sc": "^5.1.0",
     "@syncfusion/ej2-react-inputs": "^18.3.52",
     "ag-grid-community": "^22.1.1",
     "ag-grid-react": "^22.1.1",
@@ -33,6 +38,7 @@
     "match-sorter": "~4.0.2",
     "moment": "~2.24.0",
     "namor": "^2.0.2",
+    "node-sass": "^4.14.1",
     "postcss-rtl": "^1.5.0",
     "prismjs": "^1.19.0",
     "prop-types": "~15.7.2",
@@ -87,7 +93,7 @@
     "redux": "^4.0.5",
     "redux-debounced": "~0.5.0",
     "redux-thunk": "~2.3.0",
-    "styled-components": "^5.0.1",
+    "styled-components": "^5.3.3",
     "swiper": "^5.3.0",
     "xlsx": "^0.15.5",
     "yarn": "^1.21.1",
@@ -103,7 +109,6 @@
     "extends": "react-app"
   },
   "devDependencies": {
-    "node-sass": "^4.13.1",
     "react-app-rewire-postcss": "^3.0.2",
     "react-app-rewired": "^2.1.5"
   },
