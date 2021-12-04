@@ -221,7 +221,7 @@ class Comment extends Component {
                   تاریخ ارسال پیام:{" "}
                   <span className="fonticon-wrap" style={{ textAlign: "left" }}>
                     {/* {`${new Date(data.creationDate).toLocaleString()}`} */}
-                    12:38 , 1400/12/8  
+                    12:38 , 1400/12/8
                   </span>
                 </Col>
               </Row>
@@ -475,16 +475,15 @@ class Comment extends Component {
                       placeholder="پاسخ"
                       maxLength="500"
                       onChange={(e) => this.updateInput(e, "answer")}
-                    >
-                      <small
-                        className={`counter-value float-right ${
-                          this.state.answer.length >= 500 ? "bg-danger" : ""
-                        }`}
-                      >
-                        {`${this.state.answer.trim().length}/500`}
-                      </small>
-                    </Input>
+                    ></Input>
                     <Label> پاسخ: </Label>
+                    <small
+                      className={`counter-value float-right ${
+                        this.state.answer.length >= 500 ? "bg-danger" : ""
+                      }`}
+                    >
+                      {`${this.state.answer.trim().length}/500`}
+                    </small>
                   </div>
 
                   <Button

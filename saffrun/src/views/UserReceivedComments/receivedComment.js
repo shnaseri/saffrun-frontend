@@ -54,8 +54,8 @@ class Comments extends Component {
     page: 1,
     totalCount: 0,
     pageSize: 10,
-    eventCollapse : true,
-    collapse : false,
+    eventCollapse: true,
+    collapse: false,
     data: [
       {
         creationDate: "1399-09-05T12:29:53.000Z",
@@ -438,7 +438,7 @@ uid: "255423d4-af62-4c7a-9c51-a5cb03e83f4e"
                     <Col lg="3" xs="0" md="2"></Col>
                     <Col lg="2" xs="4" md="3">
                       <Radio
-                        label="همه"
+                        label="پاسخ داده‌شده"
                         onChange={this.RadioChanged}
                         id="all"
                         name="eventStatus"
@@ -447,7 +447,7 @@ uid: "255423d4-af62-4c7a-9c51-a5cb03e83f4e"
                     </Col>
                     <Col lg="2" xs="4" md="3">
                       <Radio
-                        label="در حال اجرا"
+                        label="بدون پاسخ  "
                         onChange={this.RadioChanged}
                         id="inProgress"
                         name="eventStatus"
@@ -455,7 +455,7 @@ uid: "255423d4-af62-4c7a-9c51-a5cb03e83f4e"
                     </Col>
                     <Col lg="2" xs="4" md="3">
                       <Radio
-                        label="اتمام رسیده"
+                        label="همه "
                         onChange={this.RadioChanged}
                         id="finished"
                         name="eventStatus"
