@@ -16,6 +16,7 @@ class SupportTracker extends React.Component {
           endAngle: 150,
           hollow: {
             size: "65%",
+            fontFamily : "Dana-FaNum",
           },
           track: {
             background: this.props.white,
@@ -26,6 +27,7 @@ class SupportTracker extends React.Component {
               offsetY: 30,
               color: "#99a2ac",
               fontSize: "2rem",
+              fontFamily : "Dana-FaNum",
             },
           },
         },
@@ -47,6 +49,7 @@ class SupportTracker extends React.Component {
       },
       dataLabels: {
         enabled: false,
+        
       },
       stroke: {
         dashArray: 8,
@@ -96,6 +99,7 @@ class SupportTracker extends React.Component {
                 series={this.state.series}
                 type="radialBar"
                 height={350}
+                
                 className="support-tracker-card"
               />
             </Col>
