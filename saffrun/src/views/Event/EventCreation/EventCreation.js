@@ -27,6 +27,7 @@ import "../../../assets/scss/plugins/extensions/sweet-alerts.scss";
 import axios from "axios";
 import theme from "../../../assets/datePickerTheme/theme";
 import { history } from "../../../history";
+import isAuthenticated from "../../../utility/authenticated";
 
 class EventCreation extends React.Component {
   state = {
@@ -50,7 +51,10 @@ class EventCreation extends React.Component {
     successAlert: false,
     errorAlert: false,
   };
-
+  async componentDidMount() {
+    let authenticated = await isAuthenticated();
+    if (!authenticated) history.push("/login");
+  }
   hoursGenerator = () => {
     let options = [];
     for (let i = 0; i < 24; i++)
@@ -152,41 +156,43 @@ class EventCreation extends React.Component {
     return <React.Fragment></React.Fragment>;
   };
   uploadImage = async () => {
-    try {
-      var token = "Bearer " + localStorage.getItem("access");
-      var headers = {
-        "Content-type": "multipart/form-data",
-        Authorization: token,
-      };
-      const formData = new FormData();
-      formData.append("image", this.state.files[0]);
-      let response = await axios.post(
-        `${urlDomain}/core/image/upload/`,
-        formData,
-        {
-          headers,
-        }
-      );
-      return response;
-    } catch (e) {
-      console.log(e);
-      return false;
+    let { files } = this.state;
+    let imageIds = [];
+    for (let index = 0; index < files.length; index++) {
+      try {
+        var token = "Bearer " + localStorage.getItem("access");
+        var headers = {
+          "Content-type": "multipart/form-data",
+          Authorization: token,
+        };
+        const formData = new FormData();
+        formData.append("image", files[index]);
+        let response = await axios.post(
+          `${urlDomain}/core/image/upload/`,
+          formData,
+          {
+            headers,
+          }
+        );
+        imageIds.push(response.data.id);
+      } catch (e) {
+        console.log(e);
+        return false;
+      }
     }
+    return imageIds;
   };
   deleteImage = () => {
     this.setState({ files: [] });
   };
   eventObject = () => {
-    let { title, description, startDate, endDate, discount } = this.state;
-    // i should define owner from api
-    // but for now i'll give it static id = 1
+    let { title, description, discount } = this.state;
     let event = {
       title,
       description,
       discount,
-      owner: 1,
-      start_datetime: this.acceptableDateFormat(new Date(startDate)),
-      end_datetime: this.acceptableDateFormat(new Date(endDate)),
+      start_datetime: this.acceptableDateFormat(this.createDate("from")),
+      end_datetime: this.acceptableDateFormat(this.createDate("to")),
     };
     return event;
   };
@@ -195,7 +201,6 @@ class EventCreation extends React.Component {
     var headers = {
       Authorization: token,
     };
-    console.log(this.eventObject());
     try {
       let response = await axios.post(
         `${urlDomain}/event/add/`,
@@ -209,38 +214,39 @@ class EventCreation extends React.Component {
     }
   };
   formSubmitted = async () => {
-    // let eventPost = await this.handleServerRequests();
-    // if (eventPost)
-    this.handleAlert("successAlert", true);
-    // else this.handleAlert("errorAlert", true);
+    let eventPost = await this.handleServerRequests();
+    if (eventPost) this.handleAlert("successAlert", true);
+    else this.handleAlert("errorAlert", true);
   };
   handleServerRequests = async () => {
     var token = "Bearer " + localStorage.getItem("access");
     var headers = {
       Authorization: token,
     };
-    let imageId = null;
+    let imageIds = false;
     if (this.state.files.length > 0) {
-      let imageResponse = await this.uploadImage();
-      if (imageResponse) {
-        imageId = imageResponse.data.id;
+      imageIds = await this.uploadImage();
+    }
+    let eventResponse = await this.postEvent();
+    if (!eventResponse) return false;
+    if (imageIds) {
+      for (let index = 0; index < imageIds.length; index++) {
+        try {
+          let postImageEvent = await axios.post(
+            `${urlDomain}/event/add-image/`,
+            {
+              event_id: eventResponse.data.event_id,
+              image_id: imageIds[index],
+            },
+            { headers }
+          );
+        } catch (e) {
+          console.log(e);
+          return false;
+        }
       }
     }
-    // let eventResponse = await this.postEvent();
-    // if (eventResponse && imageId) {
-    //   try {
-    //     let postImageEvent = await axios.post(
-    //       `${urlDomain}/event/add-image/`,
-    //       { event_id: eventResponse.data.id, image_id: imageId },
-    //       { headers }
-    //     );
-    //   } catch (e) {
-    //     console.log(e);
-    //     return false;
-    //   }
-    // }
-    // if (!eventResponse) return false;
-    // return true;
+    return true;
   };
 
   stepsGenerator() {
@@ -267,6 +273,7 @@ class EventCreation extends React.Component {
                 <Input
                   type="text"
                   value={this.state.title}
+                  maxLength={40}
                   onChange={(e) => this.updateInput(e, "title")}
                 />
               </FormGroup>
