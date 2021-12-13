@@ -81,7 +81,7 @@ class Comments extends Component {
       {
         creationDate: "1399-09-05T12:29:53.000Z",
         isActive: true,
-        message: "بد نبود میتونست بهتر باشه.",
+        message: "بد نبود میتونست بهتر باشه بد نبود میتونست بهتر باش بد نبود میتونست بهتر باش بد نبود میتونست بهتر باش بد نبود میتونست بهتر باش بد نبود میتونست بهتر باش بد نبود میتونست بهتر باش .",
         modificationDate: null,
         parent: {
           creationDate: "1399-09-04T12:29:53.000Z",
