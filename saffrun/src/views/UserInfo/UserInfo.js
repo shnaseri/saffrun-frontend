@@ -19,6 +19,9 @@ import "../../assets/scss/pages/users.scss";
 import axios from "axios";
 import { toast } from "react-toastify";
 import ComponentSpinner from "../../components/@vuexy/spinner/Loading-spinner";
+import { history } from "../../history";
+import isAuthenticated from "../../utility/authenticated";
+import urlDomain from "../../utility/urlDomain";
 
 class UserEdit extends React.Component {
   state = {
@@ -34,18 +37,28 @@ class UserEdit extends React.Component {
     toast.error("خطا", {
       position: toast.POSITION.TOP_CENTER,
     });
+
   componentDidMount = async () => {
-    console.log("asd");
-    let userData = await axios.get(
-      "https://6176598703178d00173daba2.mockapi.io/users/20"
-    );
+    let authenticated = await isAuthenticated();
+    if (!authenticated) history.push("/login");
+    let token = localStorage.getItem("access");
+    token = `Bearer ${token}`;
+    let userData = await axios.get(`${urlDomain}/profile/user/`, {
+      headers: { Authorization: token },
+    });
     this.setState({ userData: userData.data, loadSpinner: false });
-    // console.log(this.state.userData)
+    console.log(this.state.userData);
   };
   postData = async () => {
+    let token = localStorage.getItem("access");
+    token = `Bearer ${token}`;
     let x = await axios.put(
-      "https://6176598703178d00173daba2.mockapi.io/users/6",
-      this.state.userData
+      `${urlDomain}/profile/user/`,
+
+      { ...this.state.userData, avatar: "" },
+      {
+        headers: { Authorization: token },
+      }
     );
     if (x.status === 200) {
       this.notifySuccess();
@@ -63,10 +76,21 @@ class UserEdit extends React.Component {
     console.log(this.state.userData);
   };
   updateData = (e) => {
+    this.toggleDirection(e);
     let userData = { ...this.state.userData, [e.target.id]: e.target.value };
-
     this.setState({ userData });
     console.log(this.state.userData);
+  };
+  changeDIR = (value) => {
+    if (value && value[0].match(/[a-z]/i)) {
+      return "ltr";
+    }
+    return "rtl";
+  };
+  toggleDirection = (e) => {
+    if (e.target.value && e.target.value[0].match(/[a-z]/i))
+      e.target.style.direction = "ltr";
+    else e.target.style.direction = "rtl";
   };
 
   toggle = (tab) => {
@@ -131,12 +155,14 @@ class UserEdit extends React.Component {
                     updateData={this.updateData}
                     updateImg={this.updateImg}
                     delImg={this.delImg}
+                    changeDIR={this.changeDIR}
                   />
                 </TabPane>
                 <TabPane tabId="2">
                   <InfoTab
                     updateData={this.updateData}
                     userData={this.state.userData}
+                    changeDIR={this.changeDIR}
                   />
                 </TabPane>
                 <TabPane tabId="3">

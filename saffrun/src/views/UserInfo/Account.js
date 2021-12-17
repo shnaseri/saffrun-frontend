@@ -16,6 +16,7 @@ import {
   DropdownMenu,
   DropdownToggle,
 } from "reactstrap";
+import InputMask from "react-input-mask";
 import { Trash2, Edit } from "react-feather";
 import userImg from "../../assets/img/profile/Generic-profile-picture.jpg.webp";
 import Checkbox from "../../components/@vuexy/checkbox/CheckboxesVuexy";
@@ -44,6 +45,7 @@ class UserAccountTab extends React.Component {
   }
   hiddenFileInput = React.createRef();
   handleClick = (event) => {
+    
     console.log(this.hiddenFileInput.current);
     this.hiddenFileInput.current.click();
   };
@@ -55,12 +57,13 @@ class UserAccountTab extends React.Component {
   handleDel = () => {
     this.props.delImg();
   };
+  
   handleAvatar = () => {
-    if (this.props.userData["avatar"] != "")
-      return this.props.userData["avatar"];
-    else {
-      return userImg;
-    }
+    // if (this.props.userData["avatar"] != "")
+    //   return this.props.userData["avatar"];
+    // else {
+    return userImg;
+    // }
   };
   render() {
     return (
@@ -99,8 +102,8 @@ class UserAccountTab extends React.Component {
             </Media>
             <Media className="mt-2" body>
               <Media className="font-medium-1 text-bold-600" tag="p" heading>
-                {this.props.userData["fname"]}
-                {this.props.userData["lname"]}
+                {this.props.userData["first_name"]}
+                {this.props.userData["last_name"]}
               </Media>
               <input
                 type="file"
@@ -118,6 +121,7 @@ class UserAccountTab extends React.Component {
                 <FormGroup>
                   <Label for="username">نام کاربری</Label>
                   <Input
+                    style={{direction : this.props.changeDIR(this.props.userData["username"])}}
                     type="text"
                     value={this.props.userData["username"]}
                     id="username"
@@ -128,14 +132,15 @@ class UserAccountTab extends React.Component {
               </Col>
               <Col md="6" sm="12">
                 <FormGroup>
-                  <Label for="password">رمز عبور</Label>
+                  <Label for="email">ایمیل</Label>
                   <Input
-                    type="password"
-                    value={this.props.userData["password"]}
-                    name="password"
-                    id="password"
+                  style={{direction : this.props.changeDIR(this.props.userData["email"])}}
+                    type="text"
+                    value={this.props.userData["email"]}
+                    id="email"
+                    placeholder="Email"
                     onChange={this.props.updateData}
-                  ></Input>
+                  />
                 </FormGroup>
               </Col>
 
@@ -143,9 +148,10 @@ class UserAccountTab extends React.Component {
                 <FormGroup>
                   <Label for="name">نام</Label>
                   <Input
+                  style={{direction : this.props.changeDIR(this.props.userData["first_name"])}}
                     type="text"
-                    value={this.props.userData["fname"]}
-                    id="fname"
+                    value={this.props.userData["first_name"]}
+                    id="first_name"
                     placeholder="Name"
                     onChange={this.props.updateData}
                   />
@@ -155,38 +161,50 @@ class UserAccountTab extends React.Component {
                 <FormGroup>
                   <Label for="lName">نام خانوادگی</Label>
                   <Input
+                  style={{direction : this.props.changeDIR(this.props.userData["last_name"])}}
                     type="text"
-                    value={this.props.userData["lname"]}
+                    value={this.props.userData["last_name"]}
                     name="lName"
-                    id="lname"
-                    placeholder="lname"
+                    id="last_name"
+                    // placeholder="lname"
                     onChange={this.props.updateData}
                   ></Input>
                 </FormGroup>
               </Col>
               <Col md="6" sm="12">
                 <FormGroup>
-                  <Label for="email">ایمیل</Label>
-                  <Input
-                    type="text"
-                    value={this.props.userData["email"]}
-                    id="email"
-                    placeholder="Email"
-                    onChange={this.props.updateData}
+                  <Label for="company">شماره تلفن ثابت</Label>
+                  <InputMask
+                    style={{ direction: "ltr" }}
+                    className="form-control"
+                    mask="099 9999 9999"
+                    // placeholder="شماره تلفن"
                   />
                 </FormGroup>
               </Col>
               <Col md="6" sm="12">
-                <FormGroup>
+              <FormGroup>
+                  <Label for="company"> شماره تلفن همراه</Label>
+                  <InputMask
+                    style={{ direction: "ltr" }}
+                    className="form-control"
+                    mask="0999 999 9999"
+                    value={this.props.userData["phone"]}
+                    onChange={this.props.updateData}
+                    id = "phone"
+                    // placeholder="شماره تلفن"
+                  />
+                </FormGroup>
+                {/* <FormGroup>
                   <Label for="company">شماره همراه</Label>
                   <Input
                     type="text"
                     id="phoneNumber"
-                    value={this.props.userData["phoneNumber"]}
+                    value={this.props.userData["phone"]}
                     placeholder="phoneNumber"
                     onChange={this.props.updateData}
                   />
-                </FormGroup>
+                </FormGroup> */}
               </Col>
               <Col sm="12" style={{ marginTop: 35 }}>
                 <div className="permissions border px-2">
@@ -204,7 +222,9 @@ class UserAccountTab extends React.Component {
                           value={this.state.currPass}
                           id="password"
                           placeholder="رمز قبلی"
-                          onChange={(e) => this.setState({ currPass: e.target.value })}
+                          onChange={(e) =>
+                            this.setState({ currPass: e.target.value })
+                          }
                         />
                       </FormGroup>
                     </Col>
@@ -217,7 +237,9 @@ class UserAccountTab extends React.Component {
                           name="newpassword"
                           id="newpassword"
                           placeholder="رمز جدید"
-                          onChange={(e) => this.setState({ newPass: e.target.value })}
+                          onChange={(e) =>
+                            this.setState({ newPass: e.target.value })
+                          }
                         ></Input>
                       </FormGroup>
                     </Col>
@@ -231,7 +253,9 @@ class UserAccountTab extends React.Component {
                           id="RepPass"
                           placeholder="تکرار رمز"
                           invalid={this.state.repPass !== this.state.newPass}
-                          onChange={(e) => this.setState({ repPass: e.target.value })}
+                          onChange={(e) =>
+                            this.setState({ repPass: e.target.value })
+                          }
                         />
                         {this.state.repPass !== this.state.newPass && (
                           <small style={{ color: "red", fontSize: "11px" }}>
