@@ -28,6 +28,8 @@ import { object } from "prop-types";
 import DataListConfig from "./dayDetails";
 import { toast } from "react-toastify";
 import SweetAlert from "react-bootstrap-sweetalert";
+import { history } from "../../../history";
+import isAuthenticated from "../../../utility/authenticated";
 
 class BookingCreation extends React.Component {
   constructor(props) {
@@ -127,7 +129,9 @@ class BookingCreation extends React.Component {
       ],
     },
   };
-  componentDidMount() {
+  async componentDidMount() {
+    let authenticated = await isAuthenticated();
+    if (!authenticated) history.push("/login");
     let startDate = new Date();
     let endDate = new Date();
     startDate.setHours(0, 0, 0, 0);
@@ -140,45 +144,46 @@ class BookingCreation extends React.Component {
     this.setState({ [name]: value["_d"].getTime() });
   };
   PostToServer = async () => {
-    this.handleAlert("successAlert", true);
-    // var days = {
-    //   0: "sunday",
-    //   1: "monday",
-    //   2: "tuesday",
-    //   3: "wednesday",
-    //   4: "thursday",
-    //   5: "friday",
-    //   6: "saturday",
-    // };
+    var days = {
+      0: "sunday",
+      1: "monday",
+      2: "tuesday",
+      3: "wednesday",
+      4: "thursday",
+      5: "friday",
+      6: "saturday",
+    };
 
-    // let startDate = new Date(this.state.startDate);
-    // let endDate = new Date(this.state.endDate);
-
-    // let data = {
-    //   start_date: this.formatDate(startDate),
-    //   end_date: this.formatDate(endDate),
-    //   days_list: [],
-    // };
-    // let l = [];
-
-    // const diffTime = Math.abs(
-    //   new Date(this.state.endDate) - new Date(this.state.startDate)
-    // );
-    // const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    // for (let index = 0; index < diffDays + 1; index++) {
-    //   if (index === 7) break;
-    //   let date = new Date(this.state.startDate);
-    //   date.setDate(date.getDate() + index);
-    //   l.push({ reserve_periods: this.state.week[days[date.getDay()]] });
-    // }
-    // data["days_list"] = l;
-    // console.log(data);
-    // let token = localStorage.getItem("access");
-    // let res = await axios.post(`${urlDomain}/reserve/create/`, data, {
-    //   headers: {
-    //     Authorization: `Bearer ${token}`,
-    //   },
-    // });
+    let startDate = new Date(this.state.startDate);
+    let endDate = new Date(this.state.endDate);
+    let data = {
+      start_date: this.formatDate(startDate),
+      end_date: this.formatDate(endDate),
+      days_list: [],
+    };
+    let l = [];
+    const diffTime = Math.abs(
+      new Date(this.state.endDate) - new Date(this.state.startDate)
+    );
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    for (let index = 0; index < diffDays + 1; index++) {
+      if (index === 7) break;
+      let date = new Date(this.state.startDate);
+      date.setDate(date.getDate() + index);
+      l.push({ reserve_periods: this.state.week[days[date.getDay()]] });
+    }
+    data["days_list"] = l;
+    let token = localStorage.getItem("access");
+    try {
+      let res = await axios.post(`${urlDomain}/reserve/create/`, data, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      this.handleAlert("successAlert", true);
+    } catch (e) {
+      this.handleAlert("errorAlert", true);
+    }
   };
   formatDate = (date) => {
     var d = new Date(date),
@@ -375,12 +380,6 @@ class BookingCreation extends React.Component {
   deleteItem = (item, day) => {
     let week = { ...this.state.week };
     let items = [...week[day]];
-    if (items.length === 1) {
-      toast.warn("نمی‌توانید تنها آیتم موجود را حذف کنید.", {
-        position: toast.POSITION.TOP_CENTER,
-      });
-      return;
-    }
     items = items.filter((x) => x.index !== item.index);
     this.updateItemOfDay(day, items);
   };
@@ -620,7 +619,11 @@ class BookingCreation extends React.Component {
                     <Button
                       color="primary"
                       style={{ float: "left", width: "100%" }}
-                      disabled={this.fillInput() || this.checkDate()}
+                      disabled={
+                        this.fillInput() ||
+                        this.checkDate() ||
+                        this.state.display
+                      }
                       onClick={this.GoToTimeSection}
                     >
                       تایید و ادامه
@@ -676,16 +679,18 @@ class BookingCreation extends React.Component {
           success
           title="Success"
           show={this.state.successAlert}
+          confirmBtnText="باشه"
           onConfirm={() => {
             this.handleAlert("successAlert", false);
           }}
         >
-          <p className="sweet-alert-text">عملیات با موفقیت انجام شد.</p>
+          <p className="sweet-alert-text">نوبت های ممکن ساخته شد.</p>
         </SweetAlert>
 
         <SweetAlert
           error
           title="Error"
+          confirmBtnText="باشه"
           show={this.state.errorAlert}
           onConfirm={() => this.handleAlert("errorAlert", false)}
         >

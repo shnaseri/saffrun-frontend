@@ -8,6 +8,7 @@ import Sidebar from "./daySidebar";
 import Chip from "../../../components/@vuexy/chips/ChipComponent";
 import "../../../assets/scss/pages/data-list.scss";
 import { toast } from "react-toastify";
+import SweetAlert from "react-bootstrap-sweetalert";
 
 const chipColors = {
   "on hold": "warning",
@@ -34,12 +35,12 @@ const ActionsComponent = (props) => {
     <div className="data-list-action">
       <UncontrolledTooltip
         placement="top"
-        target="edit-icon"
+        target={`edit-icon-${props.row.id}-${props.day}`}
         style={{ backgroundColor: "rgb(245, 199, 100)", color: "black" }}
       >
         ویرایش
       </UncontrolledTooltip>
-      <span id="edit-icon">
+      <span id={`edit-icon-${props.row.id}-${props.day}`}>
         <Edit
           onMouseOver={(e) => {
             e.currentTarget.style.color = "orange";
@@ -56,11 +57,11 @@ const ActionsComponent = (props) => {
       <UncontrolledTooltip
         style={{ backgroundColor: "rgb(245, 199, 100)", color: "black" }}
         placement="top"
-        target="delete-icon"
+        target={`delete-icon-${props.row.id}-${props.day}`}
       >
         حذف
       </UncontrolledTooltip>
-      <span id="delete-icon">
+      <span id={`delete-icon-${props.row.id}-${props.day}`}>
         <Trash
           onMouseOver={(e) => {
             e.currentTarget.style.color = "red";
@@ -100,6 +101,7 @@ const CustomHeader = (props) => {
 
 class DataListConfig extends Component {
   state = {
+    deleteModalOpen: false,
     columns: [
       {
         name: "از ساعت",
@@ -154,6 +156,7 @@ class DataListConfig extends Component {
         cell: (row) => (
           <ActionsComponent
             row={row}
+            day={this.props.day}
             deleteRow={this.deleteRow}
             editItem={this.editItem}
           />
@@ -166,7 +169,12 @@ class DataListConfig extends Component {
     newAddedItem: {},
   };
   deleteRow = (item) => {
-    this.props.deleteItem(item, this.props.day);
+    this.setState({ deleteModalOpen: true, item });
+  };
+  handleAlert = (state, value) => {
+    this.setState({
+      [state]: value,
+    });
   };
   checkOverlapTime = (item) => {
     return item.interfere
@@ -198,24 +206,41 @@ class DataListConfig extends Component {
   addDefaultNewItem = () => {
     let { duration, capacity, period_count } = this.props;
     let items = this.props.items;
-    let lastItem = items[items.length - 1];
-    let newStartTime = lastItem["end_time"];
-    let startTimeHour = newStartTime.split(":")[0];
-    if (startTimeHour === "23") newStartTime = "00:00";
-    let newEndTime = `${this.twoDigitsFromat(newStartTime)}:00`;
-    let newAddedItem = {
-      start_time: newStartTime,
-      end_time: newEndTime,
-      capacity,
-      duration,
-      period_count,
-    };
-    this.setState({ newAddedItem });
+    if (items.length !== 0) {
+      let lastItem = items[items.length - 1];
+      let newStartTime = lastItem["end_time"];
+      let startTimeHour = newStartTime.split(":")[0];
+      if (startTimeHour === "23") newStartTime = "00:00";
+      let newEndTime = `${this.twoDigitsFromat(newStartTime)}:00`;
+      let newAddedItem = {
+        start_time: newStartTime,
+        end_time: newEndTime,
+        capacity,
+        duration,
+        period_count,
+      };
+      this.setState({ newAddedItem });
+    } else {
+      let newAddedItem = {
+        start_time: "08:00",
+        end_time: "17:00",
+        capacity,
+        duration,
+        period_count,
+      };
+      this.setState({ newAddedItem });
+    }
   };
   addItem = (item) => {
     let items = this.props.items;
-    let lastItem = items[items.length - 1];
-    let newAddedItem = { ...item, index: lastItem["index"] + 1 };
+    let newAddedItem = {};
+    if (items.length !== 0) {
+      let lastItem = items[items.length - 1];
+      newAddedItem = { ...item, index: lastItem["index"] + 1 };
+    } else {
+      newAddedItem = { ...item, index: 0 };
+    }
+
     this.props.addItemToDay(newAddedItem, this.props.day);
     this.handleSidebar(false, true);
   };
@@ -242,6 +267,7 @@ class DataListConfig extends Component {
           style={{ backgroundColor: "#f8f8f8" }}
           customStyles={selectedStyle}
           subHeaderComponent={<CustomHeader addNewItem={this.addNewItem} />}
+          noDataComponent="آیتمی برای نشان دادن نیست."
         />
         <Sidebar
           show={sidebar}
@@ -257,6 +283,26 @@ class DataListConfig extends Component {
           })}
           onClick={() => this.handleSidebar(false, true)}
         />
+        <SweetAlert
+          title="آیا از حذف این مورد اطمینان دارید؟"
+          warning
+          show={this.state.deleteModalOpen}
+          showCancel
+          reverseButtons
+          cancelBtnBsStyle="warning"
+          confirmBtnText="بله؛ حذف کن"
+          cancelBtnText="لغو"
+          confirmBtnBsStyle="danger"
+          onConfirm={() => {
+            this.props.deleteItem(this.state.item, this.props.day);
+            this.handleAlert("deleteModalOpen", false);
+          }}
+          onCancel={() => {
+            this.handleAlert("deleteModalOpen", false);
+          }}
+        >
+          بعد از حذف نمیتوانید دوباره این مورد را بازگردانی کنید!
+        </SweetAlert>
       </div>
     );
   }

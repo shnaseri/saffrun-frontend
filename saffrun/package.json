@@ -58,6 +58,7 @@
     "react-copy-to-clipboard": "~5.0.2",
     "react-countdown-now": "~2.1.2",
     "react-country-flag": "^2.0.1",
+    "react-custom-scroll": "^4.3.0",
     "react-data-table-component": "^6.2.3",
     "react-datepicker2": "^3.3.13",
     "react-dom": "^16.12.0",

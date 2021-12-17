@@ -89,14 +89,6 @@ class MyEvents extends React.Component {
         src: sliderImage1,
         id: 1,
       },
-      {
-        src: sliderImage2,
-        id: 2,
-      },
-      {
-        src: sliderImage3,
-        id: 3,
-      },
     ],
   };
   async componentDidMount() {
@@ -135,12 +127,11 @@ class MyEvents extends React.Component {
   loadImages = (event) => {
     let images = event.images;
     let correctFormat = [];
-    for (let i = 0 ; i < images.length ; i++)
-    {
-      correctFormat.push({id : i , src : this.loadImg(images[i])});
+    for (let i = 0; i < images.length; i++) {
+      correctFormat.push({ id: i, src: this.loadImg(images[i]) });
     }
-    return correctFormat;
-  }
+    return correctFormat.length > 0 ? correctFormat : this.state.images;
+  };
   dateRound = (event) => {
     let totalDate = `${new Date(event.end_datetime).toLocaleString("fa-IR")}`;
     let splitted = totalDate.split("،");
@@ -162,69 +153,82 @@ class MyEvents extends React.Component {
     return num;
   };
   loadEventCards = () => {
-    return this.state.events.map((ev) => (
-      <Col key={ev.id} xl={4} md="6" sm="12">
-        <Card>
-          <CardBody>
-            <UncontrolledCarousel items={this.loadImages(ev)} />
-            <h5>{ev.title}</h5>
-            <Row>
-              <Col md="5" lg="6" sm="12" xl="7">
-                <p style={{ height: "42px" }}>
-                  {ev.description.length >= 40
-                    ? ev.description.substring(0, 40) + "..."
-                    : ev.description}
-                </p>
-              </Col>
-              <Col md="7" lg="6" sm="12" xl="5">
-                <Button
-                  onClick={() => {
-                    history.push(`/event-detail/${ev.id}`);
-                  }}
-                  style={{ width: "100%" }}
-                  color="primary"
-                >
-                  نمایش
-                </Button>
-              </Col>
-            </Row>
-            <hr className="my-1" />
-            <div style={{ height: "30px" }} className="card-btns  mt-2">
+    return this.state.events.length === 0 ? (
+      <React.Fragment>
+        <Col style={{ marginTop: "30px" }} md="12">
+          <h3 style={{ textAlign: "center" }}>رویدادی برای نشان دادن نیست</h3>
+        </Col>
+      </React.Fragment>
+    ) : (
+      this.state.events.map((ev) => (
+        <Col key={ev.id} xl={4} md="6" sm="12">
+          <Card>
+            <CardBody>
+              <UncontrolledCarousel items={this.loadImages(ev)} />
+              <h5>{ev.title}</h5>
               <Row>
-                <Col xs="3">
-                  <div className="fonticon-wrap">
-                    <Status
-                      currentState={
-                        this.compareDateTimes(ev.end_datetime)
-                          ? "success"
-                          : "danger"
-                      }
-                    />
-                    <span style={{ fontSize: "12px", fontWeight: "bold" }}>
-                      {this.compareDateTimes(ev.end_datetime)
-                        ? "فعال"
-                        : "غیرفعال"}
-                    </span>
-                  </div>
+                <Col md="5" lg="6" sm="12" xl="6">
+                  <p style={{ height: "42px" }}>
+                    {ev.description.length >= 40
+                      ? ev.description.substring(0, 40) + "..."
+                      : ev.description}
+                  </p>
                 </Col>
-                <Col style={{ textAlign: "left" }} xs="3">
-                  {/* <div className="fonticon-wrap"> */}
-                  <span style={{ marginLeft: "4px" }}>
-                    {this.moreThan1000(ev.participants.length)}
-                  </span>
-                  <Icon.Users size={24} />
-
-                  {/* </div> */}
-                </Col>
-                <Col style={{ textAlign: "left" }} xs="6">
-                  <div className="fonticon-wrap">{this.dateRound(ev)}</div>
+                <Col md="7" lg="6" sm="12" xl="6">
+                  <Button
+                    onClick={() => {
+                      history.push(`/event-detail/${ev.id}`);
+                    }}
+                    style={{ width: "100%" }}
+                    color="primary"
+                  >
+                    نمایش
+                  </Button>
                 </Col>
               </Row>
-            </div>
-          </CardBody>
-        </Card>
-      </Col>
-    ));
+              <hr className="my-1" />
+              <div style={{ height: "30px" }} className="card-btns  mt-2">
+                <Row>
+                  <Col xs="3">
+                    <div className="fonticon-wrap">
+                      <Status
+                        currentState={
+                          this.compareDateTimes(ev.end_datetime)
+                            ? "success"
+                            : "danger"
+                        }
+                      />
+                      <span
+                        style={{
+                          fontSize: "11px",
+                          fontWeight: "bold",
+                        }}
+                      >
+                        {this.compareDateTimes(ev.end_datetime)
+                          ? "فعال"
+                          : "غیرفعال"}
+                      </span>
+                    </div>
+                  </Col>
+                  <Col style={{ textAlign: "left" }} xs="3">
+                    {/* <div className="fonticon-wrap"> */}
+                    <span style={{ marginLeft: "4px" }}>
+                      {this.moreThan1000(ev.participants.length)}
+                    </span>
+                    <Icon.Users size={24} />
+
+                    {/* </div> */}
+                  </Col>
+                  <Col style={{ textAlign: "left" }} xs="6">
+                    <div className="fonticon-wrap">{this.dateRound(ev)}</div>
+                  </Col>
+                </Row>
+              </div>
+            </CardBody>
+          </Card>
+        </Col>
+      ))
+    );
   };
   startDateSelected = (timeStamp, formatted) => {
     this.setState({ startDate: timeStamp });

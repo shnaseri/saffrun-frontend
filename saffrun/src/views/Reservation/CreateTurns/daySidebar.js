@@ -11,18 +11,11 @@ class DataListSidebar extends Component {
     this.state = {
       id: "",
       name: "",
-      category: "Audio",
-      order_status: "pending",
-      price: "",
-      img: "",
       capacity: "",
       period_count: "",
       duration: "",
       start_time: "08:00",
       end_time: "17:00",
-      popularity: {
-        popValue: "",
-      },
     };
   }
   componentWillReceiveProps(props) {
@@ -52,7 +45,7 @@ class DataListSidebar extends Component {
     if (this.state.start_time >= this.state.end_time)
       return (
         <small style={{ color: "red", fontSize: "11px" }}>
-          زمان شروع نباید قبل از پایان باشد
+          زمان شروع نباید بعد از پایان باشد
         </small>
       );
     if (this.moreThanFiveMinutes(this.state.start_time, this.state.end_time))
