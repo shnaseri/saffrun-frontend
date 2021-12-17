@@ -1,0 +1,68 @@
+.current-reserve {
+  color: #ffffff;
+  text-align: center;
+  font-size: 14px;
+  padding: 16px;
+  width: 120px;
+  cursor: pointer;
+  margin: 15px;
+  background-color: #a02929 !important;
+}
+
+.current-reserve span {
+  cursor: pointer;
+  display: inline-block;
+  position: relative;
+  transition: 0.5s;
+}
+
+.current-reserve span:after {
+  content: "\00BB";
+  position: absolute;
+  opacity: 0;
+  top: 0;
+  right: -20px;
+  transition: 0.5s;
+}
+
+.current-reserve:hover span {
+  padding-right: 25px;
+}
+
+.current-reserve:hover span:after {
+  opacity: 1;
+  right: 0;
+}
+.modal-header .close {
+  margin-right: 3px;
+  margin-top: 0.01px;
+}
+.modal-header {
+  height: 54px;
+}
+
+.blinking-clock {
+  animation: blinker 3s linear infinite;
+}
+
+.toast {
+  margin-top: 0;
+}
+
+@keyframes blinker {
+  50% {
+    opacity: 0;
+  }
+}
+
+@media screen and (min-width: 1000px) {
+  .timer-style {
+    margin-right: 100px;
+  }
+}
+
+@media screen and (max-width: 874px) {
+  .current-reserve {
+    float: right;
+  }
+}

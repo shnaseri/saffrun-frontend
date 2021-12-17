@@ -55,8 +55,8 @@ table.dashboard-table {
   }
 }
 
-.support-tracker-card{
-  .apexcharts-canvas{
+.support-tracker-card {
+  .apexcharts-canvas {
     top: -40px;
   }
 }
@@ -68,5 +68,11 @@ table.dashboard-table {
     .img-right {
       width: 140px;
     }
+  }
+}
+@media only screen and (max-width: 400px) {
+  .px-1 {
+    padding-left: 0 !important;
+    padding-right: 0.8rem !important;
   }
 }

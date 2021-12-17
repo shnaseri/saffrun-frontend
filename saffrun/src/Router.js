@@ -31,6 +31,8 @@ const ReceivedComments = lazy(() =>
   import("./views/UserReceivedComments/receivedComment")
 );
 const DetailPage = lazy(() => import("./views/Event/MyEvents/EventDetailPage"));
+const ReserveDetailPage = lazy(() => import("./views/Reservation/MyTurns/ReservationDetail"));
+
 
 const CallUs = lazy(() => import("./views/Support/CallUs"));
 
@@ -93,7 +95,7 @@ class AppRouter extends React.Component {
           <AppRoute path="/about-us" component={AboutUs} />
           <AppRoute path="/received-comments" component={ReceivedComments} />
           <AppRoute path ="/event-detail/:id" component={DetailPage}/>
-
+          <AppRoute path ="/reserve-detail/:date" component={ReserveDetailPage}/>
           <AppRoute path="/call-us" component={CallUs} />
         </Switch>
       </Router>
