@@ -22,7 +22,7 @@ import SweetAlert from "react-bootstrap-sweetalert";
 // import getPersianDateFormat from "./../../common/persianDate";
 import { toast } from "react-toastify";
 // import api from "../../../../utility/api/api";
-import userImage from "../../../assets/img/flags/en.png";
+import userImage from "../../../assets/img/pages/card-image-5.jpg";
 import { Link } from "react-router-dom";
 
 class Comment extends Component {
@@ -134,7 +134,7 @@ class Comment extends Component {
       <div>
         <div className="comment-item">
           <Row>
-            <Col lg="2" className="comment-sender-section">
+            <Col lg="1"  className="comment-sender-section">
               {data.userProfilePic ? (
                 <img
                   src={data.userProfilePic}
@@ -147,19 +147,19 @@ class Comment extends Component {
                 {/* <Link to={"/user?" + data.userUid}> {data.userFullName} </Link>  */}
               </div>
             </Col>
-            <Col lg="6" className="comment-title-container">
+            <Col lg="7" xs="6" className="comment-title-container">
               <BiMessageRoundedDetail
                 size="14"
                 className="comment-title-icon"
               />
               <span className="comment-title"> {data.userFullName} </span>
               <Col lg="12" className="comment-body">
-                {data.message}
+                {data.message.length>=50 ? data.message.substring(0,50) + "..." : data.message}
               </Col>
             </Col>
-            <Col lg="4">
+            <Col lg="4" xs="6">
               <Row className="justify-content-end">
-                <div className="chip-wrapper">
+                <div className="chip-wrapper" style={{marginLeft:"10px"}}>
                   <div className="chip m-0">
                     <div className="chip-body">
                       {data.parent.answer.length !== 0 ? (
@@ -184,6 +184,7 @@ class Comment extends Component {
                   size="20"
                   color="#ff531f"
                   id="remove-comment"
+                  style={{marginLeft:"10px"}}
                   onClick={() => this.handleAlert("defaultAlert", true)}
                 />
                 {data.isActive === false && (
@@ -209,13 +210,25 @@ class Comment extends Component {
                   />
                 )}
               </Row>
-              <Row className="pt-1">
+              {/* <div style={{height:"30px"}}>
+              
+              </div> */}
+              </Col>
+              
+          </Row>
+          <Row >
+                
                 <Col
+                xs="12"
+                lg="12"
                   style={{
                     textAlign: "left",
                     fontSize: "10px",
-                    position: "absolute",
-                    bottom: 0,
+                    width:"100% ",
+
+                    // margin:"10px",
+                    // position: "absolute",
+                    // bottom: 0,
                   }}
                 >
                   تاریخ ارسال پیام:{" "}
@@ -225,8 +238,6 @@ class Comment extends Component {
                   </span>
                 </Col>
               </Row>
-            </Col>
-          </Row>
         </div>
         <SweetAlert
           title="آیا از حذف این مورد اطمینان دارید؟"
@@ -234,7 +245,8 @@ class Comment extends Component {
           show={this.state.defaultAlert}
           showCancel
           reverseButtons
-          cancelBtnBsStyle="danger"
+          cancelBtnBsStyle="warning"
+          confirmBtnBsStyle="danger"
           confirmBtnText="بله؛ حذف کن"
           cancelBtnText="لغو"
           // onConfirm={async () => {
@@ -374,7 +386,7 @@ class Comment extends Component {
                   متن پیام:{" "}
                 </span>
                 <span style={{ fontWeight: 300, fontSize: 15 }}>
-                  {data.parent.message}
+                  {data.message}
                 </span>
               </Row>
               <Row className="pr-1 pl-1 pt-1">

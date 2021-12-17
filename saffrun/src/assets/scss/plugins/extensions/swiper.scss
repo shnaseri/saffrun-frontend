@@ -175,3 +175,12 @@
     width: 15px;
   }
 }
+.swiper-pagination-bullet-active {
+  background-color: orange   !important;
+  opacity: 1;
+}
+
+.swiper-pagination-bullet {
+  opacity: 1;
+  background-color: black;
+}
