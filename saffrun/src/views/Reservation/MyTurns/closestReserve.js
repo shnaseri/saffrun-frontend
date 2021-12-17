@@ -23,6 +23,7 @@ import {
   Layers,
   MapPin,
   UserPlus,
+  
   Calendar,
 } from "react-feather";
 
@@ -96,7 +97,7 @@ class ClosestReserve extends Component {
               }}
             />
           </div>
-          <div style={{ height: "30px" }}></div>
+          <div style={{ height: "30px " }}></div>
           <Row>
             <Col lg="4">
               <ul className="activity-timeline timeline-left list-unstyled">
