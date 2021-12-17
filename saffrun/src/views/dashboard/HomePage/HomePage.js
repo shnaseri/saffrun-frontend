@@ -1,17 +1,8 @@
 import React from "react";
-import { Row, Col } from "reactstrap";
+import { Row, Col , Button } from "reactstrap";
 import avatar1 from "../../../assets/img/portrait/small/avatar-s-5.jpg";
 import avatar2 from "../../../assets/img/portrait/small/avatar-s-7.jpg";
-import SubscribersGained from "../../ui-elements/cards/statistics/SubscriberGained";
-import RevenueGenerated from "../../ui-elements/cards/statistics/RevenueGenerated";
-import QuaterlySales from "../../ui-elements/cards/statistics/QuaterlySales";
-import OrdersReceived from "../../ui-elements/cards/statistics/OrdersReceived";
 import RevenueChart from "../../ui-elements/cards/analytics/Revenue";
-import GoalOverview from "../../ui-elements/cards/analytics/GoalOverview";
-import BrowserStats from "../../ui-elements/cards/analytics/BrowserStatistics";
-import ClientRetention from "../../ui-elements/cards/analytics/ClientRetention";
-import SessionByDevice from "../../ui-elements/cards/analytics/SessionByDevice";
-import CustomersChart from "../../ui-elements/cards/analytics/Customers";
 import SupportTracker from "./../../ui-elements/cards/analytics/SupportTracker";
 import ChatWidget from "../../../components/@vuexy/chatWidget/ChatWidget";
 import { Star, Users, Command, MessageCircle, Check } from "react-feather";
@@ -20,6 +11,8 @@ import "../../../assets/scss/plugins/charts/apex-charts.scss";
 import avatarImg from "../../../assets/img/portrait/small/avatar-s-12.jpg";
 import { Card, CardHeader, CardBody } from "reactstrap";
 import DispatchedOrders from "./DispatchedOrders";
+import { ChevronsRight } from "react-feather"
+import { history } from './../../../history';
 
 let $primary = "#7367F0",
   $success = "#28C76F",
@@ -120,17 +113,10 @@ class Home extends React.Component {
                     <small className="">20 دقیه قبل</small>
                   </li>
                 </ul>
-                {/* <hr className="my-2" />
-                <div className="card-btns d-flex justify-content-between">
-                  <div className="float-left">
-                    <Star size="15" className="warning" />
-                    <span className="ml-50 align-middle">4.9</span>
-                  </div>
-                  <div className="float-right">
-                    <Users size="15" className="primary" />
-                    <span className="ml-50 align-middle">150</span>
-                  </div>
-                </div> */}
+                <Button onClick={()=>{history.push("/received-comments")}} className="btn-block shadow" color="primary">
+                <ChevronsRight size={15} />
+                مشاهده همه 
+              </Button>
               </CardBody>
             </Card>
           </Col>
