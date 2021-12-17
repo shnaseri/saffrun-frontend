@@ -2,8 +2,8 @@ import React from "react";
 import { Card, CardHeader, CardTitle, CardBody, Row, Col } from "reactstrap";
 import Chart from "react-apexcharts";
 import Rating from "@mui/material/Rating";
-import { Star , Users } from "react-feather";
-
+import { Star, Users } from "react-feather";
+import "./style1.css";
 class SupportTracker extends React.Component {
   state = {
     options: {
@@ -16,7 +16,7 @@ class SupportTracker extends React.Component {
           endAngle: 150,
           hollow: {
             size: "65%",
-            fontFamily : "Dana-FaNum",
+            fontFamily: "Dana-FaNum",
           },
           track: {
             background: this.props.white,
@@ -27,7 +27,7 @@ class SupportTracker extends React.Component {
               offsetY: 30,
               color: "#99a2ac",
               fontSize: "2rem",
-              fontFamily : "Dana-FaNum",
+              fontFamily: "Dana-FaNum",
             },
           },
         },
@@ -49,7 +49,6 @@ class SupportTracker extends React.Component {
       },
       dataLabels: {
         enabled: false,
-        
       },
       stroke: {
         dashArray: 8,
@@ -63,21 +62,10 @@ class SupportTracker extends React.Component {
       <Card>
         <CardHeader>
           <CardTitle>آمار کلی</CardTitle>
-          {/* <UncontrolledDropdown>
-            <DropdownToggle className="cursor-pointer" tag="small">
-              Last 7 days <ChevronDown size={10} />
-            </DropdownToggle>
-            <DropdownMenu right>
-              <DropdownItem>Last 28 days</DropdownItem>
-              <DropdownItem>Last Month</DropdownItem>
-              <DropdownItem>Last Year</DropdownItem>
-            </DropdownMenu>
-          </UncontrolledDropdown> */}
         </CardHeader>
-        <CardBody className="pt-0">
+        <CardBody >
           <Row>
             <Col sm="2" className="d-flex flex-column flex-wrap text-center">
-              
               <h1 className="font-large-2 text-bold-600 mt-2 mb-0">163</h1>
               <div className="float-left">
                 <Users size="15" className="warning" />
@@ -99,13 +87,13 @@ class SupportTracker extends React.Component {
                 series={this.state.series}
                 type="radialBar"
                 height={350}
-                
                 className="support-tracker-card"
               />
             </Col>
           </Row>
-
-          <div className="chart-info d-flex justify-content-between">
+          <Row>
+            <Col sm="12">
+            <div  className="chart-info d-flex justify-content-sm-between">
             <div className="text-center">
               <p className="mb-50"> کل رویداد ها</p>
               <span className="font-large-1">29</span>
@@ -123,6 +111,9 @@ class SupportTracker extends React.Component {
               <span className="font-large-1">25</span>
             </div>
           </div>
+            </Col>
+          </Row>
+          
         </CardBody>
       </Card>
     );
