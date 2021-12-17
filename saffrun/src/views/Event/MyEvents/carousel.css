@@ -3,3 +3,8 @@ img.d-block.w-100 {
   margin-bottom: 15px;
   height: 200px;
 }
+.swiper-pagination-bullet{
+  background-color: orange !important;
+  color: orange !important;
+  outline-color: orange !important;
+}
