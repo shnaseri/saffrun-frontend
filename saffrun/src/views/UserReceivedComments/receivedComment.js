@@ -438,7 +438,7 @@ uid: "255423d4-af62-4c7a-9c51-a5cb03e83f4e"
                     <Col lg="3" xs="0" md="2"></Col>
                     <Col lg="2" xs="4" md="3">
                       <Radio
-                        label="پاسخ داده‌شده"
+                        label="همه"
                         onChange={this.RadioChanged}
                         id="all"
                         name="eventStatus"
@@ -455,7 +455,7 @@ uid: "255423d4-af62-4c7a-9c51-a5cb03e83f4e"
                     </Col>
                     <Col lg="2" xs="4" md="3">
                       <Radio
-                        label="همه "
+                        label="پاسخ داده‌شده "
                         onChange={this.RadioChanged}
                         id="finished"
                         name="eventStatus"

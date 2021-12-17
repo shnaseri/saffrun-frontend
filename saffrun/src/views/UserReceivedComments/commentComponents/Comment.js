@@ -22,7 +22,7 @@ import SweetAlert from "react-bootstrap-sweetalert";
 // import getPersianDateFormat from "./../../common/persianDate";
 import { toast } from "react-toastify";
 // import api from "../../../../utility/api/api";
-import userImage from "../../../assets/img/flags/en.png";
+import userImage from "../../../assets/img/pages/card-image-5.jpg";
 import { Link } from "react-router-dom";
 
 class Comment extends Component {
