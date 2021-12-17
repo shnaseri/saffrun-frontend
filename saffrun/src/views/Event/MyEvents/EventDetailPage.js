@@ -36,6 +36,7 @@ import {
   Info,
 } from "react-feather";
 import classnames from "classnames";
+import EventCreation from "../EventCreation/EventCreation"
 import { Media } from "reactstrap";
 import Comments from "../../UserReceivedComments/receivedComment";
 // import Sidebar from "react-sidebar"
@@ -109,6 +110,10 @@ class DetailPage extends React.Component {
       participants: [1, 3, 4],
     },
   };
+  handleEventState=(e)=>
+  {
+    this.props.history.push('/event-creation', this.state.event); 
+  }
   handleComposeSidebar = (status) => {
     if (status === "open") {
       this.setState({
@@ -385,12 +390,10 @@ class DetailPage extends React.Component {
                   </Col>
                   </Row>
                   <Row style={{marginBottom:"15px"}}>
-                  <Col md="2" xs="4">
-                  <Button color="primary" >ویرایش</Button>
-                  </Col>
                   <Col md="8" xs="4"></Col>
-                  <Col md="2" xs="4" style={{textAlign:"left"}}>
-                  <Button color="primary" onClick={() => history.push("/my-events")} >بازگشت</Button>
+                  <Col style={{textAlign:"left"}} md="4" xs="12">
+                  <Button color="primary" style={{marginLeft:"15px"}}  >ویرایش</Button>
+                  <Button color="primary"  onClick={this.handleEventState} >بازگشت</Button>
                   </Col>
                   </Row>
                 {/* <Row className="mb-5 mt-2">
