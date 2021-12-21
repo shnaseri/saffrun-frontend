@@ -1,5 +1,8 @@
 import React from "react";
 import {
+  Card,
+  CardBody,
+  CardHeader,
   Media,
   Row,
   Col,
@@ -69,11 +72,17 @@ class workInfo extends React.Component {
   };
   render() {
     return (
+      
+
+      
       <Row>
-        <Col sm="12">
+        <Col  sm="12">
           <Form onSubmit={(e) => e.preventDefault()}>
+          
             <Row>
-              <Col sm="12">
+            
+              <Col  sm="12">
+              
                 <div className="permissions border px-2">
                   <div className="title pt-2 pb-0">
                     <Briefcase size={19} />
@@ -81,6 +90,8 @@ class workInfo extends React.Component {
                       مشخصات کلی کسب و کار
                     </span>
                     <hr />
+                    <Card>
+                      <CardBody>
                     <Row>
                       <Col md="6" sm="12">
                         <FormGroup>
@@ -200,10 +211,13 @@ class workInfo extends React.Component {
                         </FormGroup>
                       </Col>
                     </Row>
+                    </CardBody>
+                    </Card>
                   </div>
                 </div>
+                
               </Col>
-
+              
               <Col sm="12" style={{ marginTop: 35 }}>
                 <div className="permissions border px-2">
                   <div className="title pt-2 pb-0">

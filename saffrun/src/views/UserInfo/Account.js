@@ -91,7 +91,7 @@ class UserAccountTab extends React.Component {
                   style={{ padding: 0, color: "#ff9f43", float: "left" }}
                   caret
                 >
-                  <Edit style={{ right: 0 }} />
+                  <Edit style={{ right: 0 ,backgroundColor:"white",borderRadius:"5px"}} />
                 </DropdownToggle>
                 <DropdownMenu style={{ position: "relative" }}>
                   <DropdownItem onClick={this.handleClick}>تغییر</DropdownItem>

@@ -128,12 +128,13 @@ class Home extends React.Component {
             />
           </Col>
         </Row>
-        <Row>
-          <Col lg="7" md="12">
-            <ApexLineCharts />
+        <Row >
+          <Col lg="7" md="12"  >
+            <ApexLineCharts  />
           </Col>
-          <Col lg="5" md="12" className="text-center align-middle">
+          <Col lg="5" md="12" >
             <DispatchedOrders
+              className ="h-250"
               cardName="5 نوبت نزدیک"
               header={header}
               tBody={[
@@ -195,7 +196,7 @@ class Home extends React.Component {
         </Row>
         <Row></Row>
         <Row>
-          <Col lg="5" md="12" className="text-center align-middle">
+          <Col lg="5" md="12" className="text-center">
           <DispatchedOrders
               cardName="5 رویداد اخیر"
               header={["نام رویداد" , "مکان","تاریخ و زمان","مدت","تعداد شرکت کننده"]}
@@ -248,7 +249,7 @@ class Home extends React.Component {
               ]}
             />
           </Col>
-          <Col lg="7" md="12" className="text-center align-middle">
+          <Col lg="7" md="12" className="text-center ">
             <RevenueChart
               primary={$primary}
               dangerLight={$danger_light}

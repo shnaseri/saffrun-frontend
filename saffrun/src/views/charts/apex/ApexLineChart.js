@@ -67,7 +67,7 @@ class ApexLineCharts extends React.Component {
 
   render() {
     return (
-      <Card>
+      <Card style={{height:"450px"}}>
         <CardHeader>
           <CardTitle>وضعیت رویداد ونوبت به تفکیک ماه</CardTitle>
            <UncontrolledDropdown>

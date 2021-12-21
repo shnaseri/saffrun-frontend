@@ -17,6 +17,7 @@ import {
   Collapse,
   Spinner
 } from "reactstrap"
+import userImg from "../../assets/img/profile/Generic-profile-picture.jpg.webp";
 import axios from "axios"
 import { ContextLayout } from "../../utility/context/Layout"
 import { AgGridReact } from "ag-grid-react"
@@ -28,9 +29,13 @@ import { history } from "../../history"
 import "../../assets/scss/plugins/tables/_agGridStyleOverride.scss"
 import "../../assets/scss/pages/users.scss"
 import { Color } from "ag-grid-community"
+import urlDomain from "../../utility/urlDomain";
+import "./edit.css"
+
 class UsersList extends React.Component {
   state = {
     rowData: null,
+    data:[],
     pageSize: 20,
     isVisible: true,
     reload: false,
@@ -58,12 +63,12 @@ class UsersList extends React.Component {
             >
               <img
                 className="rounded-circle mr-50"
-                src={params.data.avatar}
-                alt="user avatar"
+                src={this.SetImg(params)}
+                alt={userImg}
                 height="30"
                 width="30"
               />
-              <span>{params.data.name}</span>
+              <span>{params.data.username}</span>
             </div>
           )
         }
@@ -154,8 +159,24 @@ class UsersList extends React.Component {
       }
     ]
   }
-
+  SetImg = (params)=>{
+    if (params.data.avatar){
+      return params.data.avatar
+    }
+    else{
+      return userImg
+    }
+  }
   async componentDidMount() {
+    // if (!authenticated) history.push("/login");
+    let token = localStorage.getItem("access");
+    token = `Bearer ${token}`;
+    let data = await axios.get(`${urlDomain}/profile/follow/`, {
+      headers: { Authorization: token },
+      
+    });
+    this.setState({ data })
+    console.log(data)
     await axios.get("api/users/list").then(response => {
       let rowData = response.data
       this.setState({ rowData })
@@ -280,7 +301,7 @@ class UsersList extends React.Component {
                         rowSelection="multiple"
                         defaultColDef={defaultColDef}
                         columnDefs={columnDefs}
-                        rowData={this.props.userData["followers"]}
+                        rowData={this.state.data["data"]}
                         onGridReady={this.onGridReady}
                         colResizeDefault={"shift"}
                         animateRows={true}

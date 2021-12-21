@@ -61,7 +61,7 @@ class SupportTracker extends React.Component {
     return (
       <Card>
         <CardHeader>
-          <CardTitle>آمار کلی</CardTitle>
+          <CardTitle style={{fontWeight:"bold"}}>آمار کلی</CardTitle>
         </CardHeader>
         <CardBody >
           <Row>

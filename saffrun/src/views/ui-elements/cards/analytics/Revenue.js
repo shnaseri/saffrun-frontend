@@ -122,7 +122,7 @@ class Revenue extends React.Component {
           </UncontrolledDropdown>
         </CardHeader>
         <CardBody>
-          <div className="d-flex justify-content-start mb-1">
+          <div className="d-flex justify-content-center mb-1">
             <div className="mr-2">
               <p className="mb-50 text-bold-600">این ماه</p>
               <h2 className="text-bold-400">

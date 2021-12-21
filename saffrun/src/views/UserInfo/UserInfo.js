@@ -23,6 +23,7 @@ import { history } from "../../history";
 import isAuthenticated from "../../utility/authenticated";
 import urlDomain from "../../utility/urlDomain";
 
+
 class UserEdit extends React.Component {
   state = {
     activeTab: "1",
