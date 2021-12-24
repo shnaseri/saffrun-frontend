@@ -21,7 +21,7 @@ const ForgotPassword = lazy(() => import("./views/authentication/ForgotPassword"
 const SignUp = lazy(() => import("./views/authentication/register/Register"));
 const MyReservation = lazy(() => import("./views/Reservation/MyTurns/MyTurns"));
 const MyEvents = lazy(() => import("./views/Event/MyEvents/MyEvents"));
-
+const EditDay = lazy(() => import("./views/Reservation/MyTurns/editDay"));
 const EventCreation = lazy(() =>
   import("./views/Event/EventCreation/EventCreation")
 );
@@ -88,7 +88,7 @@ class AppRouter extends React.Component {
           <AppRoute path="/user-messages" component={UsersMessages} />
           <AppRoute path="/trade-info" component={TradeInfo} />
           <AppRoute path="/event-creation" component={EventCreation} />
-
+          <AppRoute path="/edit-day" component={EditDay} />
           <AppRoute path="/book-creation" component={BookingCreation} />
           <AppRoute path="/my-reservation" component={MyReservation} />
           <AppRoute path="/my-events" component={MyEvents} />

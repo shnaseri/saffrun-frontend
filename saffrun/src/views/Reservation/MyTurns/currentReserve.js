@@ -16,7 +16,6 @@ import {
 import "./buttonStyle.css";
 
 import "../../../assets/scss/pages/coming-soon.scss";
-
 import "../../../assets/scss/pages/dashboard-analytics.scss";
 import {
   Plus,
@@ -30,8 +29,8 @@ import {
 
 class CurrentReserve extends Component {
   state = {
-      tooltipOpen : false,
-      currentReserveModal : false
+    tooltipOpen: false,
+    currentReserveModal: false,
   };
   toggleModal = () => {
     let { currentReserveModal } = this.state;
@@ -92,7 +91,7 @@ class CurrentReserve extends Component {
             نفر شرکت‌کننده در حال برگزاری است.
           </span>
           <Button
-            className="current-reserve"
+            className="current-reserve bg-warning"
             // color="warning"
             onClick={this.toggleModal}
             onMouseOver={(e) => this.setState({ tooltipOpen: true })}
@@ -104,11 +103,7 @@ class CurrentReserve extends Component {
 
           <Tooltip
             isOpen={this.state.tooltipOpen}
-            style={{
-              backgroundColor: "rgb(245, 199, 100)",
-              color: "black",
-            }}
-            placement="left"
+            placement="top"
             target="reserve-current-tooltip"
           >
             برای مشاهده نوبت در حال انجام خود کلیک کنید
@@ -126,7 +121,7 @@ class CurrentReserve extends Component {
               نوبت کنونی
             </ModalHeader>
             <ModalBody>
-              <ul className="activity-timeline timeline-left list-unstyled">
+              <ul style={{borderRight : "none"}} className="activity-timeline timeline-left list-unstyled">
                 <li>
                   <div className="timeline-icon bg-info">
                     <Calendar size={16} />
@@ -178,8 +173,8 @@ class CurrentReserve extends Component {
                     <p className="font-weight-bold mb-0">شرکت کنندگان </p>
                     <span className="font-small-3">
                       <ul className="list-unstyled users-list m-0 d-flex">
-                        {currentReserve.participants.slice(0, 5).map((R) => (
-                          <li key={"sos"} className="avatar pull-up">
+                        {currentReserve.participants.slice(0, 5).map((R , index) => (
+                          <li key={index} className="avatar pull-up">
                             <img
                               src={R["imgUrl"]}
                               alt="avatar"

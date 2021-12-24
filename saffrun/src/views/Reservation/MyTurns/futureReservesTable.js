@@ -122,8 +122,13 @@ class FutureTable extends Component {
     return new Date(date).toLocaleDateString("fa-IR");
   };
   correctHour = (hourStr) => {
-    let splitted = hourStr.split(":");
-    return `${splitted[0]}:${splitted[1]}`;
+    try {
+      let splitted = hourStr.split(":");
+      return `${splitted[0]}:${splitted[1]}`;
+    }
+    catch(e) {
+      return "خالی";
+    }
   };
   dayOfWeek = (date) => {
     var days = {

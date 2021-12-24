@@ -91,6 +91,7 @@ class MyReservation extends React.Component {
         headers: { Authorization: `Bearer ${token}` },
         params: pagination,
       });
+      console.log(reserves.data.future);
       let futureReserves = this.assignRandomNumber(reserves.data.future);
       let pastReserves = this.assignRandomNumber(reserves.data.past);
       let nearestFive = futureReserves.slice(0, 5);
@@ -225,7 +226,7 @@ class MyReservation extends React.Component {
   closestReserve = () => {
     let { curIdx, nearestFive } = this.state;
     let currentTimer =
-      curIdx < nearestFive.length
+      (curIdx < nearestFive.length)
         ? this.dateCreator(
             nearestFive[curIdx].date,
             nearestFive[curIdx].next_reserve

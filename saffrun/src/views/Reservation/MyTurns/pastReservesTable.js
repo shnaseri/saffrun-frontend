@@ -101,8 +101,13 @@ class PastTable extends Component {
     return new Date(date).toLocaleDateString("fa-IR");
   };
   correctHour = (hourStr) => {
-    let splitted = hourStr.split(":");
-    return `${splitted[0]}:${splitted[1]}`;
+    try {
+      let splitted = hourStr.split(":");
+      return `${splitted[0]}:${splitted[1]}`;
+    }
+    catch(e) {
+      return "خالی";
+    }
   };
   dayOfWeek = (date) => {
     var days = {
@@ -142,7 +147,7 @@ class PastTable extends Component {
           forcePage={this.props.currentPagePast}
           pageCount={20}
           marginPagesDisplayed={1}
-          pageRangeDisplayed={2}
+          pageRangeDisplayed={1}
           containerClassName={
             "vx-pagination icon-pagination pagination-center mt-3"
           }

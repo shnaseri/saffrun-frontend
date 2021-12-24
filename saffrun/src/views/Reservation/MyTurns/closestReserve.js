@@ -100,7 +100,7 @@ class ClosestReserve extends Component {
           <div style={{ height: "30px " }}></div>
           <Row>
             <Col lg="4">
-              <ul className="activity-timeline timeline-left list-unstyled">
+              <ul style={{borderRight : "none"}} className="activity-timeline timeline-left list-unstyled">
                 <li>
                   <div className="timeline-icon bg-info">
                     <Calendar size={16} />
@@ -130,7 +130,7 @@ class ClosestReserve extends Component {
               </ul>
             </Col>
             <Col lg="4">
-              <ul className="activity-timeline timeline-left list-unstyled">
+              <ul style={{borderRight : "none"}} className="activity-timeline timeline-left list-unstyled">
                 <li>
                   <div className="timeline-icon bg-danger">
                     <MapPin size={16} />
@@ -181,7 +181,7 @@ class ClosestReserve extends Component {
               </ul>
             </Col>
             <Col lg="4">
-              <ul className="activity-timeline timeline-left list-unstyled">
+              <ul style={{borderRight : "none"}} className="activity-timeline timeline-left list-unstyled">
                 <li>
                   <div className="timeline-icon bg-gradient-success">
                     <Clock size={16} />
@@ -213,17 +213,6 @@ class ClosestReserve extends Component {
                   </li>
                 )}
               </ul>
-              {/* <Toast style={{borderRadius : "50%"}}>
-                <ToastHeader
-                  className="bg-warning"
-                  style={{ color: "white"}}
-                >
-                  Vuexy
-                </ToastHeader>
-                <ToastBody style={{ backgroundColor: "#ffe0c3" }}>
-                  This is a toast on a warning background — check it out!
-                </ToastBody>
-              </Toast> */}
             </Col>
           </Row>
         </CardBody>
