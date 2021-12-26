@@ -111,23 +111,7 @@ class UserInfoTab extends React.Component {
                 onChange={this.props.updateData}
               />
             </FormGroup>
-            {/* <FormGroup>
-              <Label for="website">کد ملی</Label>
-              <Input type="url" id="website" placeholder="Web Address" />
-            </FormGroup> */}
-            {/* <FormGroup>
-              <Label for="languages">Languages</Label>
-              <Select
-                isMulti
-                defaultValue={[languages[0], languages[1], languages[2]]}
-                isClearable={true}
-                styles={colourStyles}
-                options={languages}
-                className="React"
-                classNamePrefix="select"
-                id="languages"
-              />
-            </FormGroup> */}
+            
             <FormGroup>
               <Label className="d-block mb-50">جنسیت</Label>
               <div className="d-inline-block mr-1">
@@ -135,8 +119,8 @@ class UserInfoTab extends React.Component {
                   label="مرد"
                   id="gender"
                   color="primary"
-                  value={this.props.userData["gender"]}
-                  checked={this.props.userData["gender"]}
+                  value={this.props.userData["gender"] === "M"}
+                  checked={this.props.userData["gender"] === "M"}
                   name="gender"
                   onChange={this.props.updateData}
                   onClick={() => {
@@ -151,8 +135,8 @@ class UserInfoTab extends React.Component {
                   label="زن"
                   id="gender"
                   color="primary"
-                  value={!this.props.userData["gender"]}
-                  checked={!this.props.userData["gender"]}
+                  value={this.props.userData["gender"] ==="F"}
+                  checked={this.props.userData["gender"] ==="F"}
                   name="gender"
                   onChange={this.props.updateData}
                   onClick={() => {

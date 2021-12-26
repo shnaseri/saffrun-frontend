@@ -56,7 +56,7 @@ class UserEdit extends React.Component {
     let x = await axios.put(
       `${urlDomain}/profile/user/`,
 
-      { ...this.state.userData, avatar: "" },
+      { ...this.state.userData },
       {
         headers: { Authorization: token },
       }
@@ -167,7 +167,7 @@ class UserEdit extends React.Component {
                   />
                 </TabPane>
                 <TabPane tabId="3">
-                  <SocialTab userData={this.state.userData} />
+                  <SocialTab notifyError={this.notifyError} notifySuccess={this.notifySuccess} userData={this.state.userData} />
                 </TabPane>
               </TabContent>
             </CardBody>

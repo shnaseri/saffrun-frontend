@@ -1,4 +1,4 @@
-import React from "react"
+import React from "react";
 import {
   Card,
   CardBody,
@@ -15,27 +15,29 @@ import {
   DropdownItem,
   DropdownToggle,
   Collapse,
-  Spinner
-} from "reactstrap"
+  Spinner,
+} from "reactstrap";
+import SweetAlert from "react-bootstrap-sweetalert";
 import userImg from "../../assets/img/profile/Generic-profile-picture.jpg.webp";
-import axios from "axios"
-import { ContextLayout } from "../../utility/context/Layout"
-import { AgGridReact } from "ag-grid-react"
-import {
-  Trash2,
-} from "react-feather"
-import classnames from "classnames"
-import { history } from "../../history"
-import "../../assets/scss/plugins/tables/_agGridStyleOverride.scss"
-import "../../assets/scss/pages/users.scss"
-import { Color } from "ag-grid-community"
+import axios from "axios";
+import { ContextLayout } from "../../utility/context/Layout";
+import { AgGridReact } from "ag-grid-react";
+import { Trash2 } from "react-feather";
+import classnames from "classnames";
+import { history } from "../../history";
+import "../../assets/scss/plugins/tables/_agGridStyleOverride.scss";
+import "../../assets/scss/pages/users.scss";
+import { Color } from "ag-grid-community";
 import urlDomain from "../../utility/urlDomain";
-import "./edit.css"
+import isAuthenticated from "../../utility/authenticated";
+import "./edit.css";
 
 class UsersList extends React.Component {
   state = {
     rowData: null,
-    data:[],
+    defaultAlert: false,
+    confirmAlert: false,
+    data: [],
     pageSize: 20,
     isVisible: true,
     reload: false,
@@ -46,7 +48,7 @@ class UsersList extends React.Component {
     verified: "All",
     department: "All",
     defaultColDef: {
-      sortable: true
+      sortable: true,
     },
     searchVal: "",
     columnDefs: [
@@ -55,7 +57,7 @@ class UsersList extends React.Component {
         field: "username",
         // filter: true,
         width: 250,
-        cellRendererFramework: params => {
+        cellRendererFramework: (params) => {
           return (
             <div
               className="d-flex align-items-center cursor-pointer"
@@ -70,14 +72,14 @@ class UsersList extends React.Component {
               />
               <span>{params.data.username}</span>
             </div>
-          )
-        }
+          );
+        },
       },
       {
         headerName: "ایمیل",
         field: "email",
         // filter: true,
-        width: 250
+        width: 250,
       },
       // {
       //   headerName: "Name",
@@ -89,8 +91,8 @@ class UsersList extends React.Component {
         headerName: "شهر",
         field: "city",
         // filter: true,
-        
-        width: 200
+
+        width: 200,
       },
       // {
       //   headerName: "Role",
@@ -142,119 +144,143 @@ class UsersList extends React.Component {
         headerName: "حذف",
         field: "transactions",
         width: 150,
-        cellRendererFramework: params => {
+        cellRendererFramework: (params) => {
           return (
             <div className="actions cursor-pointer">
               <Trash2
                 color="red"
                 size={15}
                 onClick={() => {
-                  let selectedData = this.gridApi.getSelectedRows()
-                  this.gridApi.updateRowData({ remove: selectedData })
+                  this.handleAlert("defaultAlert", true);
+
+                  // console.log(selectedData[0]["id"])
                 }}
               />
             </div>
-          )
+          );
+        },
+      },
+    ],
+  };
+  SetImg = (params) => {
+    console.log(params.data.avatar)
+    if (params.data.avatar["image"] !=null) {
+      return params.data.avatar["image"];
+    } else {
+      return userImg;
+    }
+  };
+  handleAlert = (state, value) => {
+    this.setState({
+      [state]: value,
+    });
+  };
+  deleteUser = async (id) => {
+    console.log(id);
+    let token = localStorage.getItem("access");
+    token = `Bearer ${token}`;
+    try {
+      let res = await axios.delete(
+        `${urlDomain}/profile/follow/remove-follower`,
+        {
+          headers: { Authorization: token },
+          data: { user_id: id },
         }
-      }
-    ]
-  }
-  SetImg = (params)=>{
-    if (params.data.avatar){
-      return params.data.avatar
+      );
+      let selectedData = this.gridApi.getSelectedRows();
+      this.gridApi.updateRowData({ remove: selectedData });
+      this.props.notifySuccess();
+    } catch {
+      this.props.notifyError();
     }
-    else{
-      return userImg
-    }
-  }
+  };
   async componentDidMount() {
     // if (!authenticated) history.push("/login");
     let token = localStorage.getItem("access");
     token = `Bearer ${token}`;
     let data = await axios.get(`${urlDomain}/profile/follow/`, {
       headers: { Authorization: token },
-      
     });
-    this.setState({ data })
-    console.log(data)
-    await axios.get("api/users/list").then(response => {
-      let rowData = response.data
-      this.setState({ rowData })
-    })
+    this.setState({ data });
+    console.log(data);
+    await axios.get("api/users/list").then((response) => {
+      let rowData = response.data;
+      this.setState({ rowData });
+    });
   }
 
-  onGridReady = params => {
-    this.gridApi = params.api
-    this.gridColumnApi = params.columnApi
-  }
+  onGridReady = (params) => {
+    this.gridApi = params.api;
+    this.gridColumnApi = params.columnApi;
+  };
 
   filterData = (column, val) => {
-    var filter = this.gridApi.getFilterInstance(column)
-    var modelObj = null
+    var filter = this.gridApi.getFilterInstance(column);
+    var modelObj = null;
     if (val !== "all") {
       modelObj = {
         type: "equals",
-        filter: val
-      }
+        filter: val,
+      };
     }
-    filter.setModel(modelObj)
-    this.gridApi.onFilterChanged()
-  }
+    filter.setModel(modelObj);
+    this.gridApi.onFilterChanged();
+  };
 
-  filterSize = val => {
+  filterSize = (val) => {
     if (this.gridApi) {
-      this.gridApi.paginationSetPageSize(Number(val))
+      this.gridApi.paginationSetPageSize(Number(val));
       this.setState({
-        pageSize: val
-      })
+        pageSize: val,
+      });
     }
-  }
-  updateSearchQuery = val => {
-    this.gridApi.setQuickFilter(val)
+  };
+  updateSearchQuery = (val) => {
+    this.gridApi.setQuickFilter(val);
     this.setState({
-      searchVal: val
-    })
-  }
+      searchVal: val,
+    });
+  };
 
   refreshCard = () => {
-    this.setState({ reload: true })
+    this.setState({ reload: true });
     setTimeout(() => {
       this.setState({
         reload: false,
         role: "All",
         selectStatus: "All",
         verified: "All",
-        department: "All"
-      })
-    }, 500)
-  }
+        department: "All",
+      });
+    }, 500);
+  };
 
   toggleCollapse = () => {
-    this.setState(state => ({ collapse: !state.collapse }))
-  }
+    this.setState((state) => ({ collapse: !state.collapse }));
+  };
   onEntered = () => {
-    this.setState({ status: "Opened" })
-  }
+    this.setState({ status: "Opened" });
+  };
   onEntering = () => {
-    this.setState({ status: "Opening..." })
-  }
+    this.setState({ status: "Opening..." });
+  };
 
   onEntered = () => {
-    this.setState({ status: "Opened" })
-  }
+    this.setState({ status: "Opened" });
+  };
   onExiting = () => {
-    this.setState({ status: "Closing..." })
-  }
+    this.setState({ status: "Closing..." });
+  };
   onExited = () => {
-    this.setState({ status: "Closed" })
-  }
+    this.setState({ status: "Closed" });
+  };
   removeCard = () => {
-    this.setState({ isVisible: false })
-  }
+    this.setState({ isVisible: false });
+  };
 
-// all even rows assigned 'my-shaded-effect'
+  // all even rows assigned 'my-shaded-effect'
   render() {
-    const { rowData, columnDefs, defaultColDef, pageSize } = this.state
+    const { rowData, columnDefs, defaultColDef, pageSize } = this.state;
     return (
       <Row className="app-user-list">
         {/* <Col sm="12">
@@ -283,21 +309,23 @@ class UsersList extends React.Component {
           <Card>
             <CardBody>
               <div className="ag-theme-material ag-grid-table">
-              <div className="filter-actions d-flex"  style={{marginBottom : 25}}>
-                    <Input
-                      className="w-50 mr-1 mb-1 mb-sm-0"
-                      type="text"
-                      placeholder="جست و جو ..."
-                      onChange={e => this.updateSearchQuery(e.target.value)}
-                      value={this.state.searchVal}
-                    />
+                <div
+                  className="filter-actions d-flex"
+                  style={{ marginBottom: 25 }}
+                >
+                  <Input
+                    className="w-50 mr-1 mb-1 mb-sm-0"
+                    type="text"
+                    placeholder="جست و جو ..."
+                    onChange={(e) => this.updateSearchQuery(e.target.value)}
+                    value={this.state.searchVal}
+                  />
                 </div>
                 {this.state.rowData !== null ? (
                   <ContextLayout.Consumer>
-                    {context => (
+                    {(context) => (
                       <AgGridReact
                         gridOptions={{}}
-                        
                         rowSelection="multiple"
                         defaultColDef={defaultColDef}
                         columnDefs={columnDefs}
@@ -311,9 +339,8 @@ class UsersList extends React.Component {
                         paginationPageSize={pageSize}
                         resizable={true}
                         enableRtl={context.state.direction === "rtl"}
-                        rowStyle={ {borderBlockColor: "#ff9f43"}}
-                        headerStyle={{backgroundColor: "#ff9f43"}}
-                        
+                        rowStyle={{ borderBlockColor: "#ff9f43" }}
+                        headerStyle={{ backgroundColor: "#ff9f43" }}
                       />
                     )}
                   </ContextLayout.Consumer>
@@ -322,9 +349,45 @@ class UsersList extends React.Component {
             </CardBody>
           </Card>
         </Col>
+        <SweetAlert
+          title="آیا از حذف این مورد اطمینان دارید؟"
+          warning
+          show={this.state.defaultAlert}
+          showCancel
+          reverseButtons
+          cancelBtnBsStyle="warning"
+          confirmBtnBsStyle="danger"
+          confirmBtnText="بله؛ حذف کن"
+          cancelBtnText="لغو"
+          // onConfirm={async () => {
+          //   const res = await this.handleDelete();
+          //   if (res.status) {
+          //     this.handleAlert("defaultAlert", false);
+          //     this.handleAlert("successAlert", true);
+          //   } else {
+          //     let message = "";
+          //     res.data.forEach((element) => {
+          //       message += element + "\n";
+          //     });
+          //     this.handleAlert("defaultAlert", false);
+          //     toast.error(message);
+          //   }
+          // }}
+          onConfirm={() => {
+            let selectedData = this.gridApi.getSelectedRows();
+            // this.gridApi.updateRowData({ remove: selectedData })
+            this.deleteUser(selectedData[0]["id"]);
+            this.handleAlert("defaultAlert", false);
+          }}
+          onCancel={() => {
+            this.handleAlert("defaultAlert", false);
+          }}
+        >
+          بعد از حذف نمیتوانید دوباره این مورد را بازگردانی کنید!
+        </SweetAlert>
       </Row>
-    )
+    );
   }
 }
 
-export default UsersList
+export default UsersList;
