@@ -469,57 +469,6 @@ class TreadeInfo extends React.Component {
           </Col>
         </Row>
         <Row>
-          <Col xs="12">
-            <Card className={classnames("card-action card-reload", {})}>
-              <CardHeader
-                onClick={this.eventToggleCollapse}
-                onMouseOver={(e) => (e.currentTarget.style.cursor = "pointer")}
-              >
-                <CardTitle>وضعیت رویداد</CardTitle>
-                <div className="actions">
-                  <ChevronDown
-                    className="collapse-icon mr-50"
-                    size={15}
-                    // onClick={this.toggleCollapse}
-                  />
-                </div>
-              </CardHeader>
-              <Collapse isOpen={this.state.eventCollapse}>
-                <CardBody>
-                  <Row>
-                    <Col lg="3" xs="0" md="2"></Col>
-                    <Col lg="2" xs="4" md="3">
-                      <Radio
-                        label="همه"
-                        onChange={this.RadioChanged}
-                        id="all"
-                        name="eventStatus"
-                        defaultChecked={true}
-                      />
-                    </Col>
-                    <Col lg="2" xs="4" md="3">
-                      <Radio
-                        label="در حال اجرا"
-                        onChange={this.RadioChanged}
-                        id="inProgress"
-                        name="eventStatus"
-                      />
-                    </Col>
-                    <Col lg="2" xs="4" md="3">
-                      <Radio
-                        label="اتمام رسیده"
-                        onChange={this.RadioChanged}
-                        id="finished"
-                        name="eventStatus"
-                      />
-                    </Col>
-                  </Row>
-                </CardBody>
-              </Collapse>
-            </Card>
-          </Col>
-        </Row>
-        <Row>
           <Col>
             <Card>
               <CardHeader>

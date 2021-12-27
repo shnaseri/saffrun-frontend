@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { Badge, UncontrolledTooltip } from "reactstrap";
 import DataTable from "react-data-table-component";
 import { history } from "../../history";
-import { ChevronLeft, ChevronRight } from "react-feather";
+import { ChevronLeft, ChevronRight,AlignJustify } from "react-feather";
 // import Pagination from "../../../components/@vuexy/pagination/Pagination";
 import ReactPaginate from "react-paginate";
 import "../../assets/scss/plugins/extensions/react-paginate.scss";
@@ -12,7 +12,7 @@ class Table extends Component {
   state = {
     columns: [
       {
-        name: "نوع تراکنش",
+        name: "تاریخ ",
         selector: "date",
         sortable: true,
         minWidth: "200px",
@@ -21,90 +21,118 @@ class Table extends Component {
             <div className="user-info text-truncate ml-xl-50 ml-0">
               <span className="d-block text-bold-500 text-truncate mb-0">
                 {/* {this.dateConverter(row.date)} */}
-                {row["Type"]}
+                {row["date"]}
               </span>
-              {/* <small>{this.dayOfWeek(row.date)}</small> */}
+              <small>
+                {/* {this.dayOfWeek(row.date)} */}
+                دوشنبه
+              </small>
             </div>
           </div>
         ),
       },
       {
-        name: "دسته بندی",
+        name: "تعداد نوبت‌ ها",
         selector: "random_fill",
         center: true,
         sortable: true,
         cell: (row) => (
           <React.Fragment>
-            <UncontrolledTooltip
+            {/* <UncontrolledTooltip
               style={{
                 backgroundColor: "rgb(245, 199, 100)",
                 color: "black",
               }}
               placement="top"
-              // target={this.genereateUniqueID(row.date, "fill")}
+              target={this.genereateUniqueID(row.date, "fill")}
             >
-              {/* {row["category"]} */}
-            </UncontrolledTooltip>
-            {/* <p
-              id={this.genereateUniqueID(row.date, "fill")}
+              {row.random_fill} نوبت از تعداد کل {row.available} نوبت شما
+              پر‌شده‌است
+            </UncontrolledTooltip> */}
+            <p
+              // id={this.genereateUniqueID(row.date, "fill")}
               className="text-bold-500 text-truncate mb-0"
             >
-              {row.random_fill}
-              
-            </p> */}
-            {row["category"]}
+              {/* {row.random_fill} */}
+              {row["countofreserv"]}
+            </p>
+          </React.Fragment>
+        ),
+      },
+      {
+        center: true,
+        name: "تعداد رویداد ها",
+        cell: (row) => (
+          <React.Fragment>
+            {/* <UncontrolledTooltip
+              style={{
+                backgroundColor: "rgb(245, 199, 100)",
+                color: "black",
+              }}
+              placement="top"
+              target={this.genereateUniqueID(row.date, "percentage")}
+            >
+              {row.random}٪ از نوبت های شما پرشده‌است
+            </UncontrolledTooltip> */}
+            {/* <Badge
+              id={this.genereateUniqueID(row.date, "percentage")}
+              color={this.defineColor(row.random)}
+              pill
+            > */}
+              {/* {row.random}% */}
+              {console.log(row)}
+              {row["countofevent"]}
+            {/* </Badge> */}
           </React.Fragment>
         ),
       },
       {
         center: true,
         name: "مبلغ",
+        selector: "next_reserve",
+        sortable: true,
         cell: (row) => (
           <React.Fragment>
-            <UncontrolledTooltip
+            {/* <UncontrolledTooltip
               style={{
                 backgroundColor: "rgb(245, 199, 100)",
                 color: "black",
               }}
               placement="top"
-              // target={this.genereateUniqueID(row.date, "percentage")}
+              target={this.genereateUniqueID(row.date, "nearest_reserve")}
             >
-              ٪ از نوبت های شما پرشده‌است
-            </UncontrolledTooltip>
-            <Badge
-              // id={this.genereateUniqueID(row.date, "percentage")}
-              // color={this.defineColor(row.random)}
-              pill
+              نزدیک‌ترین نوبت بعدی شما ساعت {this.correctHour(row.next_reserve)}{" "}
+              می‌باشد.
+            </UncontrolledTooltip> */}
+            <p
+              // id={this.genereateUniqueID(row.date, "nearest_reserve")}
+              className="text-bold-500 mb-0"
             >
+              {/* {this.correctHour(row.next_reserve)} */}
               {row["price"]}
-            </Badge>
+            </p>
           </React.Fragment>
         ),
       },
       {
         center: true,
-        name: "تاریخ",
+        name: "جزییات بیشتر",
         selector: "next_reserve",
         sortable: true,
         cell: (row) => (
           <React.Fragment>
-            <UncontrolledTooltip
+            {/* <UncontrolledTooltip
               style={{
                 backgroundColor: "rgb(245, 199, 100)",
                 color: "black",
               }}
               placement="top"
-              // target={this.genereateUniqueID(row.date, "nearest_reserve")}
+              target={this.genereateUniqueID(row.date, "nearest_reserve")}
             >
-              {/* نزدیک‌ترین نوبت بعدی شما ساعت {this.correctHour(row.next_reserve)}{" "} */}
+              نزدیک‌ترین نوبت بعدی شما ساعت {this.correctHour(row.next_reserve)}{" "}
               می‌باشد.
-            </UncontrolledTooltip>
-            <p
-              // id={this.genereateUniqueID(row.date, "nearest_reserve")}
-              className="text-bold-500 mb-0"
-            >
-              {row["date"]}
-            </p>
+            </UncontrolledTooltip> */}
+            <AlignJustify/>
           </React.Fragment>
         ),
       },
@@ -148,7 +176,7 @@ class Table extends Component {
     return (
       <React.Fragment>
         <DataTable
-          data={[{"Type":"برداشت","category":"نوبت","price":"2500000","date":"25/02/1400"}]}
+          data={[{date:"1400/9/25",countofreserv:"25",countofevent:"5",price:"6500000"}]}
           columns={columns}
           noHeader
           highlightOnHover
@@ -162,7 +190,7 @@ class Table extends Component {
           nextLabel={<ChevronRight size="15" />}
           breakLabel={"..."}
           breakClassName={"break-me"}
-          forcePage={this.props.currentPageFuture}
+          // forcePage={this.props.currentPageFuture}
           pageCount={20}
           marginPagesDisplayed={1}
           pageRangeDisplayed={2}
