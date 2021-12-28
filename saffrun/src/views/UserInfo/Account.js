@@ -38,6 +38,8 @@ class UserAccountTab extends React.Component {
     currPass: "",
     newPass: "",
     repPass: "",
+    isUploadedImg:false,
+    uploadedUrl:""
   };
   toggle() {
     this.setState((prevState) => ({
@@ -51,22 +53,42 @@ class UserAccountTab extends React.Component {
   };
   handleChange = (event) => {
     const fileUploaded = event.target.files[0];
-    console.log(fileUploaded);
+    this.setState({isUploadedImg:true ,uploadedUrl:URL.createObjectURL(fileUploaded) })
+    this.postImg(fileUploaded)
     this.props.updateImg(URL.createObjectURL(fileUploaded));
     console.log(URL.createObjectURL(fileUploaded));
   };
+
+  postImg = async (file)=>{
+    try {
+      var token = "Bearer " + localStorage.getItem("access");
+      var headers = {
+        "Content-type": "multipart/form-data",
+        Authorization: token,
+      };
+      const formData = new FormData();
+      formData.append("image", file);
+      let response = await axios.post(
+        `${urlDomain}/core/image/upload/`,
+        formData,
+        {
+          headers,
+        }
+      );
+      this.props.updateImg(response.data.id)
+    } catch (e) {
+      console.log(e);
+      return false;
+    }
+  }
   handleDel = () => {
     this.props.delImg();
   };
 
   handleAvatar = () => {
-    if (this.props.userData["avatar"]["image"]["thumbnail"] != "") {
-      console.log(
-        "http://127.0.0.1:8000/" +
-          this.props.userData["avatar"]["image"]["thumbnail"]
-      );
+    if (this.props.userData["avatar"]["image"] ) {
       return (
-        "http://127.0.0.1:8000" +
+        this.state.isUploadedImg? this.state.uploadedUrl : "http://127.0.0.1:8000" +
         this.props.userData["avatar"]["image"]["thumbnail"]
       );
     } else {

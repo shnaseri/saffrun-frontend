@@ -23,7 +23,6 @@ import { history } from "../../history";
 import isAuthenticated from "../../utility/authenticated";
 import urlDomain from "../../utility/urlDomain";
 
-
 class UserEdit extends React.Component {
   state = {
     activeTab: "1",
@@ -67,12 +66,14 @@ class UserEdit extends React.Component {
       this.notifyError();
     }
   };
-  updateImg = (url) => {
-    let userData = { ...this.state.userData, avatar: url };
+  updateImg = (id) => {
+    let avatar = { image_id: id };
+    let userData = { ...this.state.userData, avatar };
+    console.log(userData)
     this.setState({ userData });
   };
   delImg = () => {
-    let userData = { ...this.state.userData, avatar: "" };
+    let userData = { ...this.state.userData, avatar: null };
     this.setState({ userData });
     console.log(this.state.userData);
   };
@@ -167,7 +168,11 @@ class UserEdit extends React.Component {
                   />
                 </TabPane>
                 <TabPane tabId="3">
-                  <SocialTab notifyError={this.notifyError} notifySuccess={this.notifySuccess} userData={this.state.userData} />
+                  <SocialTab
+                    notifyError={this.notifyError}
+                    notifySuccess={this.notifySuccess}
+                    userData={this.state.userData}
+                  />
                 </TabPane>
               </TabContent>
             </CardBody>
