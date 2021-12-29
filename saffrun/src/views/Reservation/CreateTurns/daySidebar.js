@@ -131,7 +131,9 @@ class DataListSidebar extends Component {
       this.moreThanFiveMinutes(start_time, end_time) ||
       parseInt(this.state.duration % 5) !== 0 ||
       this.minuteMod5Disabled(start_time) ||
-      this.minuteMod5Disabled(end_time)
+      this.minuteMod5Disabled(end_time) ||
+      capacity === 0 ||
+      (duration === 0 && period_count === 0)
     );
   };
   render() {

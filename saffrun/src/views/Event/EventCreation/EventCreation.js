@@ -54,7 +54,27 @@ class EventCreation extends React.Component {
   async componentDidMount() {
     let authenticated = await isAuthenticated();
     if (!authenticated) history.push("/login");
+    let token = localStorage.getItem("access");
+    token = `Bearer ${token}`;
+    try {
+      let categories = await axios.get(`${urlDomain}/category/get-all/`, {
+        headers: { Authorization: token },
+      });
+      this.loadCategories(categories.data);
+    }
+    catch {
+      history.push("/login");
+    }
   }
+  loadCategories = (categories) => {
+    let categoryItems = categories.map((item) => {
+      return {
+        label: item.name,
+        value: item.id,
+      };
+    });
+    this.setState({ jobCategoryOptions: categoryItems });
+  };
   hoursGenerator = () => {
     let options = [];
     for (let i = 0; i < 24; i++)
@@ -182,17 +202,15 @@ class EventCreation extends React.Component {
     }
     return imageIds;
   };
-  deleteImage = () => {
-    this.setState({ files: [] });
-  };
   eventObject = () => {
-    let { title, description, discount } = this.state;
+    let { title, description, discount, jobCategory } = this.state;
     let event = {
       title,
       description,
       discount,
       start_datetime: this.acceptableDateFormat(this.createDate("from")),
       end_datetime: this.acceptableDateFormat(this.createDate("to")),
+      category_id : jobCategory.value
     };
     return event;
   };
@@ -437,7 +455,6 @@ class EventCreation extends React.Component {
           <DropzoneBasic
             imageUploaded={this.imageUploaded}
             files={this.state.files}
-            deleteImage={this.deleteImage}
           />
         ),
       },

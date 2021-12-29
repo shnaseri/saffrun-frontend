@@ -6,7 +6,7 @@
   width: 120px;
   cursor: pointer;
   margin: 15px;
-  background-color: #a02929 !important;
+  /* background-color: #a02929 !important; */
 }
 
 .current-reserve span {
@@ -64,5 +64,8 @@
 @media screen and (max-width: 874px) {
   .current-reserve {
     float: right;
+    font-size: 12px;
+    padding: 14px;
+    width: 100px;
   }
 }

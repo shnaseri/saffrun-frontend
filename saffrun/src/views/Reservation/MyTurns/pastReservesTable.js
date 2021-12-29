@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Badge,UncontrolledTooltip } from "reactstrap";
+import { Badge, UncontrolledTooltip } from "reactstrap";
 import DataTable from "react-data-table-component";
 import { history } from "../../../history";
 import { ChevronLeft, ChevronRight } from "react-feather";
@@ -27,27 +27,28 @@ class PastTable extends Component {
       },
       {
         name: "نوبت‌های پرشده",
-        selector: "random_fill",
+        selector: "fill",
         center: true,
         sortable: true,
         cell: (row) => (
           <React.Fragment>
             <UncontrolledTooltip
-              style={{
-                backgroundColor: "rgb(245, 199, 100)",
-                color: "black",
-              }}
               placement="top"
               target={this.genereateUniqueID(row.date, "fill")}
             >
-              {row.random_fill} نوبت از تعداد کل {row.available} نوبت شما
-              پر‌شده‌است
+              {row.fill} 
+              {" "}
+               نوبت از تعداد کل 
+               {" "}
+              {row.fill + row.available}
+              {" "} 
+              نوبت شما پر شده‌است.
             </UncontrolledTooltip>
             <p
               id={this.genereateUniqueID(row.date, "fill")}
               className="text-bold-500 text-truncate mb-0"
             >
-              {row.random_fill}
+              {row.fill}
             </p>
           </React.Fragment>
         ),
@@ -65,14 +66,10 @@ class PastTable extends Component {
         cell: (row) => (
           <React.Fragment>
             <UncontrolledTooltip
-              style={{
-                backgroundColor: "rgb(245, 199, 100)",
-                color: "black",
-              }}
               placement="top"
               target={this.genereateUniqueID(row.date, "percentage")}
             >
-              {row.random}٪ از نوبت های شما پرشده‌است
+              {this.calculateFillPercentage(row)}٪ از نوبت های شما پرشده‌است
             </UncontrolledTooltip>
             <Badge
               id={this.genereateUniqueID(row.date, "percentage")}
@@ -87,8 +84,10 @@ class PastTable extends Component {
     ],
   };
   calculateFillPercentage = (row) => {
-    return Math.floor((row.random_fill / row.available ) * 100) 
-  }
+    return Math.floor(
+      (row.fill / (row.available + row.fill)) * 100
+    );
+  };
   defineColor = (num) => {
     if (num < 25) return "light-success";
     if (num < 75) return "light-warning";
@@ -101,8 +100,12 @@ class PastTable extends Component {
     return new Date(date).toLocaleDateString("fa-IR");
   };
   correctHour = (hourStr) => {
-    let splitted = hourStr.split(":");
-    return `${splitted[0]}:${splitted[1]}`;
+    try {
+      let splitted = hourStr.split(":");
+      return `${splitted[0]}:${splitted[1]}`;
+    } catch (e) {
+      return "خالی";
+    }
   };
   dayOfWeek = (date) => {
     var days = {
@@ -142,7 +145,7 @@ class PastTable extends Component {
           forcePage={this.props.currentPagePast}
           pageCount={20}
           marginPagesDisplayed={1}
-          pageRangeDisplayed={2}
+          pageRangeDisplayed={1}
           containerClassName={
             "vx-pagination icon-pagination pagination-center mt-3"
           }

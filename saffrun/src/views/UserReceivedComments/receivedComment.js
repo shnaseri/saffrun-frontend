@@ -15,7 +15,7 @@ import {
   DateTimeRangePicker,
 } from "react-advance-jalaali-datepicker";
 import Radio from "../../components/@vuexy/radio/RadioVuexy";
-
+import "../../assets/scss/plugins/extensions/react-paginate.scss";
 import Select from "react-select";
 import classnames from "classnames";
 import "../../assets/scss/plugins/forms/react-select/_react-select.scss";
@@ -43,89 +43,81 @@ import {
   DropdownItem,
   DropdownMenu,
 } from "reactstrap";
-
-import InputMask from "react-input-mask";
 import _ from "lodash";
-import { toast } from "react-toastify";
-import AsyncSelect from "react-select/async";
+import { history } from "../../history";
+import isAuthenticated from "../../utility/authenticated";
+import axios from "axios";
+import urlDomain from "../../utility/urlDomain";
+import defaultImg from "../../assets/img/profile/Generic-profile-picture.jpg.webp";
+import imgUrlDomain from "../../utility/imgUrlDomain";
+import ComponentSpinner from "../../components/@vuexy/spinner/Loading-spinner";
+import ReactPaginate from "react-paginate";
 
 class Comments extends Component {
   state = {
-    page: 1,
+    currentPage: 0,
     totalCount: 0,
-    pageSize: 10,
+    pageSize: 3,
+    loadSpinner: true,
     eventCollapse: true,
     collapse: false,
-    data: [
-      {
-        creationDate: "1399-09-05T12:29:53.000Z",
-        isActive: true,
-        message: "بسیار خوب بود.",
-        modificationDate: null,
-        parent: {
-          creationDate: "1399-09-04T12:29:53.000Z",
-          isActive: true,
-          message: " بسیار خوب بود.",
-          modificationDate: null,
-          parent: null,
-          answer: "",
-          productTitle: "هالوژن گرد",
-          uid: "255423d4-af61-4c7a-9c51-a5cb03e83f4e",
-          userFullName: "Hosein Naseri",
-          userPhoneNumber: "09381454033",
-        },
-        productTitle: "هالوژن گرد",
-        uid: "255423d4-af62-4c7a-9c51-a5cb03e83f4e",
-        userFullName: "Hosein Naseri",
-      },
-      {
-        creationDate: "1399-09-05T12:29:53.000Z",
-        isActive: true,
-        message: "بد نبود میتونست بهتر باشه بد نبود میتونست بهتر باش بد نبود میتونست بهتر باش بد نبود میتونست بهتر باش بد نبود میتونست بهتر باش بد نبود میتونست بهتر باش بد نبود میتونست بهتر باش .",
-        modificationDate: null,
-        parent: {
-          creationDate: "1399-09-04T12:29:53.000Z",
-          isActive: true,
-          message: "بد نبود میتونست بهتر باشه.",
-          modificationDate: null,
-          parent: null,
-          productTitle: "هالوژن گرد",
-          uid: "255423d4-af61-4c7a-9c51-a5cb03e83f4e",
-          answer: "",
-          userFullName: "ali moradian",
-          userPhoneNumber: "09381454033",
-        },
-        productTitle: "هالوژن گرد",
-        uid: "255423d4-af62-4c7a-9c51-a5cb03e83f4e",
-        userFullName: "ali moradian",
-      },
-    ],
+    data: [],
     error: "",
     fromDate: "",
     toDate: "",
     message: "",
     userPhoneNumber: "",
     productTitle: "",
+    commentState: "all",
   };
-  /**
-creationDate: "1399-09-05T12:29:53.000Z"
-isActive: true
-message: "لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است."
-modificationDate: null
-parent:
-    creationDate: "1399-09-04T12:29:53.000Z"
-    isActive: true
-    message: "لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است."
-    modificationDate: null
-    parent: null
-    productTitle: "هالوژن گرد"
-    uid: "255423d4-af61-4c7a-9c51-a5cb03e83f4e"
-    userFullName: "Hosein Naseri1"
-    userPhoneNumber: "09381454033"
-productTitle: "هالوژن گرد"
-uid: "255423d4-af62-4c7a-9c51-a5cb03e83f4e"
-     */
 
+  imgGenerator = (x) => {
+    return x.image.image
+      ? `${imgUrlDomain}${x.image.image.thumbnail}`
+      : defaultImg;
+  };
+  isReplied = (item) => {
+    return item.reply ? item.reply.content : "";
+  };
+  dateRound = (end_datetime) => {
+    let totalDate = `${new Date(end_datetime).toLocaleString("fa-IR")}`;
+    let splitted = totalDate.split("،");
+    return `${splitted[0]}،${splitted[1].split(":")[0]}:${
+      splitted[1].split(":")[1]
+    }`;
+  };
+  async componentDidMount() {
+    let authenticated = await isAuthenticated();
+    if (!authenticated) history.push("/login");
+    let token = localStorage.getItem("access");
+    token = `Bearer ${token}`;
+    try {
+      let comments = await axios.get(
+        `${urlDomain}/comment/get_comment_of_owner/`,
+        {
+          headers: { Authorization: token },
+        }
+      );
+      console.log(comments.data.comments);
+      let data = comments.data.comments.map((item) => {
+        return {
+          ...item,
+          imgUrl: this.imgGenerator(item.user),
+          answer: this.isReplied(item),
+          date: this.dateRound(item.created_at),
+        };
+      });
+      this.setState({ data, loadSpinner: false });
+    } catch (e) {
+      console.log(e);
+      this.setState({ loadSpinner: false });
+    }
+  }
+  imgGenerator = (x) => {
+    return x.image.image
+      ? `${imgUrlDomain}${x.image.image.thumbnail}`
+      : defaultImg;
+  };
   setError = (message) => {
     this.setState({ error: message });
   };
@@ -141,11 +133,22 @@ uid: "255423d4-af62-4c7a-9c51-a5cb03e83f4e"
   };
   handleDelete = (cid) => {
     let data = [...this.state.data];
-    console.log(cid);
-    console.log(data);
-    //javad dorost kon
-    data.splice(cid, 1);
+    data = data.filter(x => x.id !== cid)
+    let comments = this.loadFileteredComments(data);
+    if (comments.length === 0)
+      this.setState({currentPage : 0})
     this.setState({ data });
+  };
+  toggleAnswered = (answer, cid) => {
+    let comments = [...this.state.data];
+    let commentIdx = comments.findIndex(x => x.id === cid);
+    let comment = {...comments[commentIdx]}
+    comment.answer = answer;
+    comments[commentIdx] = comment;
+    let filteredComments = this.loadFileteredComments(comments);
+    if (filteredComments.length === 0)
+      this.setState({currentPage : 0})
+    this.setState({ data: comments });
   };
 
   endDatePickerInput = (props) => {
@@ -159,143 +162,8 @@ uid: "255423d4-af62-4c7a-9c51-a5cb03e83f4e"
     );
   };
 
-  // loadProductsOptions = async (inputValue, callback) => {
-  //   const res = await api.post(
-  //     "/Products/GetProductsTitle",
-  //     { keyword: inputValue },
-  //     null,
-  //     this.setError
-  //   );
-  //   if (res.status) {
-  //     const productsOptions = [];
-  //     res.data.forEach((product) => {
-  //       productsOptions.push({ value: product.uid, label: product.title });
-  //     });
-  //     callback(productsOptions);
-  //   } else callback([]);
-  // };
+  
 
-  // paginationChange = async (currentPage) => {
-  //   const { pageSize } = this.state;
-
-  //   const {
-  //     fromDate,
-  //     toDate,
-  //     message,
-  //     userPhoneNumber,
-  //     productTitle,
-  //   } = this.state;
-
-  //   const body = {
-  //     sliding: {
-  //       page: currentPage,
-  //       pageCount: pageSize,
-  //     },
-  //   };
-
-  //   if (fromDate) body.sliding.fromDate = fromDate;
-  //   if (toDate) body.sliding.toDate = toDate;
-  //   const searchParameters = [];
-  //   if (message)
-  //     searchParameters.push({
-  //       keyword: message,
-  //       prop: "Message",
-  //     });
-  //   if (userPhoneNumber)
-  //     searchParameters.push({
-  //       keyword: userPhoneNumber,
-  //       prop: "UserPhoneNumber",
-  //     });
-  //   if (productTitle)
-  //     searchParameters.push({
-  //       keyword: productTitle,
-  //       prop: "ProductTitle",
-  //     });
-  //   if (searchParameters) body.sliding.searchParameters = searchParameters;
-
-  //   const res = await api.post("/Comments/GetAll", body, null, this.setError);
-
-  //   if (res.status) {
-  //     this.setState({
-  //       page: currentPage,
-  //       totalCount: res.data.totalCount,
-  //       data: res.data.data,
-  //       error: "",
-  //     });
-  //   } else {
-  //     let message = "";
-  //     res.data.forEach((element) => {
-  //       message += element + "\n";
-  //     });
-  //     toast.error(message);
-  //   }
-  // };
-
-  reloadData = async () => {
-    await this.paginationChange(this.state.page);
-  };
-  toggleCollapse = () => {
-    this.setState((state) => ({
-      collapse: !state.collapse,
-      eventCollapse: false,
-    }));
-  };
-
-  toggleAnswered = (answer, cid) => {
-    let comments = [...this.state.data];
-    let comment = { ...comments[cid] };
-    let parent = { ...comment.parent };
-    parent.answer = answer;
-    comment.parent = parent;
-    comments[cid] = comment;
-    this.setState({ data: comments });
-  };
-
-  handleSearch = async () => await this.paginationChange(1);
-
-  // async componentDidMount() {
-  //   const res = await api.post(
-  //     "/Comments/GetAll",
-  //     {
-  //       sliding: {
-  //         page: 1,
-  //         pageCount: 10,
-  //       },
-  //     },
-  //     null,
-  //     this.setError
-  //   );
-  //   this.setState({ totalCount: res.data.totalCount, data: res.data.data });
-  // }
-
-  renderPagination = () => {
-    const { page, totalCount, pageSize } = this.state;
-    const pagesCount = totalCount / pageSize;
-    const pages = _.range(1, pagesCount + 1);
-    return (
-      <Pagination className="d-flex justify-content-center mt-1">
-        {pages.map((x) => {
-          if (x === page) {
-            return (
-              <PaginationItem active key={x}>
-                <PaginationLink>{x}</PaginationLink>
-              </PaginationItem>
-            );
-          } else {
-            return (
-              <PaginationItem key={x}>
-                <PaginationLink
-                  onClick={async () => await this.paginationChange(x)}
-                >
-                  {x}
-                </PaginationLink>
-              </PaginationItem>
-            );
-          }
-        })}
-      </Pagination>
-    );
-  };
   toggleCollapse = () => {
     this.setState((state) => ({
       collapse: !state.collapse,
@@ -308,15 +176,39 @@ uid: "255423d4-af62-4c7a-9c51-a5cb03e83f4e"
       collapse: false,
     }));
   };
+  RadioChanged = async ({ currentTarget: input }) => {
+    this.setState({ commentState: input.id, currentPage: 0 });
+  };
+  pageChanged = (data) => {
+    this.setState({ currentPage: data.selected });
+  };
+  loadFileteredComments = (data) => {
+    let { commentState, currentPage, pageSize } = this.state;
+    if (commentState === "responseLess")
+      return data
+        .filter((x) => x.answer === "")
+        .slice(currentPage * pageSize, (currentPage + 1) * pageSize);
+    else if (commentState === "responsed")
+      return data
+        .filter((x) => x.answer !== "")
+        .slice(currentPage * pageSize, (currentPage + 1) * pageSize);
+    return data.slice(currentPage * pageSize, (currentPage + 1) * pageSize);
+  };
+  commentsCount = () => {
+    let { data, commentState } = this.state;
+    if (commentState === "responseLess")
+      return data.filter((x) => x.answer === "").length;
+    else if (commentState === "responsed")
+      return data.filter((x) => x.answer !== "").length;
+    return data.length;
+  };
   render() {
     const {
       data,
       error,
-      fromDate,
-      toDate,
-      message,
-      userPhoneNumber,
+      pageSize,
     } = this.state;
+    let comments = this.loadFileteredComments(data);
     return (
       <React.Fragment>
         <Row className="app-user-list">
@@ -423,7 +315,7 @@ uid: "255423d4-af62-4c7a-9c51-a5cb03e83f4e"
                 onClick={this.eventToggleCollapse}
                 onMouseOver={(e) => (e.currentTarget.style.cursor = "pointer")}
               >
-                <CardTitle>وضعیت رویداد</CardTitle>
+                <CardTitle>وضعیت پاسخ</CardTitle>
                 <div className="actions">
                   <ChevronDown
                     className="collapse-icon mr-50"
@@ -441,24 +333,24 @@ uid: "255423d4-af62-4c7a-9c51-a5cb03e83f4e"
                         label="همه"
                         onChange={this.RadioChanged}
                         id="all"
-                        name="eventStatus"
+                        name="commentStatus"
                         defaultChecked={true}
                       />
                     </Col>
                     <Col lg="2" xs="4" md="3">
                       <Radio
-                        label="بدون پاسخ  "
+                        label="بدون پاسخ"
                         onChange={this.RadioChanged}
-                        id="inProgress"
-                        name="eventStatus"
+                        id="responseLess"
+                        name="commentStatus"
                       />
                     </Col>
                     <Col lg="2" xs="4" md="3">
                       <Radio
                         label="پاسخ داده‌شده "
                         onChange={this.RadioChanged}
-                        id="finished"
-                        name="eventStatus"
+                        id="responsed"
+                        name="commentStatus"
                       />
                     </Col>
                   </Row>
@@ -475,15 +367,19 @@ uid: "255423d4-af62-4c7a-9c51-a5cb03e83f4e"
                 {error && <Alert color="danger"> {error} </Alert>}
               </CardHeader>
               <CardBody>
-                {data.length > 0 ? (
+                {this.state.loadSpinner ? (
+                  <div style={{ marginTop: "400px" }}>
+                    <ComponentSpinner />
+                  </div>
+                ) : comments.length > 0 ? (
                   <div className="comment-container">
-                    {data.map((x, ind) => (
+                    {comments.map((x, ind) => (
                       <Comment
                         data={x}
-                        key={x.uid}
+                        key={x.id}
                         reload={this.reloadData}
                         onError={this.setError}
-                        cid={ind}
+                        cid={x.id}
                         toggleAnswered={this.toggleAnswered}
                         handleDelete={this.handleDelete}
                       />
@@ -494,7 +390,24 @@ uid: "255423d4-af62-4c7a-9c51-a5cb03e83f4e"
                     موردی جهت نمایش وجود ندارد
                   </div>
                 )}
-                {this.renderPagination()}
+
+                {!this.state.loadSpinner && comments.length > 0 && (
+                  <ReactPaginate
+                    previousLabel={<ChevronLeft size="15" />}
+                    nextLabel={<ChevronRight size="15" />}
+                    breakLabel={"..."}
+                    breakClassName={"break-me"}
+                    pageCount={Math.ceil(this.commentsCount() / pageSize)}
+                    marginPagesDisplayed={1}
+                    pageRangeDisplayed={2}
+                    containerClassName={
+                      "vx-pagination icon-pagination pagination-center mt-3"
+                    }
+                    activeClassName={"active"}
+                    onPageChange={this.pageChanged}
+                    forcePage={this.state.currentPage}
+                  />
+                )}
               </CardBody>
             </Card>
           </Col>
