@@ -19,6 +19,10 @@ import ReactPaginate from "react-paginate";
 import "../../assets/scss/plugins/extensions/react-paginate.scss";
 import reservesList from "./fakeDataGenerator";
 import SweetAlert from "react-bootstrap-sweetalert";
+import axios from "axios";
+import urlDomain from "../../utility/urlDomain";
+import isAuthenticated from "../../utility/authenticated";
+
 const ActionsComponent = (props) => {
   return (
     <div className="data-list-action">
@@ -38,34 +42,19 @@ const ActionsComponent = (props) => {
           }}
         />
       </span>
-      <UncontrolledTooltip
-        placement="top"
-        target={`delete-icon-${props.row.id}`}
-      >
-        حذف
-      </UncontrolledTooltip>
-      <span id={`delete-icon-${props.row.id}`}>
-        <Trash
-          onMouseOver={(e) => {
-            e.currentTarget.style.color = "red";
-          }}
-          onMouseOut={(e) => (e.currentTarget.style.color = null)}
-          className="cursor-pointer"
-          size={20}
-          onClick={() => {
-            // props.deleteRow(props.row);
-          }}
-        />
-      </span>
     </div>
   );
 };
 class TableNotif extends React.Component {
   state = {
+    title:"",
+    text:"",
+    type:2,
+    time:"",
     columns: [
       {
         // center: true,
-        name: "زمان شروع",
+        name: "تاریخ",
         selector: "startTime",
         sortable: true,
         cell: (row) => (
@@ -125,6 +114,21 @@ class TableNotif extends React.Component {
       [state]: value,
     });
   };
+  async componentDidMount ()
+  {
+    let authenticated = await isAuthenticated();
+    if (!authenticated) history.push("/login");
+    let token = localStorage.getItem("access");
+    token = `Bearer ${token}`;
+    try {
+      let response = await axios.get(`${urlDomain}/notification/employee/get-notifications`, {
+        headers: { Authorization: token },
+      });
+      this.setState({ title: response.data.title,text:response.data.text,type:response.data.type,time:response.data.created_at});
+    } catch (e) {
+      // this.setState({ loadSpinner: false });
+    }
+  }
   deleteReserve = () => {
     history.push("/my-reservation");
   };
