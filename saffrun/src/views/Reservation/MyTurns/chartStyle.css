@@ -1,0 +1,10 @@
+@media screen and (max-width: 1000px) {
+  .apexcharts-xaxis-label {
+    font-size: 10px !important;
+    /* transform: none !important; */
+  }
+}
+
+.apexcharts-toolbar{
+  z-index: 2;
+}
