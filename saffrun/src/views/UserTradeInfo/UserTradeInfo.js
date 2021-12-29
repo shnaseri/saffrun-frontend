@@ -56,7 +56,7 @@ import urlDomain from "../../utility/urlDomain";
 import sliderImage1 from "../../assets/img/slider/03.jpg";
 import sliderImage2 from "../../assets/img/slider/04.jpg";
 import sliderImage3 from "../../assets/img/slider/05.jpg";
-import Table from "./TreadeInfoTable";
+import DataTableExpandableRows from "./TreadeInfoTable";
 class TreadeInfo extends React.Component {
   state = {
     collapse: false,
@@ -473,7 +473,7 @@ class TreadeInfo extends React.Component {
             <Card>
               <CardHeader>
                 <CardBody>
-                  <Table />
+                  <DataTableExpandableRows />
                 </CardBody>
               </CardHeader>
             </Card>
