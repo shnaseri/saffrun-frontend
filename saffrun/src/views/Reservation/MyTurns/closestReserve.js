@@ -23,7 +23,6 @@ import {
   Layers,
   MapPin,
   UserPlus,
-  
   Calendar,
 } from "react-feather";
 
@@ -76,6 +75,25 @@ class ClosestReserve extends Component {
     let splitted = hourStr.split(":");
     return `${splitted[0]}:${splitted[1]}`;
   };
+  differenceTwoTime = (hourStr1, hourStr2) => {
+    let splitted1 = hourStr1.split(":");
+    let splitted2 = hourStr2.split(":");
+    let date1 = new Date(
+      2000,
+      1,
+      1,
+      parseInt(splitted1[0]),
+      parseInt(splitted1[1])
+    );
+    let date2 = new Date(
+      2000,
+      1,
+      1,
+      parseInt(splitted2[0]),
+      parseInt(splitted2[1])
+    );
+    return (date2 - date1) / (1000 * 60);
+  };
   render() {
     let { curIdx, nearestFive, currentTimer } = this.props;
     return (
@@ -100,7 +118,10 @@ class ClosestReserve extends Component {
           <div style={{ height: "30px " }}></div>
           <Row>
             <Col lg="4">
-              <ul style={{borderRight : "none"}} className="activity-timeline timeline-left list-unstyled">
+              <ul
+                style={{ borderRight: "none" }}
+                className="activity-timeline timeline-left list-unstyled"
+              >
                 <li>
                   <div className="timeline-icon bg-info">
                     <Calendar size={16} />
@@ -121,16 +142,23 @@ class ClosestReserve extends Component {
                   </div>
                   <div className="timeline-info">
                     <p className="font-weight-bold mb-0">ظرفیت</p>
-                    <span className="font-small-3">۶/۱۰</span>
+                    <span className="font-small-3">
+                      {nearestFive[curIdx].participants.length}/
+                      {nearestFive[curIdx].capacity}
+                    </span>
                   </div>
                   <small className="text-muted">
-                    ۶ ظرفیت از ۱۰ ظرفیت شما پر شده‌است
+                    {nearestFive[curIdx].participants.length} ظرفیت از{" "}
+                    {nearestFive[curIdx].capacity} ظرفیت شما پر شده‌است
                   </small>
                 </li>
               </ul>
             </Col>
             <Col lg="4">
-              <ul style={{borderRight : "none"}} className="activity-timeline timeline-left list-unstyled">
+              <ul
+                style={{ borderRight: "none" }}
+                className="activity-timeline timeline-left list-unstyled"
+              >
                 <li>
                   <div className="timeline-icon bg-danger">
                     <MapPin size={16} />
@@ -138,7 +166,7 @@ class ClosestReserve extends Component {
                   <div className="timeline-info">
                     <p className="font-weight-bold mb-0">لوکاتیون</p>
                     <span className="font-small-3">
-                      تهران ، میرداماد ، خیابان پاسداران ، کوچه شهید دارابی
+                      {nearestFive[curIdx].location}
                     </span>
                   </div>
                   <small className="text-muted">
@@ -153,11 +181,9 @@ class ClosestReserve extends Component {
                     <p className="font-weight-bold mb-0">شرکت کنندگان </p>
                     <span className="font-small-3">
                       <ul className="list-unstyled users-list m-0 d-flex">
-                        {this.props
-                          .participantsGenreator()
-                          .slice(0, 5)
-                          .map((R) => (
-                            <li key={"sos"} className="avatar pull-up">
+                        {nearestFive[curIdx].participants ? (
+                          nearestFive[curIdx].participants.map((R, idx) => (
+                            <li key={idx} className="avatar pull-up">
                               <img
                                 src={R["imgUrl"]}
                                 alt="avatar"
@@ -172,7 +198,10 @@ class ClosestReserve extends Component {
                                 {R["name"]}
                               </UncontrolledTooltip>
                             </li>
-                          ))}
+                          ))
+                        ) : (
+                          <React.Fragment></React.Fragment>
+                        )}
                       </ul>
                     </span>
                   </div>
@@ -181,14 +210,23 @@ class ClosestReserve extends Component {
               </ul>
             </Col>
             <Col lg="4">
-              <ul style={{borderRight : "none"}} className="activity-timeline timeline-left list-unstyled">
+              <ul
+                style={{ borderRight: "none" }}
+                className="activity-timeline timeline-left list-unstyled"
+              >
                 <li>
                   <div className="timeline-icon bg-gradient-success">
                     <Clock size={16} />
                   </div>
                   <div className="timeline-info">
                     <p className="font-weight-bold mb-0">طول نوبت</p>
-                    <span className="font-small-3">۲۰ دقیقه</span>
+                    <span className="font-small-3">
+                      {this.differenceTwoTime(
+                        nearestFive[curIdx].start_time,
+                        nearestFive[curIdx].end_time
+                      )}{" "}
+                      دقیقه
+                    </span>
                   </div>
                   <small className="text-muted">مدت زمان نوبت شما</small>
                 </li>
@@ -204,7 +242,7 @@ class ClosestReserve extends Component {
                       <p className="font-weight-bold mb-0">نوبت بعدی</p>
                       <span className="font-small-3">
                         {this.dayOfWeek(nearestFive[curIdx + 1].date)} -{" "}
-                        {this.correctHour(nearestFive[curIdx + 1].next_reserve)}
+                        {this.correctHour(nearestFive[curIdx + 1].start_time)}
                       </span>
                     </div>
                     <small className="text-muted">

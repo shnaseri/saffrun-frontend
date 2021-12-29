@@ -29,27 +29,23 @@ class FutureTable extends Component {
       },
       {
         name: "نوبت‌های پرشده",
-        selector: "random_fill",
+        selector: "fill",
         center: true,
         sortable: true,
         cell: (row) => (
           <React.Fragment>
             <UncontrolledTooltip
-              style={{
-                backgroundColor: "rgb(245, 199, 100)",
-                color: "black",
-              }}
               placement="top"
               target={this.genereateUniqueID(row.date, "fill")}
             >
-              {row.random_fill} نوبت از تعداد کل {row.available} نوبت شما
-              پر‌شده‌است
+              {row.fill} نوبت از تعداد کل {row.fill + row.available} نوبت شما پر
+              شده‌است.
             </UncontrolledTooltip>
             <p
               id={this.genereateUniqueID(row.date, "fill")}
               className="text-bold-500 text-truncate mb-0"
             >
-              {row.random_fill}
+              {row.fill}
             </p>
           </React.Fragment>
         ),
@@ -60,21 +56,17 @@ class FutureTable extends Component {
         cell: (row) => (
           <React.Fragment>
             <UncontrolledTooltip
-              style={{
-                backgroundColor: "rgb(245, 199, 100)",
-                color: "black",
-              }}
               placement="top"
               target={this.genereateUniqueID(row.date, "percentage")}
             >
-              {row.random}٪ از نوبت های شما پرشده‌است
+              {this.calculateFillPercentage(row)}٪ از نوبت های شما پرشده‌است
             </UncontrolledTooltip>
             <Badge
               id={this.genereateUniqueID(row.date, "percentage")}
-              color={this.defineColor(row.random)}
+              color={this.defineColor(this.calculateFillPercentage(row))}
               pill
             >
-              {row.random}%
+              {this.calculateFillPercentage(row)}%
             </Badge>
           </React.Fragment>
         ),
@@ -109,6 +101,12 @@ class FutureTable extends Component {
     ],
     loadSpinner: false,
   };
+  calculateFillPercentage = (row) => {
+    return Math.floor(
+      (row.fill / (row.available + row.fill)) * 100
+    );
+  };
+
   genereateUniqueID = (date, str) => {
     return `${str}ـ${date.split("-").join("")}`;
   };
@@ -125,8 +123,7 @@ class FutureTable extends Component {
     try {
       let splitted = hourStr.split(":");
       return `${splitted[0]}:${splitted[1]}`;
-    }
-    catch(e) {
+    } catch (e) {
       return "خالی";
     }
   };

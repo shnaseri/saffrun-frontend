@@ -26,6 +26,8 @@ import {
   UserPlus,
   Calendar,
 } from "react-feather";
+import { history } from "../../../history";
+import "./tooltipModal.css";
 
 class CurrentReserve extends Component {
   state = {
@@ -82,13 +84,17 @@ class CurrentReserve extends Component {
           <span style={{ lineHeight: "3" }}>
             نوبت کنونی شما در ساعت{" "}
             <mark>
-              <strong>{currentReserve.holdTime}</strong>
+              <strong>{this.correctHour(currentReserve.holdTime)}</strong>
             </mark>{" "}
-            شروع شده و با تعداد{" "}
+            با تعداد
             <mark>
-              <strong>12</strong>
+              <strong>{currentReserve.participants.length}</strong>
             </mark>{" "}
-            نفر شرکت‌کننده در حال برگزاری است.
+             شرکت‌کننده شروع‌شده و در ساعت
+            <mark>
+              <strong>{this.correctHour(currentReserve.endTime)}</strong>
+            </mark>{" "}
+            به اتمام می‌رسد.
           </span>
           <Button
             className="current-reserve bg-warning"
@@ -121,7 +127,10 @@ class CurrentReserve extends Component {
               نوبت کنونی
             </ModalHeader>
             <ModalBody>
-              <ul style={{borderRight : "none"}} className="activity-timeline timeline-left list-unstyled">
+              <ul
+                style={{ borderRight: "none" }}
+                className="activity-timeline timeline-left list-unstyled"
+              >
                 <li>
                   <div className="timeline-icon bg-info">
                     <Calendar size={16} />
@@ -134,7 +143,7 @@ class CurrentReserve extends Component {
                   </div>
                   <small className="text-muted">
                     {this.dayOfWeek(currentReserve.holdDate)} -
-                    {currentReserve.holdTime}
+                    {this.correctHour(currentReserve.holdTime)}
                   </small>
                 </li>
                 <li>
@@ -143,12 +152,14 @@ class CurrentReserve extends Component {
                   </div>
                   <div className="timeline-info">
                     <p className="font-weight-bold mb-0">ظرفیت</p>
+
                     <span className="font-small-3">
-                      {currentReserve.capacity}
+                      {currentReserve.allCap}
                     </span>
                   </div>
                   <small className="text-muted">
-                    ۶ ظرفیت از ۱۰ ظرفیت شما پر شده‌است
+                    {currentReserve.participants.length} ظرفیت از{" "}
+                    {currentReserve.allCap} ظرفیت شما پر شده‌است
                   </small>
                 </li>
                 <li>
@@ -173,23 +184,26 @@ class CurrentReserve extends Component {
                     <p className="font-weight-bold mb-0">شرکت کنندگان </p>
                     <span className="font-small-3">
                       <ul className="list-unstyled users-list m-0 d-flex">
-                        {currentReserve.participants.slice(0, 5).map((R , index) => (
-                          <li key={index} className="avatar pull-up">
-                            <img
-                              src={R["imgUrl"]}
-                              alt="avatar"
-                              height="30"
-                              width="30"
-                              id={R["name"]}
-                            />
-                            <UncontrolledTooltip
-                              placement="bottom"
-                              target={R["name"]}
-                            >
-                              {R["name"]}
-                            </UncontrolledTooltip>
-                          </li>
-                        ))}
+                        {currentReserve.participants
+                          .slice(0, 5)
+                          .map((R, index) => (
+                            <li key={index} className="avatar pull-up">
+                              <span></span>
+                              <img
+                                src={R["imgUrl"]}
+                                alt="avatar"
+                                height="30"
+                                width="30"
+                                id={R["name"]}
+                              />
+                              <UncontrolledTooltip
+                                placement="bottom"
+                                target={R["name"]}
+                              >
+                                {R["name"]}
+                              </UncontrolledTooltip>
+                            </li>
+                          ))}
                       </ul>
                     </span>
                   </div>
@@ -200,7 +214,9 @@ class CurrentReserve extends Component {
             <ModalFooter>
               <Button
                 color="primary"
-                // onClick={}
+                onClick={() => {
+                  history.push(`reserve-detail/${currentReserve.date}`);
+                }}
               >
                 مشاهده جزئیات
               </Button>
