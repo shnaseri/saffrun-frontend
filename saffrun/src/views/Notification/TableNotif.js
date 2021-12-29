@@ -13,7 +13,7 @@ import {
 } from "reactstrap";
 import DataTable from "react-data-table-component";
 import { history } from "../../history";
-import { ChevronLeft, ChevronRight, Edit, Trash, Users } from "react-feather";
+import { ChevronLeft, ChevronRight, Edit, Trash, Users ,Eye} from "react-feather";
 // import Pagination from "../../../components/@vuexy/pagination/Pagination";
 import ReactPaginate from "react-paginate";
 import "../../assets/scss/plugins/extensions/react-paginate.scss";
@@ -27,10 +27,10 @@ const ActionsComponent = (props) => {
   return (
     <div className="data-list-action">
       <UncontrolledTooltip placement="top" target={`edit-icon-${props.row.id}`}>
-        شرکت کنندگان
+        جزئیات
       </UncontrolledTooltip>
       <span id={`edit-icon-${props.row.id}`}>
-        <Users
+        <Eye
           onMouseOver={(e) => {
             e.currentTarget.style.color = "orange";
           }}
@@ -47,10 +47,7 @@ const ActionsComponent = (props) => {
 };
 class TableNotif extends React.Component {
   state = {
-    title:"",
-    text:"",
-    type:2,
-    time:"",
+    data:[],
     columns: [
       {
         // center: true,
@@ -59,7 +56,7 @@ class TableNotif extends React.Component {
         sortable: true,
         cell: (row) => (
           <React.Fragment>
-            <p className="text-bold-500 mb-0">{row.startTime}</p>
+            <p className="text-bold-500 mb-0"></p>
           </React.Fragment>
         ),
       },
@@ -124,9 +121,8 @@ class TableNotif extends React.Component {
       let response = await axios.get(`${urlDomain}/notification/employee/get-notifications`, {
         headers: { Authorization: token },
       });
-      this.setState({ title: response.data.title,text:response.data.text,type:response.data.type,time:response.data.created_at});
+      this.setState();
     } catch (e) {
-      // this.setState({ loadSpinner: false });
     }
   }
   deleteReserve = () => {
