@@ -96,19 +96,19 @@ class SupportTracker extends React.Component {
             <div  className="chart-info d-flex justify-content-sm-between">
             <div className="text-center">
               <p className="mb-50"> کل رویداد ها</p>
-              <span className="font-large-1">29</span>
+    <span className="font-large-1">{this.props.allEvents}</span>
             </div>
             <div className="text-center">
               <p className="mb-50">رویداد های فعال</p>
-              <span className="font-large-1">29</span>
+              <span className="font-large-1">{this.props.allEventsActive}</span>
             </div>
             <div className="text-center">
               <p className="mb-50"> کل نوبت ها</p>
-              <span className="font-large-1">63</span>
+              <span className="font-large-1">{this.props.allReservs}</span>
             </div>
             <div className="text-center">
               <p className="mb-50">نوبت های گرفته شده</p>
-              <span className="font-large-1">25</span>
+              <span className="font-large-1">{this.props.allReservsActive}</span>
             </div>
           </div>
             </Col>

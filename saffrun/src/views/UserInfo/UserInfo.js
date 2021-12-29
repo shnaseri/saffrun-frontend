@@ -67,13 +67,13 @@ class UserEdit extends React.Component {
     }
   };
   updateImg = (id) => {
-    let avatar = { image_id: id };
-    let userData = { ...this.state.userData, avatar };
+    
+    let userData = { ...this.state.userData, image_id:id };
     console.log(userData)
     this.setState({ userData });
   };
   delImg = () => {
-    let userData = { ...this.state.userData, avatar: null };
+    let userData = { ...this.state.userData };
     this.setState({ userData });
     console.log(this.state.userData);
   };
