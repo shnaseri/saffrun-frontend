@@ -30,12 +30,15 @@ import {
 import Radio from "../../components/@vuexy/radio/RadioVuexy";
 import axios from "axios";
 import urlDomain from "../../utility/urlDomain";
+import { history } from "../../history";
+import isAuthenticated from "../../utility/authenticated";
 
 class FormNotif extends React.Component {
   state = {
     answer: "",
     defalert:false,
     title:"",
+    exampleRadio:2,
   };
 
   handleAlert = (state, value) => {
@@ -44,6 +47,21 @@ class FormNotif extends React.Component {
     });
   };
 
+  async componentDidMount ()
+  {
+    let authenticated = await isAuthenticated();
+    if (!authenticated) history.push("/login");
+    let token = localStorage.getItem("access");
+    token = `Bearer ${token}`;
+    try {
+      let response = await axios.get(`${urlDomain}/profile/user/`, {
+        headers: { Authorization: token },
+      });
+      this.setState({ username: response.data.username,image:response.data.avatar["image"]});
+    } catch (e) {
+      // this.setState({ loadSpinner: false });
+    }
+  }
   sendNotif = async ()=>
   {
     var token = "Bearer " + localStorage.getItem("access");
@@ -52,8 +70,8 @@ class FormNotif extends React.Component {
     };
     try {
       let response = await axios.post(
-        `${urlDomain}/event/add/`,
-        { ...this.eventObject() },
+        `${urlDomain}/notification/send-notification/`,
+        { title: this.state.title,text:this.state.answer , type: this.state.exampleRadio , url: "https://www.google.com"},
         { headers }
       );
       return response;
@@ -85,6 +103,7 @@ class FormNotif extends React.Component {
                       label="همه"
                       defaultChecked={true}
                       name="exampleRadio"
+                      onChange={() => this.setState({exampleRadio:2})}
                     />
                   </Col>
                   <Col lg="4" xs="5" md="5">
@@ -93,6 +112,7 @@ class FormNotif extends React.Component {
                       label="مخاطبان"
                       defaultChecked={false}
                       name="exampleRadio"
+                      onChange={() => this.setState({exampleRadio:1})}
                     />
                   </Col>
                 </Row>
@@ -125,7 +145,7 @@ class FormNotif extends React.Component {
                 onChange={(e) => this.setState({ answer: e.target.value })}
               />
             </FormGroup>
-            <Button  onClick={() =>  this.handleAlert("defalert", true)} className="btn-block shadow" color="primary">ارسال</Button>
+            <Button  onClick={() =>  this.handleAlert("defalert",true) } className="btn-block shadow" color="primary">ارسال</Button>
           </CardBody>
         </Card>
         <SweetAlert
@@ -141,6 +161,7 @@ class FormNotif extends React.Component {
           onConfirm={() => {
             
             this.handleAlert("defalert", false);
+            this.sendNotif();
           }}
           onCancel={() => {
             this.handleAlert("defalert", false);
