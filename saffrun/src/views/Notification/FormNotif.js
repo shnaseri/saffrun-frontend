@@ -66,7 +66,7 @@ class FormNotif extends React.Component {
   render() {
     return (
       <React.Fragment>
-        <Card>
+        <Card style={{height:"477px"}}>
           <CardHeader>
             <CardTitle>ایجاد اعلان</CardTitle>
           </CardHeader>
@@ -75,9 +75,12 @@ class FormNotif extends React.Component {
             <div>
               <Row className="d-flex align-items-center">
                 <Col lg="4" xs="2" md="3" >
+                  <br></br>
+
                   <strong>افراد</strong>
                 </Col>
                   <Col lg="4" xs="5" md="4">
+                  <br></br>
                     <Radio
                       label="همه"
                       defaultChecked={true}
@@ -85,6 +88,7 @@ class FormNotif extends React.Component {
                     />
                   </Col>
                   <Col lg="4" xs="5" md="5">
+                  <br></br>
                     <Radio
                       label="مخاطبان"
                       defaultChecked={false}
@@ -96,6 +100,7 @@ class FormNotif extends React.Component {
             </div>
             <FormGroup style={{marginTop:"10px"}}>
                 <Label>
+                <br></br>
                   <strong>
                   عنوان اعلان
                   </strong>
