@@ -187,7 +187,7 @@ const data = [
 
 const ExpandableTable = ({ data }) => {
   return (
-    <Table responsive striped>
+    <Table className="border border-4 border-secondary rounded-2" responsive striped>
       <thead>
         <tr>
           <th>نام و نام خانوادگی</th>
@@ -227,8 +227,9 @@ class DataTableExpandableRows extends React.Component {
             columns={columns}
             noHeader
             expandableRows
+            
             expandOnRowClicked
-            expandableRowsComponent={<ExpandableTable />}
+            expandableRowsComponent={<ExpandableTable  />}
           />
         </CardBody>
       </Card>
