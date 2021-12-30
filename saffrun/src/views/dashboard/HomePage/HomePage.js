@@ -15,6 +15,7 @@ import { history } from "./../../../history";
 import isAuthenticated from "./../../../utility/authenticated";
 import axios from "axios";
 import urlDomain from "./../../../utility/urlDomain";
+import ComponentSpinner from './../../../components/@vuexy/spinner/Loading-spinner';
 
 let $primary = "#7367F0",
   $danger = "#EA5455",
@@ -49,7 +50,7 @@ class Home extends React.Component {
     }
   }
   render() {
-    return (
+    return this.state.loadSpinner ? (<ComponentSpinner/>) :(
       <React.Fragment>
         <Row className="match-height">
           <Col lg="4" md="6" sm="12">
@@ -112,15 +113,15 @@ class Home extends React.Component {
                             </span>
                           </div>
                           <small className="">
-                            {new Date(
-                              comment["created_at"]
-                            ).toLocaleDateString("fa-IR")}
+                            {new Date(comment["created_at"]).toLocaleDateString(
+                              "fa-IR"
+                            )}
                           </small>
                           {"  "}
                           <small className="">
-                            {    new Date(
-                              comment["created_at"]
-                            ).toLocaleTimeString('en-GB')}
+                            {new Date(comment["created_at"]).toLocaleTimeString(
+                              "en-GB"
+                            )}
                           </small>
                         </li>
                       );
@@ -145,10 +146,12 @@ class Home extends React.Component {
               primary={$primary}
               danger={$danger}
               white={$white}
-              allEvents ={this.state.homeData["number_of_events"]}
-              allEventsActive ={this.state.homeData["number_of_active_events"]}
-              allReservs ={this.state.homeData["number_of_all_reserves"]}
-              allReservsActive ={this.state.homeData["number_of_given_reserves"]}
+              allEvents={this.state.homeData["number_of_events"]}
+              allEventsActive={this.state.homeData["number_of_active_events"]}
+              allReservs={this.state.homeData["number_of_all_reserves"]}
+              allReservsActive={this.state.homeData["number_of_given_reserves"]}
+              rate={this.state.homeData["rate"]}
+              numberUserDate={this.state.homeData["number_user_rate"]}
             />
           </Col>
         </Row>
@@ -161,60 +164,7 @@ class Home extends React.Component {
               className="h-250"
               cardName="5 نوبت نزدیک"
               header={header}
-              tBody={[
-                {
-                  Recipient: [
-                    { name: "Ali", imgUrl: avatar1 },
-                    { name: "Mmd", imgUrl: avatar2 },
-                  ],
-                  Place: "تهران",
-                  Time: "18:00",
-                  Date: "25/02/1400",
-                  Duration: "20",
-                },
-                {
-                  Recipient: [
-                    { name: "Ali", imgUrl: avatar1 },
-                    { name: "Mmd", imgUrl: avatar2 },
-                  ],
-                  Place: "سمنان",
-                  Time: "21:00",
-                  Date: "14/02/1400",
-                  Duration: "120",
-                },
-                {
-                  Recipient: [
-                    { name: "Ali", imgUrl: avatar1 },
-                    { name: "Mmd", imgUrl: avatar2 },
-                  ],
-                  Place: "تهران",
-                  Time: "18:00",
-                  Date: "25/02/1400",
-                  Duration: "20",
-                },
-                {
-                  Recipient: [
-                    { name: "Ali", imgUrl: avatar1 },
-                    { name: "Mmd", imgUrl: avatar2 },
-                    { name: "Ali", imgUrl: avatar1 },
-                    { name: "Mmd", imgUrl: avatar2 },
-                  ],
-                  Place: "کرمان",
-                  Time: "18:00",
-                  Date: "25/02/1400",
-                  Duration: "20",
-                },
-                {
-                  Recipient: [
-                    { name: "Ali", imgUrl: avatar1 },
-                    { name: "Mmd", imgUrl: avatar2 },
-                  ],
-                  Place: "زنجان",
-                  Time: "19:00",
-                  Date: "25/12/1400",
-                  Duration: "200",
-                },
-              ]}
+              tBody={this.state.homeData["last_given_reserves"]}
             />
           </Col>
         </Row>
@@ -230,53 +180,7 @@ class Home extends React.Component {
                 "مدت",
                 "تعداد شرکت کننده",
               ]}
-              tBody={[
-                {
-                  eventName: "آمورش شنا",
-                  Recipient: [],
-                  Place: "تهران",
-                  Time: "18:00",
-                  Date: "25/02/1400",
-                  Duration: "20",
-                  Participant: "4",
-                },
-                {
-                  eventName: "مسابقه کتاب خوانی",
-                  Recipient: [],
-                  Place: "تهران",
-                  Time: "18:00",
-                  Date: "25/02/1400",
-                  Duration: "20",
-                  Participant: "25",
-                },
-                {
-                  eventName: "همایش دوستی",
-                  Recipient: [],
-                  Place: "شیراز",
-                  Time: "18:00",
-                  Date: "25/02/1400",
-                  Duration: "20",
-                  Participant: "44",
-                },
-                {
-                  eventName: "مافیا",
-                  Recipient: [],
-                  Place: "کاشان",
-                  Time: "22:00",
-                  Date: "25/02/1400",
-                  Duration: "90",
-                  Participant: "10",
-                },
-                {
-                  eventName: "آمورش شنا",
-                  Recipient: [],
-                  Place: "تهران",
-                  Time: "18:00",
-                  Date: "25/02/1400",
-                  Duration: "20",
-                  Participant: "88",
-                },
-              ]}
+              tBody={this.state.homeData["last_events"]}
             />
           </Col>
           <Col lg="7" md="12" className="text-center ">
