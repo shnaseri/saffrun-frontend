@@ -59,6 +59,40 @@ const data = [
       },
     ],
   },
+  {
+    date: "1400/12/25",
+
+    events: "5",
+    reserves: "8",
+    totalPrice: "8500000",
+    details: [
+      {
+        name: "حسن کریمی",
+        time: "12:50",
+        price: "250000",
+        type: "نوبت",
+      },
+      {
+        name: "حسن کریمی",
+        time: "12:50",
+        price: "250000",
+        type: "نوبت",
+      },
+      {
+        name: "حسن کریمی",
+        time: "12:50",
+        price: "250000",
+        type: "نوبت",
+      },
+      {
+        name: "حسن کریمی",
+        time: "12:50",
+        price: "250000",
+        type: "نوبت",
+      },
+    ],
+  },
+  
   // {
   //   date: "14-1096446",
   //   name: "Mireielle Quick",

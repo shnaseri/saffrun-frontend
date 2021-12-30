@@ -352,7 +352,7 @@ class TreadeInfo extends React.Component {
   render() {
     return (
       <React.Fragment>
-        <Row className="app-user-list">
+        {/* <Row className="app-user-list">
           <Col sm="12">
             <Card className={classnames("card-action card-reload", {})}>
               <CardHeader
@@ -467,7 +467,7 @@ class TreadeInfo extends React.Component {
               </Collapse>
             </Card>
           </Col>
-        </Row>
+        </Row> */}
         <Row>
           <Col>
             <Card>
