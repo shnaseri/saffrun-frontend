@@ -22,6 +22,9 @@ import userImg from "../../assets/img/profile/Generic-profile-picture.jpg.webp";
 import Checkbox from "../../components/@vuexy/checkbox/CheckboxesVuexy";
 import { Check, Lock } from "react-feather";
 import axios from "axios";
+import { history } from "../../history";
+import isAuthenticated from "../../utility/authenticated";
+import urlDomain from "../../utility/urlDomain";
 // import { Avatar } from 'react-native-elements';
 
 class UserAccountTab extends React.Component {
@@ -31,13 +34,30 @@ class UserAccountTab extends React.Component {
     this.toggle = this.toggle.bind(this);
     this.state = {
       dropdownOpen: false,
+      currPass: "",
+      newPass: "",
+      repPass: "",
     };
   }
-  state = {
-    currPass: "",
-    newPass: "",
-    repPass: "",
+
+  postPassword = async () => {
+    var token = "Bearer " + localStorage.getItem("access");
+    var headers = {
+      Authorization: token,
+    };
+    try {
+      let response = await axios.post(
+        `${urlDomain}/auth/change_password/`,
+        {old_password:this.state.currPass , new_password: this.state.newPass},
+        { headers }
+      );
+      return response;
+    } catch (e) {
+      console.log(e);
+      return false;
+    }
   };
+
   toggle() {
     this.setState((prevState) => ({
       dropdownOpen: !prevState.dropdownOpen,
@@ -221,6 +241,7 @@ class UserAccountTab extends React.Component {
                           type="password"
                           value={this.state.currPass}
                           id="password"
+                          required
                           placeholder="رمز قبلی"
                           onChange={(e) =>
                             this.setState({ currPass: e.target.value })
@@ -236,6 +257,7 @@ class UserAccountTab extends React.Component {
                           value={this.state.newPass}
                           name="newpassword"
                           id="newpassword"
+                          required
                           placeholder="رمز جدید"
                           onChange={(e) =>
                             this.setState({ newPass: e.target.value })
@@ -252,7 +274,8 @@ class UserAccountTab extends React.Component {
                           value={this.state.repPass}
                           id="RepPass"
                           placeholder="تکرار رمز"
-                          invalid={this.state.repPass !== this.state.newPass}
+                          required
+                          invalid={this.state.repPass !== this.state.newPass  }
                           onChange={(e) =>
                             this.setState({ repPass: e.target.value })
                           }
@@ -271,8 +294,9 @@ class UserAccountTab extends React.Component {
                     >
                       <Button
                         className="mr-1"
-                        color="primary"
-                        // onClick={this.props.postData}
+                        color="primary" 
+                        disabled={this.state.repPass !== this.state.newPass || this.state.newPass.length ===0 }
+                        onClick={() => this.postPassword()}
                         style={{ margin: 20 }}
                       >
                         تغییر رمز
