@@ -17,7 +17,9 @@ import {
 } from "reactstrap";
 import SweetAlert from "react-bootstrap-sweetalert";
 import Countdown from "react-countdown-now";
-import { toast } from "react-toastify";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import "../../assets/scss/plugins/extensions/toastr.scss";
 import {
   Plus,
   AlertCircle,
@@ -74,9 +76,14 @@ class FormNotif extends React.Component {
         { title: this.state.title,text:this.state.answer , type: this.state.exampleRadio , url: "https://www.google.com"},
         { headers }
       );
+      toast.success("با موفقیت ارسال شد", {
+        position: toast.POSITION.TOP_CENTER,
+      });
       return response;
     } catch (e) {
-      console.log(e);
+      toast.error("ارسال نشد", {
+        position: toast.POSITION.TOP_CENTER,
+      });
       return false;
     }
   };
@@ -84,6 +91,7 @@ class FormNotif extends React.Component {
   render() {
     return (
       <React.Fragment>
+         <ToastContainer />
         <Card style={{height:"477px"}}>
           <CardHeader>
             <CardTitle>ایجاد اعلان</CardTitle>
@@ -128,7 +136,9 @@ class FormNotif extends React.Component {
                 <Input
                   type="text"
                   value={this.state.title}
-                  maxLength={40}
+                  maxLength={30}
+                  placeholder="عنوان اعلان"
+                  required
                   onChange={(e) => this.setState({ title: e.target.value })}
                 />
               </FormGroup>
@@ -141,11 +151,12 @@ class FormNotif extends React.Component {
                 type="textarea"
                 rows="5"
                 placeholder="توضیحات درمورد اعلان"
-                maxLength={100}
+                maxLength={500}
+                required
                 onChange={(e) => this.setState({ answer: e.target.value })}
               />
             </FormGroup>
-            <Button  onClick={() =>  this.handleAlert("defalert",true) } className="btn-block shadow" color="primary">ارسال</Button>
+            <Button disabled={this.state.answer.length ===0 || this.state.title.length ===0}  onClick={() =>  this.handleAlert("defalert",true) } className="btn-block shadow" color="primary">ارسال</Button>
           </CardBody>
         </Card>
         <SweetAlert
