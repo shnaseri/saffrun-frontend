@@ -31,7 +31,7 @@ class ForgotPassword extends React.Component {
   postUsername = async () => {
     try {
       let response = await axios.post(
-        `${urlDomain}/auth/change_password/`,
+        `${urlDomain}/auth/forgot_password/`,
         { username :this.state.username }
         
       )
