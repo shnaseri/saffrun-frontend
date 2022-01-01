@@ -25,8 +25,8 @@ import axios from "axios";
 import { history } from "../../history";
 import isAuthenticated from "../../utility/authenticated";
 import urlDomain from "../../utility/urlDomain";
+import { toast } from "react-toastify";
 // import { Avatar } from 'react-native-elements';
-import urlDomain from "./../../utility/urlDomain";
 
 class UserAccountTab extends React.Component {
   constructor(props) {
@@ -49,12 +49,22 @@ class UserAccountTab extends React.Component {
     try {
       let response = await axios.post(
         `${urlDomain}/auth/change_password/`,
-        {old_password:this.state.currPass , new_password: this.state.newPass},
+        {
+          old_password: this.state.currPass,
+          new_password: this.state.newPass,
+          username: "admin",
+        },
         { headers }
       );
+      toast.success("رمز شما با موفقیت تغییر پیدا کرد", {
+        position: toast.POSITION.TOP_CENTER,
+      });
       return response;
     } catch (e) {
       console.log(e);
+      toast.error("عملیات با خطا روبرو شد.", {
+        position: toast.POSITION.TOP_CENTER,
+      });
       return false;
     }
   };
@@ -71,13 +81,16 @@ class UserAccountTab extends React.Component {
   };
   handleChange = (event) => {
     const fileUploaded = event.target.files[0];
-    this.setState({isUploadedImg:true ,uploadedUrl:URL.createObjectURL(fileUploaded) })
-    this.postImg(fileUploaded)
+    this.setState({
+      isUploadedImg: true,
+      uploadedUrl: URL.createObjectURL(fileUploaded),
+    });
+    this.postImg(fileUploaded);
     this.props.updateImg(URL.createObjectURL(fileUploaded));
     console.log(URL.createObjectURL(fileUploaded));
   };
 
-  postImg = async (file)=>{
+  postImg = async (file) => {
     try {
       var token = "Bearer " + localStorage.getItem("access");
       var headers = {
@@ -93,22 +106,22 @@ class UserAccountTab extends React.Component {
           headers,
         }
       );
-      this.props.updateImg(response.data.id)
+      this.props.updateImg(response.data.id);
     } catch (e) {
       console.log(e);
       return false;
     }
-  }
+  };
   handleDel = () => {
     this.props.delImg();
   };
 
   handleAvatar = () => {
-    if (this.props.userData["avatar"]["image"] ) {
-      return (
-        this.state.isUploadedImg? this.state.uploadedUrl : "http://127.0.0.1:8000" +
-        this.props.userData["avatar"]["image"]["thumbnail"]
-      );
+    if (this.props.userData["avatar"]["image"]) {
+      return this.state.isUploadedImg
+        ? this.state.uploadedUrl
+        : "http://127.0.0.1:8000" +
+            this.props.userData["avatar"]["image"]["thumbnail"];
     } else {
       return userImg;
     }
@@ -133,15 +146,15 @@ class UserAccountTab extends React.Component {
                 direction="right"
                 isOpen={this.state.dropdownOpen}
                 toggle={this.toggle}
-                style={{ marginTop: 58,marginRight:-20 }}
+                style={{ marginTop: 58, marginRight: -20 }}
               >
-                <DropdownToggle 
+                <DropdownToggle
                   style={{ padding: 3, backgroundColor: "#fff", float: "left" }}
                   caret
                 >
                   <Edit style={{ right: 0, borderRadius: "5px" }} />
                 </DropdownToggle>
-                <DropdownMenu style={{marginRight:35}} >
+                <DropdownMenu style={{ marginRight: 35 }}>
                   <DropdownItem onClick={this.handleClick}>تغییر</DropdownItem>
                   <DropdownItem divider />
                   <DropdownItem onClick={this.handleDel}>حذف</DropdownItem>
@@ -320,7 +333,7 @@ class UserAccountTab extends React.Component {
                           id="RepPass"
                           placeholder="تکرار رمز"
                           required
-                          invalid={this.state.repPass !== this.state.newPass  }
+                          invalid={this.state.repPass !== this.state.newPass}
                           onChange={(e) =>
                             this.setState({ repPass: e.target.value })
                           }
@@ -339,8 +352,11 @@ class UserAccountTab extends React.Component {
                     >
                       <Button
                         className="mr-1"
-                        color="primary" 
-                        disabled={this.state.repPass !== this.state.newPass || this.state.newPass.length ===0 }
+                        color="primary"
+                        disabled={
+                          this.state.repPass !== this.state.newPass ||
+                          this.state.newPass.length === 0
+                        }
                         onClick={() => this.postPassword()}
                         style={{ margin: 20 }}
                       >
