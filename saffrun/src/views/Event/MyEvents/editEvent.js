@@ -22,14 +22,14 @@ import { Check } from "react-feather";
 import Select from "react-select";
 import DropzoneBasic from "../../../components/@vuexy/dropZone/dropZone";
 import { DatePicker, RangeDatePicker } from "jalali-react-datepicker";
-import "./input-datepicker.css";
+import "../EventCreation/input-datepicker.css";
 import "../../../assets/scss/plugins/extensions/sweet-alerts.scss";
 import axios from "axios";
 import theme from "../../../assets/datePickerTheme/theme";
 import { history } from "../../../history";
 import isAuthenticated from "../../../utility/authenticated";
 
-class EventCreation extends React.Component {
+class EditEvent extends React.Component {
   state = {
     title: "",
     jobCategory: "",
@@ -51,6 +51,7 @@ class EventCreation extends React.Component {
     files: [],
     successAlert: false,
     errorAlert: false,
+    loadSpinner : true,
   };
   async componentDidMount() {
     let authenticated = await isAuthenticated();
@@ -525,4 +526,4 @@ class EventCreation extends React.Component {
     );
   }
 }
-export default EventCreation;
+export default EditEvent;

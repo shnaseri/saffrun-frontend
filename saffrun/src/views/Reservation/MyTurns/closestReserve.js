@@ -102,7 +102,10 @@ class ClosestReserve extends Component {
           <CardTitle>نزدیکترین نوبت</CardTitle>
         </CardHeader>
         <CardBody>
-          <div className="text-center getting-started pt-2 d-flex justify-content-center flex-wrap">
+          <div
+            style={{ fontSize: "32px" }}
+            className="text-center  pt-2 d-flex justify-content-center flex-wrap"
+          >
             <Countdown
               date={currentTimer}
               renderer={this.renderTimer}
@@ -248,6 +251,20 @@ class ClosestReserve extends Component {
                     <small className="text-muted">
                       {this.dateConverter(nearestFive[curIdx + 1].date)}
                     </small>
+                  </li>
+                )}
+                {curIdx + 1 >= nearestFive.length && (
+                  <li>
+                    <div
+                      style={{ backgroundColor: "#c882c8" }}
+                      className="timeline-icon"
+                    >
+                      <MapPin size={16} />
+                    </div>
+                    <div className="timeline-info">
+                      <p className="font-weight-bold mb-0">نوبت بعدی</p>
+                      <span className="font-small-3">نوبت بعدی وجود ندارد</span>
+                    </div>
                   </li>
                 )}
               </ul>

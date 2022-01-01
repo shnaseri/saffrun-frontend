@@ -45,9 +45,9 @@ class Comment extends Component {
   toggleReplyModal = () => {
     this.setState({ replyModal: !this.state.replyModal });
   };
-  handleAnswer = () => {
+  handleAnswer = async () => {
     let answer = this.state.answer;
-    this.props.toggleAnswered(answer, this.props.cid);
+    await this.props.toggleAnswered(answer, this.props.cid);
     this.toggleParentModal();
     //call API autosave
   };
@@ -114,14 +114,14 @@ class Comment extends Component {
                 <Trash2
                   size="20"
                   color="#ff531f"
-                  id="remove-comment"
+                  id={`remove-comment-${this.props.cid}`}
                   style={{ marginLeft: "10px" }}
                   onClick={() => this.handleAlert("defaultAlert", true)}
                 />
                 <BiMessageRoundedDetail
                   size="20"
                   color="orange"
-                  id="main-comment"
+                  id={`main-comment-${this.props.cid}`}
                   onClick={() => this.toggleParentModal()}
                 />
               </Row>
@@ -292,11 +292,17 @@ class Comment extends Component {
           </ModalBody>
         </Modal>
 
-        <UncontrolledTooltip placement="top" target="main-comment">
+        <UncontrolledTooltip
+          placement="top"
+          target={`main-comment-${this.props.cid}`}
+        >
           پیام اصلی
         </UncontrolledTooltip>
 
-        <UncontrolledTooltip placement="top" target="remove-comment">
+        <UncontrolledTooltip
+          placement="top"
+          target={`remove-comment-${this.props.cid}`}
+        >
           حذف کردن
         </UncontrolledTooltip>
       </div>

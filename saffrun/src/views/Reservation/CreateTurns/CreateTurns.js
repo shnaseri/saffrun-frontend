@@ -694,6 +694,7 @@ class BookingCreation extends React.Component {
           confirmBtnText="باشه"
           onConfirm={() => {
             this.handleAlert("successAlert", false);
+            history.push("my-reservation");
           }}
         >
           <p className="sweet-alert-text">نوبت های ممکن ساخته شد.</p>

@@ -60,7 +60,7 @@ class MyEvents extends React.Component {
     eventCollapse: true,
     loadSpinner: true,
     currentPage: 1,
-    pageCount: 4,
+    pageCount: 6,
     sortStates: [
       {
         basedOn: "start_datetime",
@@ -96,6 +96,7 @@ class MyEvents extends React.Component {
       let categories = await axios.get(`${urlDomain}/category/get-all/`, {
         headers: { Authorization: token },
       });
+      console.log(events.data.events);
       this.loadCategories(categories.data);
       this.setState({ events: events.data.events, loadSpinner: false });
     } catch (e) {
@@ -123,9 +124,13 @@ class MyEvents extends React.Component {
       collapse: false,
     }));
   };
-  compareDateTimes = (eventDateTime) => {
-    return new Date(eventDateTime) > new Date();
+  compareDateTimes = (eventDateTime, startDateTime) => {
+    return (
+      new Date(eventDateTime) > new Date() &&
+      new Date(startDateTime) < new Date()
+    );
   };
+ 
   loadImg = (img) => {
     return `http://localhost:8000${img.image.full_size}`;
   };
@@ -196,7 +201,7 @@ class MyEvents extends React.Component {
                     <div className="fonticon-wrap">
                       <Status
                         currentState={
-                          this.compareDateTimes(ev.end_datetime)
+                          this.compareDateTimes(ev.end_datetime , ev.start_datetime)
                             ? "success"
                             : "danger"
                         }
@@ -207,7 +212,7 @@ class MyEvents extends React.Component {
                           fontWeight: "bold",
                         }}
                       >
-                        {this.compareDateTimes(ev.end_datetime)
+                        {this.compareDateTimes(ev.end_datetime , ev.start_datetime)
                           ? "فعال"
                           : "غیرفعال"}
                       </span>
@@ -216,7 +221,7 @@ class MyEvents extends React.Component {
                   <Col style={{ textAlign: "left" }} xs="3">
                     {/* <div className="fonticon-wrap"> */}
                     <span style={{ marginLeft: "4px" }}>
-                      {this.moreThan1000(ev.participants)}
+                      {this.moreThan1000(ev.participants.length)}
                     </span>
                     <Icon.Users size={24} />
 
@@ -391,7 +396,7 @@ class MyEvents extends React.Component {
               <Collapse isOpen={this.state.collapse}>
                 <CardBody>
                   <Row>
-                    <Col lg="3" md="6" sm="12">
+                    <Col md="4" sm="12">
                       <FormGroup>
                         <Label for="search-events">عنوان</Label>
                         <Input
@@ -404,7 +409,7 @@ class MyEvents extends React.Component {
                         />
                       </FormGroup>
                     </Col>
-                    <Col lg="3" md="6" sm="12">
+                    <Col md="4" sm="12">
                       <FormGroup>
                         <Label for="datePicker_1">تاریخ شروع</Label>
                         <DatePicker
@@ -417,7 +422,7 @@ class MyEvents extends React.Component {
                         />
                       </FormGroup>
                     </Col>
-                    <Col lg="3" md="6" sm="12">
+                    <Col md="4" sm="12">
                       <FormGroup>
                         <Label for="datePicker_2">تاریخ پایان</Label>
                         <DatePicker
@@ -426,23 +431,6 @@ class MyEvents extends React.Component {
                           format="jYYYY/jMM/jDD"
                           onChange={this.endDateSelected}
                           id="datePicker_2"
-                        />
-                      </FormGroup>
-                    </Col>
-                    <Col lg="3" md="6" sm="12">
-                      <FormGroup>
-                        <Label for="asdsad">دسته‌بندی</Label>
-                        <Select
-                          id="asdsad"
-                          className="React"
-                          classNamePrefix="select"
-                          // defaultValue={colourOptions[0]}
-                          name="color"
-                          options={this.state.categories}
-                          isClearable={true}
-                          placeholder="دسته‌بندی..."
-                          value={this.state.selectedCategory}
-                          onChange={this.SelectChanged}
                         />
                       </FormGroup>
                     </Col>

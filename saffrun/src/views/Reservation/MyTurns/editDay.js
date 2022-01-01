@@ -8,10 +8,13 @@ import {
   CardBody,
   Row,
   Col,
+  Input,
+  Label,
+  FormGroup,
 } from "reactstrap";
 import DataTable from "react-data-table-component";
 import classnames from "classnames";
-import { Edit, Trash, Plus } from "react-feather";
+import { Edit, Trash, Plus, Check } from "react-feather";
 
 import Sidebar from "../CreateTurns/daySidebar";
 import Chip from "../../../components/@vuexy/chips/ChipComponent";
@@ -19,6 +22,9 @@ import "../../../assets/scss/pages/data-list.scss";
 import { toast } from "react-toastify";
 import SweetAlert from "react-bootstrap-sweetalert";
 import { history } from "../../../history";
+import Checkbox from "../../../components/@vuexy/checkbox/CheckboxesVuexy";
+import axios from "axios";
+import urlDomain from "../../../utility/urlDomain";
 
 const chipColors = {
   "on hold": "warning",
@@ -91,7 +97,7 @@ const ActionsComponent = (props) => {
 const CustomHeader = (props) => {
   return (
     <div
-      style={{ marginTop: "15px" }}
+      style={{ marginTop: "35px" }}
       className="data-list-header d-flex justify-content-between flex-wrap"
     >
       <div className="actions-left d-flex flex-wrap">
@@ -112,6 +118,7 @@ class EditDay extends Component {
   //   get day by props.location.state.date
   state = {
     deleteModalOpen: false,
+    price: 0,
     items: [
       {
         index: 0,
@@ -185,6 +192,8 @@ class EditDay extends Component {
     ],
     sidebar: false,
     currentData: null,
+    errorAlert: false,
+    successAlert: false,
     addNew: "",
     newAddedItem: {},
   };
@@ -217,6 +226,49 @@ class EditDay extends Component {
       toast.warn("بیشتر از ۵ مورد نمی‌توانید اضافه کنید", {
         position: toast.POSITION.TOP_CENTER,
       });
+    }
+  };
+  formatDate = (date) => {
+    var d = new Date(date),
+      month = "" + (d.getMonth() + 1),
+      day = "" + d.getDate(),
+      year = d.getFullYear();
+
+    if (month.length < 2) month = "0" + month;
+    if (day.length < 2) day = "0" + day;
+
+    return [year, month, day].join("-");
+  };
+  PostToServer = async () => {
+    let startDate = new Date(this.props.location.state.date);
+    let endDate = new Date(this.props.location.state.date);
+    let data = {
+      start_date: this.formatDate(startDate),
+      end_date: this.formatDate(endDate),
+      price: this.state.price,
+      days_list: [],
+    };
+    let l = [];
+    const diffTime = Math.abs(endDate - startDate);
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    for (let index = 0; index < diffDays + 1; index++) {
+      if (index === 7) break;
+      let date = startDate;
+      date.setDate(date.getDate() + index);
+      l.push({ reserve_periods: this.state.items });
+    }
+    data["days_list"] = l;
+    console.log(data);
+    let token = localStorage.getItem("access");
+    try {
+      let res = await axios.post(`${urlDomain}/reserve/create/`, data, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      this.handleAlert("successAlert", true);
+    } catch (e) {
+      this.handleAlert("errorAlert", true);
     }
   };
   twoDigitsFromat = (hour) => {
@@ -304,95 +356,161 @@ class EditDay extends Component {
   };
   disabledSubmitButton = () => {
     let { items } = this.state;
+
     for (let j = 0; j < items.length; j++) {
       if (items[j].interfere) return true;
     }
-    return false;
+    return items.length === 0 ? true : false;
   };
-  postEditedDate = () => {
-    history.push(`/reserve-detail/${this.props.location.state.date}`);
-  }
+  handleAlert = (state, value) => {
+    this.setState({ [state]: value });
+  };
+  postEditedDate = async () => {
+    await this.PostToServer();
+  };
+  dayOfWeek = (date) => {
+    var days = {
+      0: "یکشنبه",
+      1: "دوشنبه",
+      2: "سه‌شنبه",
+      3: "چهارشنبه",
+      4: "پنج‌شنبه",
+      5: "جمعه",
+      6: "شنبه",
+    };
+    return days[new Date(date).getDay()];
+  };
   render() {
     let { columns, currentData, sidebar } = this.state;
     let { items } = this.state;
     return (
-      <Card>
-        <CardHeader>
-          <CardTitle>
-            ویرایش نوبت جمعه -{" "}
-            {this.dateConverter(this.props.location.state.date)}
-          </CardTitle>
-        </CardHeader>
-        <CardBody>
-          <div
-            className={`data-list ${
-              this.props.thumbView ? "thumb-view" : "list-view"
-            }`}
-            style={{ width: "100%" }}
-          >
-            <DataTable
-              columns={columns}
-              data={items}
-              noHeader
-              subHeader
-              responsive
-              style={{ backgroundColor: "#f8f8f8" }}
-              customStyles={selectedStyle}
-              subHeaderComponent={<CustomHeader addNewItem={this.addNewItem} />}
-              noDataComponent="آیتمی برای نشان دادن نیست."
-            />
-            <Sidebar
-              show={sidebar}
-              data={currentData}
-              handleSidebar={this.handleSidebar}
-              newAddedItem={this.state.newAddedItem}
-              addItem={this.addItem}
-              updateItem={this.updateItem}
-            />
+      <React.Fragment>
+        <Card>
+          <CardHeader>
+            <CardTitle>
+              ویرایش نوبت {this.dayOfWeek(this.props.location.state.date)} -{" "}
+              {this.dateConverter(this.props.location.state.date)}
+            </CardTitle>
+          </CardHeader>
+          <CardBody>
+            <Row style={{ marginTop: "20px", marginBottom: "20px" }}>
+              <Col lg="2" />
+              <Col xs="12" md="6" lg="3">
+                <Label>قیمت هر نوبت</Label>
+                <Input
+                  value={this.state.price}
+                  onChange={(e) => this.setState({ price: e.target.value })}
+                  id="price-input"
+                  placeholder="قیمت به تومان"
+                  type="number"
+                />
+              </Col>
+              <Col lg="1" />
+              <Col style={{ marginTop: "20px" }} xs="12" md="6" lg="3">
+                <Checkbox
+                  color="primary"
+                  icon={<Check className="vx-icon" size={16} />}
+                  label="هزینه اینترنتی پرداخت شود."
+                  defaultChecked={true}
+                />
+              </Col>
+            </Row>
             <div
-              className={classnames("data-list-overlay", {
-                show: sidebar,
-              })}
-              onClick={() => this.handleSidebar(false, true)}
-            />
-            <Button
-              style={{
-                float: "left",
-                marginTop: "20px",
-                padding: "12px",
-                paddingRight: "30px",
-                paddingLeft: "30px",
-              }}
-              color="primary"
-              className="btn-lg"
-              disabled={this.disabledSubmitButton()}
-              onClick={this.postEditedDate}
+              className={`data-list ${
+                this.props.thumbView ? "thumb-view" : "list-view"
+              }`}
+              style={{ width: "100%" }}
             >
-              ثبت
-            </Button>
-            <SweetAlert
-              title="آیا از حذف این مورد اطمینان دارید؟"
-              warning
-              show={this.state.deleteModalOpen}
-              showCancel
-              reverseButtons
-              cancelBtnBsStyle="warning"
-              confirmBtnText="بله؛ حذف کن"
-              cancelBtnText="لغو"
-              confirmBtnBsStyle="danger"
-              onConfirm={() => {
-                this.deleteItem();
-                this.handleAlert("deleteModalOpen", false);
-              }}
-              onCancel={() => {
-                this.handleAlert("deleteModalOpen", false);
-              }}
-            >
-              بعد از حذف نمیتوانید دوباره این مورد را بازگردانی کنید!
-            </SweetAlert>
-          </div>
-        </CardBody>
-      </Card>
+              <DataTable
+                columns={columns}
+                data={items}
+                noHeader
+                subHeader
+                responsive
+                style={{ backgroundColor: "#f8f8f8" }}
+                customStyles={selectedStyle}
+                subHeaderComponent={
+                  <CustomHeader addNewItem={this.addNewItem} />
+                }
+                noDataComponent="آیتمی برای نشان دادن نیست."
+              />
+              <Sidebar
+                show={sidebar}
+                data={currentData}
+                handleSidebar={this.handleSidebar}
+                newAddedItem={this.state.newAddedItem}
+                addItem={this.addItem}
+                updateItem={this.updateItem}
+              />
+              <div
+                className={classnames("data-list-overlay", {
+                  show: sidebar,
+                })}
+                onClick={() => this.handleSidebar(false, true)}
+              />
+              <Button
+                style={{
+                  float: "left",
+                  marginTop: "20px",
+                  padding: "12px",
+                  paddingRight: "30px",
+                  paddingLeft: "30px",
+                }}
+                color="primary"
+                className="btn-lg"
+                disabled={this.disabledSubmitButton()}
+                onClick={this.postEditedDate}
+              >
+                ثبت
+              </Button>
+              <SweetAlert
+                title="آیا از حذف این مورد اطمینان دارید؟"
+                warning
+                show={this.state.deleteModalOpen}
+                showCancel
+                reverseButtons
+                cancelBtnBsStyle="warning"
+                confirmBtnText="بله؛ حذف کن"
+                cancelBtnText="لغو"
+                confirmBtnBsStyle="danger"
+                onConfirm={() => {
+                  this.deleteItem();
+                  this.handleAlert("deleteModalOpen", false);
+                }}
+                onCancel={() => {
+                  this.handleAlert("deleteModalOpen", false);
+                }}
+              >
+                بعد از حذف نمیتوانید دوباره این مورد را بازگردانی کنید!
+              </SweetAlert>
+            </div>
+          </CardBody>
+        </Card>
+        <SweetAlert
+          success
+          title="Success"
+          show={this.state.successAlert}
+          confirmBtnText="باشه"
+          onConfirm={() => {
+            this.handleAlert("successAlert", false);
+            history.push(`/reserve-detail/${this.props.location.state.date}`);
+          }}
+        >
+          <p className="sweet-alert-text">نوبت های ممکن ساخته شد.</p>
+        </SweetAlert>
+
+        <SweetAlert
+          error
+          title="Error"
+          confirmBtnText="باشه"
+          show={this.state.errorAlert}
+          onConfirm={() => this.handleAlert("errorAlert", false)}
+        >
+          <p className="sweet-alert-text">
+            فرآیند با خطا مواجه شد دوباره تلاش کنید
+          </p>
+        </SweetAlert>
+      </React.Fragment>
     );
   }
 }

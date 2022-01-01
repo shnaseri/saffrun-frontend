@@ -64,7 +64,8 @@ class ReserveStats extends Component {
     history.push({ pathname: "/edit-day", state: { date: "1400/12/24" } });
   };
   render() {
-    let { stats } = this.state;
+    let stats = this.props.data;
+    
     return (
       <React.Fragment>
         <Card>
@@ -74,7 +75,6 @@ class ReserveStats extends Component {
           <CardBody>
             <Row>
               <Col lg="6">
-                
                 <ul
                   style={{ borderRight: "none" }}
                   className="activity-timeline timeline-left list-unstyled"
@@ -99,7 +99,7 @@ class ReserveStats extends Component {
                     <div className="timeline-info">
                       <p className="font-weight-bold mb-0">گردش مالی</p>
                       <span className="font-small-3">
-                        {this.moreThan1000(stats.turnOver)}
+                        {this.moreThan1000(stats.payment_of_date)}
                       </span>
                     </div>
                     {/* <small className="text-muted">
@@ -120,7 +120,7 @@ class ReserveStats extends Component {
                     <div className="timeline-info">
                       <p className="font-weight-bold mb-0">تعداد نوبت</p>
                       <span className="font-small-3">
-                        {stats.reserveCount} نوبت ایجاد شده
+                        {stats.number_of_reservation} نوبت ایجاد شده
                       </span>
                     </div>
                     {/* <small className="text-muted">سلام</small> */}
@@ -134,7 +134,7 @@ class ReserveStats extends Component {
                         تعداد شرکت‌کنندگان
                       </p>
                       <span className="font-small-3">
-                        {stats.participantsCount} نفر شرکت کرده
+                        {stats.number_of_users} نفر شرکت کرده
                       </span>
                     </div>
                     {/* <small className="text-muted">
