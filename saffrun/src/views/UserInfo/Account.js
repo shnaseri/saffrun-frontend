@@ -126,7 +126,7 @@ class UserAccountTab extends React.Component {
                 <DropdownMenu style={{marginRight:35}} >
                   <DropdownItem onClick={this.handleClick}>تغییر</DropdownItem>
                   <DropdownItem divider />
-                  <DropdownItem onClick={this.props.delImg}>حذف</DropdownItem>
+                  <DropdownItem onClick={this.handleDel}>حذف</DropdownItem>
                 </DropdownMenu>
               </UncontrolledButtonDropdown>
             </Media>
@@ -329,7 +329,7 @@ class UserAccountTab extends React.Component {
                   </div>
                 </div>
               </Col>
-              <Col sm="12" style={{ marginTop: 35 }}>
+              {/* <Col sm="12" style={{ marginTop: 35 }}>
                 <div className="permissions border px-2">
                   <div className="title pt-2 pb-0">
                     <Lock size={19} />
@@ -460,7 +460,7 @@ class UserAccountTab extends React.Component {
                     </tbody>
                   </Table>
                 </div>
-              </Col>
+              </Col> */}
               <Col
                 className="d-flex justify-content-end flex-wrap mt-2"
                 sm="12"

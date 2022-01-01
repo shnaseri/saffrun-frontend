@@ -106,7 +106,7 @@ class Revenue extends React.Component {
   }
   render() {
     return (
-      <Card>
+      <Card style={{height:"450px"}}>
         <CardHeader>
           <CardTitle>وضعیت مالی</CardTitle>
           {/* <Settings size={20} className="cursor-pointer text-muted" /> */}

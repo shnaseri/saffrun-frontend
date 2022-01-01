@@ -10,13 +10,6 @@ import Flatpickr from "react-flatpickr";
 import "flatpickr/dist/themes/light.css";
 import "../../assets/scss/plugins/forms/flatpickr/flatpickr.scss";
 
-const languages = [
-  { value: "english", label: "English", color: "#7367f0" },
-  { value: "french", label: "French", color: "#7367f0" },
-  { value: "spanish", label: "Spanish", color: "#7367f0" },
-  { value: "russian", label: "Russian", color: "#7367f0" },
-  { value: "italian", label: "Italian", color: "#7367f0" },
-];
 
 const colourStyles = {
   control: (styles) => ({ ...styles, backgroundColor: "white" }),
@@ -119,14 +112,12 @@ class UserInfoTab extends React.Component {
                   label="مرد"
                   id="gender"
                   color="primary"
-                  value={this.props.userData["gender"] === "M"}
+                  value={"M"}
                   checked={this.props.userData["gender"] === "M"}
                   name="gender"
                   onChange={this.props.updateData}
                   onClick={() => {
-                    this.props.userData["gender"] = !this.props.userData[
-                      "gender"
-                    ];
+                    this.props.userData["gender"] ="M";
                   }}
                 />
               </div>
@@ -135,14 +126,12 @@ class UserInfoTab extends React.Component {
                   label="زن"
                   id="gender"
                   color="primary"
-                  value={this.props.userData["gender"] ==="F"}
+                  value={"F"}
                   checked={this.props.userData["gender"] ==="F"}
                   name="gender"
                   onChange={this.props.updateData}
                   onClick={() => {
-                    this.props.userData["gender"] = !this.props.userData[
-                      "gender"
-                    ];
+                    this.props.userData["gender"] = "F";
                   }}
                 />
               </div>

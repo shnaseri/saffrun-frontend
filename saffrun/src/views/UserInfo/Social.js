@@ -165,7 +165,7 @@ class UsersList extends React.Component {
   SetImg = (params) => {
     console.log(params.data.avatar)
     if (params.data.avatar["image"] !=null) {
-      return params.data.avatar["image"];
+      return "http://127.0.0.1:8000" + params.data.avatar["image"]["thumbnail"];
     } else {
       return userImg;
     }

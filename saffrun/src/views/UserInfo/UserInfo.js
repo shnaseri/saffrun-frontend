@@ -50,7 +50,8 @@ class UserEdit extends React.Component {
     console.log(this.state.userData);
   };
   postData = async () => {
-    let token = localStorage.getItem("access");
+    try{
+      let token = localStorage.getItem("access");
     token = `Bearer ${token}`;
     let x = await axios.put(
       `${urlDomain}/profile/user/`,
@@ -60,11 +61,17 @@ class UserEdit extends React.Component {
         headers: { Authorization: token },
       }
     );
-    if (x.status === 200) {
-      this.notifySuccess();
-    } else {
+    this.notifySuccess();
+    }
+    catch{
       this.notifyError();
     }
+    
+    // if (x.status === 200) {
+    //   this.notifySuccess();
+    // } else {
+     
+    // }
   };
   updateImg = (id) => {
     
@@ -73,9 +80,11 @@ class UserEdit extends React.Component {
     this.setState({ userData });
   };
   delImg = () => {
-    let userData = { ...this.state.userData };
+
+    let userData = { ...this.state.userData , image_id : -1 , avatar : {image : null} };
+    console.log(userData)
     this.setState({ userData });
-    console.log(this.state.userData);
+    // console.log(this.state.userData);
   };
   updateData = (e) => {
     this.toggleDirection(e);
@@ -165,6 +174,7 @@ class UserEdit extends React.Component {
                     updateData={this.updateData}
                     userData={this.state.userData}
                     changeDIR={this.changeDIR}
+                    postData={this.postData}
                   />
                 </TabPane>
                 <TabPane tabId="3">

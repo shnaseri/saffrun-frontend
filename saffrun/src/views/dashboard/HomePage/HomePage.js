@@ -16,6 +16,7 @@ import isAuthenticated from "./../../../utility/authenticated";
 import axios from "axios";
 import urlDomain from "./../../../utility/urlDomain";
 import ComponentSpinner from './../../../components/@vuexy/spinner/Loading-spinner';
+import userImg from "../../../assets/img/profile/Generic-profile-picture.jpg.webp";
 
 let $primary = "#7367F0",
   $danger = "#EA5455",
@@ -49,6 +50,16 @@ class Home extends React.Component {
       this.setState({ loadSpinner: false });
     }
   }
+  handleAvatar = () => {
+    if (this.state.homeData["image"]["image"] ) {
+      return (
+         "http://127.0.0.1:8000" +
+        this.state.homeData["image"]["image"]["thumbnail"]
+      );
+    } else {
+      return userImg;
+    }
+  };
   render() {
     return this.state.loadSpinner ? (<ComponentSpinner/>) :(
       <React.Fragment>
@@ -57,7 +68,7 @@ class Home extends React.Component {
             <Card>
               <CardHeader className="mx-auto">
                 <div className="avatar mr-1 avatar-xl">
-                  <img src={avatarImg} alt="avatarImg" />
+                  <img src={this.handleAvatar()} alt="avatarImg" />
                 </div>
               </CardHeader>
               <CardBody className="text-center">
