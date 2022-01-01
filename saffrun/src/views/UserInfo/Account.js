@@ -11,7 +11,7 @@ import {
   Table,
   ButtonGroup,
   ButtonDropdown,
-  Dropdown,
+  UncontrolledButtonDropdown,
   DropdownItem,
   DropdownMenu,
   DropdownToggle,
@@ -23,6 +23,7 @@ import Checkbox from "../../components/@vuexy/checkbox/CheckboxesVuexy";
 import { Check, Lock } from "react-feather";
 import axios from "axios";
 // import { Avatar } from 'react-native-elements';
+import urlDomain from "./../../utility/urlDomain";
 
 class UserAccountTab extends React.Component {
   constructor(props) {
@@ -37,6 +38,8 @@ class UserAccountTab extends React.Component {
     currPass: "",
     newPass: "",
     repPass: "",
+    isUploadedImg:false,
+    uploadedUrl:""
   };
   toggle() {
     this.setState((prevState) => ({
@@ -45,25 +48,52 @@ class UserAccountTab extends React.Component {
   }
   hiddenFileInput = React.createRef();
   handleClick = (event) => {
-    
     console.log(this.hiddenFileInput.current);
     this.hiddenFileInput.current.click();
   };
   handleChange = (event) => {
     const fileUploaded = event.target.files[0];
+    this.setState({isUploadedImg:true ,uploadedUrl:URL.createObjectURL(fileUploaded) })
+    this.postImg(fileUploaded)
     this.props.updateImg(URL.createObjectURL(fileUploaded));
     console.log(URL.createObjectURL(fileUploaded));
   };
+
+  postImg = async (file)=>{
+    try {
+      var token = "Bearer " + localStorage.getItem("access");
+      var headers = {
+        "Content-type": "multipart/form-data",
+        Authorization: token,
+      };
+      const formData = new FormData();
+      formData.append("image", file);
+      let response = await axios.post(
+        `${urlDomain}/core/image/upload/`,
+        formData,
+        {
+          headers,
+        }
+      );
+      this.props.updateImg(response.data.id)
+    } catch (e) {
+      console.log(e);
+      return false;
+    }
+  }
   handleDel = () => {
     this.props.delImg();
   };
-  
+
   handleAvatar = () => {
-    // if (this.props.userData["avatar"] != "")
-    //   return this.props.userData["avatar"];
-    // else {
-    return userImg;
-    // }
+    if (this.props.userData["avatar"]["image"] ) {
+      return (
+        this.state.isUploadedImg? this.state.uploadedUrl : "http://127.0.0.1:8000" +
+        this.props.userData["avatar"]["image"]["thumbnail"]
+      );
+    } else {
+      return userImg;
+    }
   };
   render() {
     return (
@@ -81,28 +111,29 @@ class UserAccountTab extends React.Component {
                 width="84"
               />
 
-              <Dropdown
-                direction="left"
+              <UncontrolledButtonDropdown
+                direction="right"
                 isOpen={this.state.dropdownOpen}
                 toggle={this.toggle}
-                style={{ marginTop: -15 }}
+                style={{ marginTop: 58,marginRight:-20 }}
               >
-                <DropdownToggle
-                  style={{ padding: 0, color: "#ff9f43", float: "left" }}
+                <DropdownToggle 
+                  style={{ padding: 3, backgroundColor: "#fff", float: "left" }}
                   caret
                 >
-                  <Edit style={{ right: 0 }} />
+                  <Edit style={{ right: 0, borderRadius: "5px" }} />
                 </DropdownToggle>
-                <DropdownMenu style={{ position: "relative" }}>
+                <DropdownMenu style={{marginRight:35}} >
                   <DropdownItem onClick={this.handleClick}>تغییر</DropdownItem>
                   <DropdownItem divider />
-                  <DropdownItem onClick={this.props.delImg}>حذف</DropdownItem>
+                  <DropdownItem onClick={this.handleDel}>حذف</DropdownItem>
                 </DropdownMenu>
-              </Dropdown>
+              </UncontrolledButtonDropdown>
             </Media>
             <Media className="mt-2" body>
               <Media className="font-medium-1 text-bold-600" tag="p" heading>
                 {this.props.userData["first_name"]}
+                <span> </span>
                 {this.props.userData["last_name"]}
               </Media>
               <input
@@ -121,7 +152,11 @@ class UserAccountTab extends React.Component {
                 <FormGroup>
                   <Label for="username">نام کاربری</Label>
                   <Input
-                    style={{direction : this.props.changeDIR(this.props.userData["username"])}}
+                    style={{
+                      direction: this.props.changeDIR(
+                        this.props.userData["username"]
+                      ),
+                    }}
                     type="text"
                     value={this.props.userData["username"]}
                     id="username"
@@ -134,7 +169,11 @@ class UserAccountTab extends React.Component {
                 <FormGroup>
                   <Label for="email">ایمیل</Label>
                   <Input
-                  style={{direction : this.props.changeDIR(this.props.userData["email"])}}
+                    style={{
+                      direction: this.props.changeDIR(
+                        this.props.userData["email"]
+                      ),
+                    }}
                     type="text"
                     value={this.props.userData["email"]}
                     id="email"
@@ -148,7 +187,11 @@ class UserAccountTab extends React.Component {
                 <FormGroup>
                   <Label for="name">نام</Label>
                   <Input
-                  style={{direction : this.props.changeDIR(this.props.userData["first_name"])}}
+                    style={{
+                      direction: this.props.changeDIR(
+                        this.props.userData["first_name"]
+                      ),
+                    }}
                     type="text"
                     value={this.props.userData["first_name"]}
                     id="first_name"
@@ -161,7 +204,11 @@ class UserAccountTab extends React.Component {
                 <FormGroup>
                   <Label for="lName">نام خانوادگی</Label>
                   <Input
-                  style={{direction : this.props.changeDIR(this.props.userData["last_name"])}}
+                    style={{
+                      direction: this.props.changeDIR(
+                        this.props.userData["last_name"]
+                      ),
+                    }}
                     type="text"
                     value={this.props.userData["last_name"]}
                     name="lName"
@@ -183,7 +230,7 @@ class UserAccountTab extends React.Component {
                 </FormGroup>
               </Col>
               <Col md="6" sm="12">
-              <FormGroup>
+                <FormGroup>
                   <Label for="company"> شماره تلفن همراه</Label>
                   <InputMask
                     style={{ direction: "ltr" }}
@@ -191,7 +238,7 @@ class UserAccountTab extends React.Component {
                     mask="0999 999 9999"
                     value={this.props.userData["phone"]}
                     onChange={this.props.updateData}
-                    id = "phone"
+                    id="phone"
                     // placeholder="شماره تلفن"
                   />
                 </FormGroup>
@@ -282,7 +329,7 @@ class UserAccountTab extends React.Component {
                   </div>
                 </div>
               </Col>
-              <Col sm="12" style={{ marginTop: 35 }}>
+              {/* <Col sm="12" style={{ marginTop: 35 }}>
                 <div className="permissions border px-2">
                   <div className="title pt-2 pb-0">
                     <Lock size={19} />
@@ -413,7 +460,7 @@ class UserAccountTab extends React.Component {
                     </tbody>
                   </Table>
                 </div>
-              </Col>
+              </Col> */}
               <Col
                 className="d-flex justify-content-end flex-wrap mt-2"
                 sm="12"
