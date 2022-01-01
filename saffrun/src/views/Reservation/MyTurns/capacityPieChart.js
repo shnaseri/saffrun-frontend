@@ -64,7 +64,22 @@ class CapacityPieChart extends React.Component {
     },
     series: [1, 4, 2],
   };
+  componentDidMount() {}
+  seriesGenerator = () => {
+    let {
+      number_of_full_reservation,
+      number_of_half_full_reservation,
+      number_of_empty_reservation,
+    } = this.props.data;
+    
+    return [
+      number_of_full_reservation,
+      number_of_half_full_reservation,
+      number_of_empty_reservation,
+    ];
+  };
   render() {
+    let series = this.seriesGenerator()
     return (
       <Card>
         <CardHeader>
@@ -73,7 +88,7 @@ class CapacityPieChart extends React.Component {
         <CardBody className="pt-0">
           <Chart
             options={this.state.options}
-            series={this.state.series}
+            series={series}
             type="pie"
             height={210}
           />
@@ -94,7 +109,7 @@ class CapacityPieChart extends React.Component {
               <span className="text-bold-600">کامل</span>
             </div>
             <div className="product-result">
-              <span>1</span>
+              <span>{series[0]}</span>
             </div>
           </ListGroupItem>
           <ListGroupItem className="d-flex justify-content-between">
@@ -112,7 +127,7 @@ class CapacityPieChart extends React.Component {
               <span className="text-bold-600">نیمه کامل</span>
             </div>
             <div className="product-result">
-              <span>4</span>
+              <span>{series[1]}</span>
             </div>
           </ListGroupItem>
           <ListGroupItem className="d-flex justify-content-between">
@@ -130,7 +145,7 @@ class CapacityPieChart extends React.Component {
               <span className="text-bold-600">خالی</span>
             </div>
             <div className="product-result">
-              <span>2</span>
+              <span>{series[2]}</span>
             </div>
           </ListGroupItem>
         </ListGroup>

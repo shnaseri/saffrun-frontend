@@ -88,6 +88,19 @@ class NavbarBookmarks extends React.PureComponent {
     })
   }
 
+  handlePush =(item)=>
+  {
+    if(item.id ===8)
+    {
+      // e.preventDefault();
+      localStorage.clear();
+      history.push(item.link);
+    }
+    else
+    {
+      history.push(item.link)
+    }
+  }
   renderBookmarks = () => {
     this.updateBookmarks = true
     return <DragDropContext onDragEnd={this.onDragEnd}>
@@ -111,7 +124,7 @@ class NavbarBookmarks extends React.PureComponent {
                           tag="span"
                           id={item.target}
                           className="nav-link cursor-pointer"
-                          onClick={() => history.push(item.link)}
+                          onClick={()=> this.handlePush(item)}
 
                         >
                           <IconTag size={21} />

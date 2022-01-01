@@ -8,8 +8,12 @@ import img4 from "../../../assets/img/slider/banner-4.jpg";
 import img5 from "../../../assets/img/slider/banner-5.jpg";
 import "swiper/css/swiper.css";
 import "../../../assets/scss/plugins/extensions/swiper.scss";
+import urlDomain from "../../../utility/urlDomain";
+import isAuthenticated from "../../../utility/authenticated";
+import axios from "axios";
+
 const params = {
-  spaceBetween: 30,
+  spaceBetween: 170,
   effect: "fade",
   pagination: {
     el: ".swiper-pagination",
@@ -25,30 +29,31 @@ const params = {
   },
 };
 class FadeEffectSwiper extends React.Component {
+  imagesGenreator = (images) => {
+    return images.map((item) => item.image.full_size);
+  };
   render() {
+    let { images } = this.props;
     return (
       <Card>
         <CardHeader>
           <CardTitle> تصاویر رویداد</CardTitle>
         </CardHeader>
-        <CardBody>
-          <Swiper dotColor="orange" activeDotColor="red" {...params}>
-            <div>
-              <img src={img1} alt="swiper 1" className="img-fluid" />
-            </div>
-            <div>
-              <img src={img2} alt="swiper 2" className="img-fluid" />
-            </div>
-            <div>
-              <img src={img3} alt="swiper 3" className="img-fluid" />
-            </div>
-            <div>
-              <img src={img4} alt="swiper 4" className="img-fluid" />
-            </div>
-            <div>
-              <img src={img5} alt="swiper 5" className="img-fluid" />
-            </div>
-          </Swiper>
+        <CardBody className="justify-content-center d-flex">
+          {images.length === 0 && (
+            <p>عکسی برای این رویداد موجود نیست.</p>
+          )}
+          {images.length !== 0 && (
+            <Swiper dotColor="orange" activeDotColor="red" {...params}>
+              {this.imagesGenreator(images).map((item) => {
+                return (
+                  <div>
+                    <img src={item} alt="swiper 1" className="img-fluid" />
+                  </div>
+                );
+              })}
+            </Swiper>
+          )}
         </CardBody>
       </Card>
     );

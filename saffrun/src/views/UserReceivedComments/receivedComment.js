@@ -70,7 +70,14 @@ class Comments extends Component {
     productTitle: "",
     commentState: "all",
   };
-
+  ownerOrEvent = () => {
+    return this.props.eventId
+      ? "comment/get_event_comments/"
+      : "comment/get_comment_of_owner/";
+  };
+  paramsGenerator = () => {
+    return this.props.eventId ? { event_id: this.props.eventId } : {};
+  };
   imgGenerator = (x) => {
     return x.image.image
       ? `${imgUrlDomain}${x.image.image.thumbnail}`
@@ -91,14 +98,13 @@ class Comments extends Component {
     if (!authenticated) history.push("/login");
     let token = localStorage.getItem("access");
     token = `Bearer ${token}`;
+
     try {
-      let comments = await axios.get(
-        `${urlDomain}/comment/get_comment_of_owner/`,
-        {
-          headers: { Authorization: token },
-        }
-      );
-      console.log(comments.data.comments);
+      let comments = await axios.get(`${urlDomain}/${this.ownerOrEvent()}`, {
+        headers: { Authorization: token },
+        params: this.paramsGenerator(),
+      });
+      
       let data = comments.data.comments.map((item) => {
         return {
           ...item,
@@ -133,21 +139,30 @@ class Comments extends Component {
   };
   handleDelete = (cid) => {
     let data = [...this.state.data];
-    data = data.filter(x => x.id !== cid)
+    data = data.filter((x) => x.id !== cid);
     let comments = this.loadFileteredComments(data);
-    if (comments.length === 0)
-      this.setState({currentPage : 0})
+    if (comments.length === 0) this.setState({ currentPage: 0 });
     this.setState({ data });
   };
-  toggleAnswered = (answer, cid) => {
+  toggleAnswered = async (answer, cid) => {
+    let token = localStorage.getItem("access");
+    let response = await axios.post(
+      `${urlDomain}/comment/save_reply/`,
+      {
+        comment_id: cid,
+        content: answer,
+      },
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
     let comments = [...this.state.data];
-    let commentIdx = comments.findIndex(x => x.id === cid);
-    let comment = {...comments[commentIdx]}
+    let commentIdx = comments.findIndex((x) => x.id === cid);
+    let comment = { ...comments[commentIdx] };
     comment.answer = answer;
     comments[commentIdx] = comment;
     let filteredComments = this.loadFileteredComments(comments);
-    if (filteredComments.length === 0)
-      this.setState({currentPage : 0})
+    if (filteredComments.length === 0) this.setState({ currentPage: 0 });
     this.setState({ data: comments });
   };
 
@@ -161,9 +176,6 @@ class Comments extends Component {
       />
     );
   };
-
-  
-
   toggleCollapse = () => {
     this.setState((state) => ({
       collapse: !state.collapse,
@@ -203,112 +215,11 @@ class Comments extends Component {
     return data.length;
   };
   render() {
-    const {
-      data,
-      error,
-      pageSize,
-    } = this.state;
+    const { data, error, pageSize } = this.state;
     let comments = this.loadFileteredComments(data);
     return (
       <React.Fragment>
         <Row className="app-user-list">
-          <Col sm="12">
-            <Card className={classnames("card-action card-reload", {})}>
-              <CardHeader
-                onClick={this.toggleCollapse}
-                onMouseOver={(e) => (e.currentTarget.style.cursor = "pointer")}
-              >
-                <CardTitle>اعمال فیلتر</CardTitle>
-                <div className="actions">
-                  <ChevronDown
-                    className="collapse-icon mr-50"
-                    size={15}
-                    // onClick={this.toggleCollapse}
-                  />
-                </div>
-              </CardHeader>
-              <Collapse isOpen={this.state.collapse}>
-                <CardBody>
-                  <Row>
-                    <Col md="4" sm="12">
-                      <FormGroup>
-                        <Label for="search-events">جستجو در متن</Label>
-                        <Input
-                          className="search-product"
-                          placeholder=" جستجو در متن"
-                          id="search-events"
-                          value={this.state.eventTitle}
-                          onChange={this.InputChanged}
-                          name="eventTitle"
-                        />
-                      </FormGroup>
-                    </Col>
-                    <Col md="4" sm="12">
-                      <FormGroup>
-                        <Label for="datePicker_1">تاریخ شروع</Label>
-                        <DatePicker
-                          inputComponent={this.startDatePickerInput}
-                          placeholder="انتخاب تاریخ"
-                          format="jYYYY/jMM/jDD"
-                          onChange={this.startDateSelected}
-                          id="datePicker_1"
-                          // preSelected="1396/05/15" eyval ndadm
-                        />
-                      </FormGroup>
-                    </Col>
-                    <Col md="4" sm="12">
-                      <FormGroup>
-                        <Label for="datePicker_2">تاریخ پایان</Label>
-                        <DatePicker
-                          inputComponent={this.endDatePickerInput}
-                          placeholder="انتخاب تاریخ"
-                          format="jYYYY/jMM/jDD"
-                          onChange={this.endDateSelected}
-                          id="datePicker_2"
-                        />
-                      </FormGroup>
-                    </Col>
-                  </Row>
-                  <Row>
-                    <Col xs="12" md="5" lg="3" xl="2">
-                      <Button
-                        style={{
-                          width: "100%",
-                          margin: "6px",
-                          marginTop: "9px",
-                        }}
-                        onClick={this.clearFilters}
-                        color="warning"
-                        outline
-                      >
-                        پاکسازی فیلتر ها
-                      </Button>
-                    </Col>
-                    <Col md="2" lg="6" xl="8"></Col>
-                    <Col
-                      style={{ textAlign: "left" }}
-                      xs="12"
-                      md="5"
-                      lg="3"
-                      xl="2"
-                    >
-                      <Button
-                        style={{
-                          width: "100%",
-                          margin: "6px",
-                          marginTop: "9px",
-                        }}
-                        color="warning"
-                        onClick={this.handleFilter}
-                      >
-                        اعمال
-                      </Button>
-                    </Col>
-                  </Row>
-                </CardBody>
-              </Collapse>
-            </Card>
-          </Col>
           <Col xs="12">
             <Card className={classnames("card-action card-reload", {})}>
               <CardHeader

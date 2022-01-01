@@ -36,10 +36,10 @@ const navigationConfig = [
   },
   {
     id: "messages",
-    title: "پیغام ها",
+    title: "اعلانات",
     type: "item",
     icon: <Icon.MessageCircle size={20} />,
-    navLink: "/user-messages",
+    navLink: "/notifications",
   },
   {
     id: "received_comments",
