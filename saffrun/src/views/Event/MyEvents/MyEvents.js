@@ -2,6 +2,7 @@ import React from "react";
 import * as Icon from "react-feather";
 import { Badge } from "reactstrap";
 import img2 from "../../../assets/img/slider/banner-20.jpg";
+import { Link } from "react-router-dom";
 import {
   Card,
   CardBody,
@@ -22,6 +23,8 @@ import {
   DropdownItem,
   DropdownMenu,
   UncontrolledCarousel,
+  NavLink,
+  NavItem,
 } from "reactstrap";
 import ReactPaginate from "react-paginate";
 import "./carousel.css";
@@ -130,7 +133,7 @@ class MyEvents extends React.Component {
       new Date(startDateTime) < new Date()
     );
   };
- 
+
   loadImg = (img) => {
     return `http://localhost:8000${img.image.full_size}`;
   };
@@ -201,7 +204,10 @@ class MyEvents extends React.Component {
                     <div className="fonticon-wrap">
                       <Status
                         currentState={
-                          this.compareDateTimes(ev.end_datetime , ev.start_datetime)
+                          this.compareDateTimes(
+                            ev.end_datetime,
+                            ev.start_datetime
+                          )
                             ? "success"
                             : "danger"
                         }
@@ -212,7 +218,10 @@ class MyEvents extends React.Component {
                           fontWeight: "bold",
                         }}
                       >
-                        {this.compareDateTimes(ev.end_datetime , ev.start_datetime)
+                        {this.compareDateTimes(
+                          ev.end_datetime,
+                          ev.start_datetime
+                        )
                           ? "فعال"
                           : "غیرفعال"}
                       </span>

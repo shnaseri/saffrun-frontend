@@ -38,9 +38,9 @@ import isAuthenticated from "../../utility/authenticated";
 class FormNotif extends React.Component {
   state = {
     answer: "",
-    defalert:false,
-    title:"",
-    exampleRadio:2,
+    defalert: false,
+    title: "",
+    exampleRadio: 2,
   };
 
   handleAlert = (state, value) => {
@@ -49,8 +49,7 @@ class FormNotif extends React.Component {
     });
   };
 
-  async componentDidMount ()
-  {
+  async componentDidMount() {
     let authenticated = await isAuthenticated();
     if (!authenticated) history.push("/login");
     let token = localStorage.getItem("access");
@@ -59,13 +58,15 @@ class FormNotif extends React.Component {
       let response = await axios.get(`${urlDomain}/profile/user/`, {
         headers: { Authorization: token },
       });
-      this.setState({ username: response.data.username,image:response.data.avatar["image"]});
+      this.setState({
+        username: response.data.username,
+        image: response.data.avatar["image"],
+      });
     } catch (e) {
       // this.setState({ loadSpinner: false });
     }
   }
-  sendNotif = async ()=>
-  {
+  sendNotif = async () => {
     var token = "Bearer " + localStorage.getItem("access");
     var headers = {
       Authorization: token,
@@ -73,7 +74,12 @@ class FormNotif extends React.Component {
     try {
       let response = await axios.post(
         `${urlDomain}/notification/send-notification/`,
-        { title: this.state.title,text:this.state.answer , type: this.state.exampleRadio , url: "https://www.google.com"},
+        {
+          title: this.state.title,
+          text: this.state.answer,
+          type: this.state.exampleRadio,
+          url: "https://www.google.com",
+        },
         { headers }
       );
       toast.success("با موفقیت ارسال شد", {
@@ -91,57 +97,52 @@ class FormNotif extends React.Component {
   render() {
     return (
       <React.Fragment>
-         <ToastContainer />
-        <Card style={{height:"477px"}}>
+        <Card style={{ height: "477px" }}>
           <CardHeader>
             <CardTitle>ایجاد اعلان</CardTitle>
           </CardHeader>
           <CardBody>
-            
             <div>
               <Row className="d-flex align-items-center">
-                <Col lg="4" xs="2" md="3" >
+                <Col lg="4" xs="3" md="3">
                   <br></br>
 
                   <strong>افراد</strong>
                 </Col>
-                  <Col lg="4" xs="5" md="4">
+                <Col lg="4" xs="4" md="4">
                   <br></br>
-                    <Radio
-                      label="همه"
-                      defaultChecked={true}
-                      name="exampleRadio"
-                      onChange={() => this.setState({exampleRadio:2})}
-                    />
-                  </Col>
-                  <Col lg="4" xs="5" md="5">
+                  <Radio
+                    label="همه"
+                    defaultChecked={true}
+                    name="exampleRadio"
+                    onChange={() => this.setState({ exampleRadio: 2 })}
+                  />
+                </Col>
+                <Col lg="4" xs="4" md="5">
                   <br></br>
-                    <Radio
-                      label="مخاطبان"
-                      defaultChecked={false}
-                      name="exampleRadio"
-                      onChange={() => this.setState({exampleRadio:1})}
-                    />
-                  </Col>
-                </Row>
-
+                  <Radio
+                    label="مخاطبان"
+                    defaultChecked={false}
+                    name="exampleRadio"
+                    onChange={() => this.setState({ exampleRadio: 1 })}
+                  />
+                </Col>
+              </Row>
             </div>
-            <FormGroup style={{marginTop:"10px"}}>
-                <Label>
+            <FormGroup style={{ marginTop: "10px" }}>
+              <Label>
                 <br></br>
-                  <strong>
-                  عنوان اعلان
-                  </strong>
-                </Label>
-                <Input
-                  type="text"
-                  value={this.state.title}
-                  maxLength={30}
-                  placeholder="عنوان اعلان"
-                  required
-                  onChange={(e) => this.setState({ title: e.target.value })}
-                />
-              </FormGroup>
+                <strong>عنوان اعلان</strong>
+              </Label>
+              <Input
+                type="text"
+                value={this.state.title}
+                maxLength={30}
+                placeholder="عنوان اعلان"
+                required
+                onChange={(e) => this.setState({ title: e.target.value })}
+              />
+            </FormGroup>
             <FormGroup style={{ marginTop: "20px" }}>
               <Label>
                 {" "}
@@ -156,7 +157,16 @@ class FormNotif extends React.Component {
                 onChange={(e) => this.setState({ answer: e.target.value })}
               />
             </FormGroup>
-            <Button disabled={this.state.answer.length ===0 || this.state.title.length ===0}  onClick={() =>  this.handleAlert("defalert",true) } className="btn-block shadow" color="primary">ارسال</Button>
+            <Button
+              disabled={
+                this.state.answer.length === 0 || this.state.title.length === 0
+              }
+              onClick={() => this.handleAlert("defalert", true)}
+              className="btn-block shadow"
+              color="primary"
+            >
+              ارسال
+            </Button>
           </CardBody>
         </Card>
         <SweetAlert
@@ -170,7 +180,6 @@ class FormNotif extends React.Component {
           confirmBtnText="بله؛ ارسال کن"
           cancelBtnText="لغو"
           onConfirm={() => {
-            
             this.handleAlert("defalert", false);
             this.sendNotif();
           }}

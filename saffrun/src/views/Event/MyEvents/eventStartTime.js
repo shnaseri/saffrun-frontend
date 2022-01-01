@@ -10,7 +10,7 @@ class EventStartTime extends Component {
   state = {};
   renderTimer = ({ days, hours, minutes, seconds }) => {
     return (
-      <div className="timer-style">
+      <div>
         <div className="clockCard my-padding">
           <p>{seconds}</p>
           <p className="bg-amber clockFormat lead my-padding "> ثانیه </p>
@@ -50,7 +50,7 @@ class EventStartTime extends Component {
           {this.compareDateTimes(datetime, start_datetime) && (
             <div
               style={{ color: "orange", fontSize: "14px" }}
-              className="text-center  pt-2 d-flex justify-content-center flex-wrap"
+              className="text-center   d-flex justify-content-center flex-wrap"
             >
               <Countdown
                 date={this.loadTimer(datetime)}

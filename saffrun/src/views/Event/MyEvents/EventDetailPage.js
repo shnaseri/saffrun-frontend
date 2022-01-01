@@ -40,6 +40,7 @@ class DetailPage extends React.Component {
     selectedColor: 1,
     active: "1",
     event: {
+      id : "",
       title: "",
       description: "",
       images: [],
@@ -305,7 +306,7 @@ class DetailPage extends React.Component {
     );
   };
   render() {
-    return this.state.editClicked ? <EditEvent /> : this.eventDetailShow();
+    return this.state.editClicked ? <EditEvent event={this.state.event} id={this.state.event.id} /> : this.eventDetailShow();
   }
 }
 export default DetailPage;

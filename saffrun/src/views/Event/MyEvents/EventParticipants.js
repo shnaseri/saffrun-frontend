@@ -17,7 +17,6 @@ class EventParticipants extends React.Component {
       : defaultImg;
   };
   participantsGenreator = (participants) => {
-    console.log(participants);
     return participants.map((x) => {
       return { id: x.id, name: x.name, imgUrl: this.imgGenerator(x) };
     });

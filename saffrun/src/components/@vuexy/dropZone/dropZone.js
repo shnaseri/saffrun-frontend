@@ -14,11 +14,17 @@ import { DropzoneArea } from "material-ui-dropzone";
 import "./dropzone.css";
 import { UploadCloud } from "react-feather";
 import { toast } from "react-toastify";
+import urlDomain from "./../../../utility/urlDomain";
+import axios from "axios";
+import isAuthenticated from "./../../../utility/authenticated";
+import { history } from "./../../../history";
 
 class DropzoneBasic extends React.Component {
   state = {
     files: [],
+
   };
+
   errorMessage = (message, variant) => {
     if (variant === "error") {
       if (message.includes("allowed number"))
@@ -31,6 +37,7 @@ class DropzoneBasic extends React.Component {
         });
     }
   };
+
   render() {
     return (
       <Card>
@@ -39,6 +46,7 @@ class DropzoneBasic extends React.Component {
         </CardHeader>
         <CardBody>
           <DropzoneArea
+            initialFiles={this.props.imageUrlList}
             dropzoneText="عکس مورد نظر را انتخاب یا به روی مکان زیر بکشید"
             onChange={(files) => this.props.imageUploaded(files)}
             dropzoneClass="my-dropzone-style"
