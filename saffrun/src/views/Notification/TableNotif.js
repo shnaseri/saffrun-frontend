@@ -70,6 +70,7 @@ class TableNotif extends React.Component {
     page_count: 5,
     row: -1,
     pages: 10,
+    totalPages: 0,
     loadSpinner: true,
     columns: [
       {
@@ -193,7 +194,11 @@ class TableNotif extends React.Component {
 
       let data = response.data.notifications;
       data = this.assignIndex(data);
-      this.setState({ data: data, loadSpinner: false });
+      this.setState({
+        data: data,
+        loadSpinner: false,
+        totalPages: response.data.pages,
+      });
     } catch (e) {
       this.setState({ loadSpinner: false });
     }
@@ -322,7 +327,7 @@ class TableNotif extends React.Component {
                 nextLabel={<ChevronRight size="15" />}
                 breakLabel={"..."}
                 breakClassName={"break-me"}
-                pageCount={this.state.pages}
+                pageCount={this.state.totalPages}
                 marginPagesDisplayed={1}
                 pageRangeDisplayed={1}
                 forcePage={this.state.page - 1}

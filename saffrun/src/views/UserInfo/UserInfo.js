@@ -56,7 +56,7 @@ class UserEdit extends React.Component {
     let x = await axios.put(
       `${urlDomain}/profile/user/`,
 
-      { ...this.state.userData },
+      { ...this.state.userData , phone : this.state.userData["phone"].replace(/\s/g, "")  },
       {
         headers: { Authorization: token },
       }
@@ -87,7 +87,8 @@ class UserEdit extends React.Component {
     // console.log(this.state.userData);
   };
   updateData = (e) => {
-    this.toggleDirection(e);
+    if (e.target.id !== "phone")
+      this.toggleDirection(e);
     let userData = { ...this.state.userData, [e.target.id]: e.target.value };
     this.setState({ userData });
     console.log(this.state.userData);

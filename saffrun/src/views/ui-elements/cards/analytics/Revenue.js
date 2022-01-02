@@ -1,33 +1,39 @@
-import React from "react"
-import { Card, CardHeader, CardTitle, CardBody , UncontrolledDropdown,
+import React from "react";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardBody,
+  UncontrolledDropdown,
   DropdownMenu,
   DropdownItem,
-  DropdownToggle, } from "reactstrap"
-import Chart from "react-apexcharts"
-import { ChevronDown } from "react-feather"
-import { Settings } from "react-feather"
+  DropdownToggle,
+} from "reactstrap";
+import Chart from "react-apexcharts";
+import { ChevronDown } from "react-feather";
+import { Settings } from "react-feather";
 
 class Revenue extends React.Component {
   state = {
     options: {
       chart: {
         toolbar: {
-          show: false
+          show: false,
         },
         animations: {
-          enabled: false
-        }
+          enabled: false,
+        },
       },
       stroke: {
         curve: "smooth",
         dashArray: [0, 8],
-        width: [4, 2]
+        width: [4, 2],
       },
       grid: {
-        borderColor: this.props.labelColor
+        borderColor: this.props.labelColor,
       },
       legend: {
-        show: false
+        show: false,
       },
       colors: [this.props.dangerLight, this.props.strokeColor],
 
@@ -41,23 +47,23 @@ class Revenue extends React.Component {
           type: "horizontal",
           opacityFrom: 1,
           opacityTo: 1,
-          stops: [0, 100, 100, 100]
-        }
+          stops: [0, 100, 100, 100],
+        },
       },
       markers: {
         size: 0,
         hover: {
-          size: 5
-        }
+          size: 5,
+        },
       },
       xaxis: {
         labels: {
           style: {
-            colors: this.props.strokeColor
-          }
+            colors: this.props.strokeColor,
+          },
         },
         axisTicks: {
-          show: false
+          show: false,
         },
         categories: [
           "فروردین",
@@ -71,42 +77,57 @@ class Revenue extends React.Component {
           "آذر",
           "دی",
           "بهمن",
-          "اسفند"
+          "اسفند",
         ],
         axisBorder: {
-          show: false
+          show: false,
         },
-        tickPlacement: "on"
+        tickPlacement: "on",
       },
       yaxis: {
         tickAmount: 5,
         labels: {
           style: {
-            color: this.props.strokeColor
+            color: this.props.strokeColor,
           },
-          formatter: val => {
-            return val > 999 ? (val / 1000).toFixed(1) + "تومان" : val
-          }
-        }
+          offsetX: -45,
+          offsetY: 0,
+          formatter: (val) => {
+            return val > 999 ? (val / 1000) + "تومان" : val;
+          },
+        },
       },
       tooltip: {
-        x: { show: false }
-      }
+        x: { show: false },
+      },
     },
     series: [
       {
         name: "تراکنش",
-        data: [45000, 47000, 44800, 47500, 45500, 48000, 46500, 48600,5420,65000,25000,15400]
-      }
+        data: [
+          45000,
+          47000,
+          44800,
+          47500,
+          45500,
+          48000,
+          46500,
+          48600,
+          5420,
+          65000,
+          25000,
+          15400,
+        ],
+      },
       // {
       //   name: "Last Month",
       //   data: [46000, 48000, 45500, 46600, 44500, 46500, 45000, 47000,65000,87123,36500,63000]
       // }
-    ]
-  }
+    ],
+  };
   render() {
     return (
-      <Card style={{height:"450px"}}>
+      <Card style={{ height: "460px" }}>
         <CardHeader>
           <CardTitle>وضعیت مالی</CardTitle>
           {/* <Settings size={20} className="cursor-pointer text-muted" /> */}
@@ -146,7 +167,7 @@ class Revenue extends React.Component {
           />
         </CardBody>
       </Card>
-    )
+    );
   }
 }
-export default Revenue
+export default Revenue;

@@ -167,7 +167,7 @@ class ClosestReserve extends Component {
                     <MapPin size={16} />
                   </div>
                   <div className="timeline-info">
-                    <p className="font-weight-bold mb-0">لوکاتیون</p>
+                    <p className="font-weight-bold mb-0">مکان</p>
                     <span className="font-small-3">
                       {nearestFive[curIdx].location}
                     </span>

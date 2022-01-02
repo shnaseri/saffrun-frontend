@@ -40,12 +40,12 @@ class DetailPage extends React.Component {
     selectedColor: 1,
     active: "1",
     event: {
-      id : "",
+      id: "",
       title: "",
       description: "",
       images: [],
       discount: 0,
-      owner: 1,
+      owner: { id: 1 },
       start_datetime: "2021-10-27T13:38:47Z",
       end_datetime: "2021-10-29T19:30:00Z",
       participants: [],
@@ -284,7 +284,7 @@ class DetailPage extends React.Component {
                   deleteUser={this.deleteUser}
                 />
                 <EventStartTime
-                  datetime={this.state.event.end_datetime}
+                  end_datetime={this.state.event.end_datetime}
                   start_datetime={this.state.event.start_datetime}
                   participants={this.state.event.participants.length}
                 />
@@ -306,7 +306,15 @@ class DetailPage extends React.Component {
     );
   };
   render() {
-    return this.state.editClicked ? <EditEvent event={this.state.event} id={this.state.event.id} /> : this.eventDetailShow();
+    return this.state.editClicked ? (
+      <EditEvent
+        event={this.state.event}
+        id={this.state.event.id}
+        ownerId={this.state.event.owner.id}
+      />
+    ) : (
+      this.eventDetailShow()
+    );
   }
 }
 export default DetailPage;

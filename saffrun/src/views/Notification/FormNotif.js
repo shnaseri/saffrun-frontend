@@ -85,6 +85,10 @@ class FormNotif extends React.Component {
       toast.success("با موفقیت ارسال شد", {
         position: toast.POSITION.TOP_CENTER,
       });
+      this.setState({
+        title : "",
+        answer : ""
+      });
       return response;
     } catch (e) {
       toast.error("ارسال نشد", {

@@ -90,7 +90,7 @@ class CapacityPieChart extends React.Component {
             options={this.state.options}
             series={series}
             type="pie"
-            height={210}
+            height={170}
           />
         </CardBody>
         <ListGroup flush>

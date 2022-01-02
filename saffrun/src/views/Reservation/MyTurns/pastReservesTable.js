@@ -143,7 +143,7 @@ class PastTable extends Component {
           breakLabel={"..."}
           breakClassName={"break-me"}
           forcePage={this.props.currentPagePast}
-          pageCount={20}
+          pageCount={this.props.totalPages}
           marginPagesDisplayed={1}
           pageRangeDisplayed={1}
           containerClassName={

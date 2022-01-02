@@ -13,7 +13,14 @@ import {
 } from "reactstrap";
 import DataTable from "react-data-table-component";
 import { history } from "../../../history";
-import { ChevronLeft, ChevronRight, Edit, Trash, Users } from "react-feather";
+import {
+  ChevronLeft,
+  ChevronRight,
+  Edit,
+  Edit2,
+  Trash,
+  Users,
+} from "react-feather";
 import ReactPaginate from "react-paginate";
 import "../../../assets/scss/plugins/extensions/react-paginate.scss";
 import SweetAlert from "react-bootstrap-sweetalert";
@@ -222,11 +229,13 @@ class ReservationTable extends Component {
   };
   getParticipants = () => {
     let { reserveDetails, rowClicked, loadSpinner } = this.state;
-
-    return reserveDetails.length === 0 || rowClicked === 0 || loadSpinner
-      ? []
-      : reserveDetails.find((item) => item.id === this.state.rowClicked)
-          .participants;
+    if (reserveDetails.length === 0 || rowClicked === 0 || loadSpinner)
+      return []
+    let foundParticipant = reserveDetails.find((item) => item.id === this.state.rowClicked);
+    if (! foundParticipant)
+      return [] 
+    if (foundParticipant)
+      return foundParticipant.participants; 
   };
   callServer = async (pagination) => {
     let token = localStorage.getItem("access");
@@ -246,6 +255,8 @@ class ReservationTable extends Component {
       });
       return 200;
     } catch (e) {
+      console.log(e);
+      this.setState({ loadSpinner: false });
       return e.response.status;
     }
   };
@@ -298,30 +309,39 @@ class ReservationTable extends Component {
       <React.Fragment>
         <Card>
           <CardHeader>
-            <CardTitle>جزئیات روز</CardTitle>
+            <CardTitle>
+              جزئیات روز
+              <Edit2
+                size={16}
+                id="edit-reserve"
+                onMouseOver={(e) => {
+                  e.currentTarget.style.color = "orange";
+                }}
+                className="cursor-pointer mr-1 ml-1"
+                onMouseOut={(e) => (e.currentTarget.style.color = null)}
+                onClick={() => this.handleAlert("editModalOpen", true)}
+              />
+              <Trash
+                size={16}
+                id="delete-reserve"
+                onMouseOver={(e) => {
+                  e.currentTarget.style.color = "red";
+                }}
+                className="cursor-pointer"
+                onMouseOut={(e) => (e.currentTarget.style.color = null)}
+                onClick={() => this.handleAlert("deleteModalOpen", true)}
+              />
+            </CardTitle>
+            <UncontrolledTooltip placement="top" target="edit-reserve">
+              ویرایش کل نوبت
+            </UncontrolledTooltip>
+            <UncontrolledTooltip placement="top" target="delete-reserve">
+              حذف کل نوبت‌های روز
+            </UncontrolledTooltip>
           </CardHeader>
           <CardBody>
-            <React.Fragment>
-              <Button
-                color="primary"
-                onClick={() => this.handleAlert("editModalOpen", true)}
-                outline
-              >
-                <Edit size={15} />
-                <span style={{ marginRight: "5px" }}>ویرایش</span>
-              </Button>
-              <Button
-                color="danger"
-                onClick={() => this.handleAlert("deleteModalOpen", true)}
-                outline
-                style={{ marginRight: "20px" }}
-              >
-                <Trash size={15} />
-                <span style={{ marginRight: "5px" }}>حذف</span>
-              </Button>
-            </React.Fragment>
             <br />
-            <br />
+
             {this.state.loadSpinner && this.showSpinner()}
             {!this.state.loadSpinner && (
               <DataTable
@@ -345,7 +365,7 @@ class ReservationTable extends Component {
               confirmBtnBsStyle="danger"
               onConfirm={async () => {
                 await this.deleteWholeReserve();
-                history.push("/my-reservation")
+                history.push("/my-reservation");
               }}
               onCancel={() => {
                 this.handleAlert("deleteModalOpen", false);

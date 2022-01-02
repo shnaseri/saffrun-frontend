@@ -102,9 +102,7 @@ class FutureTable extends Component {
     loadSpinner: false,
   };
   calculateFillPercentage = (row) => {
-    return Math.floor(
-      (row.fill / (row.available + row.fill)) * 100
-    );
+    return Math.floor((row.fill / (row.available + row.fill)) * 100);
   };
 
   genereateUniqueID = (date, str) => {
@@ -163,7 +161,7 @@ class FutureTable extends Component {
           breakLabel={"..."}
           breakClassName={"break-me"}
           forcePage={this.props.currentPageFuture}
-          pageCount={20}
+          pageCount={this.props.totalPages}
           marginPagesDisplayed={1}
           pageRangeDisplayed={2}
           containerClassName={

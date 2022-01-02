@@ -57,7 +57,7 @@ class Comments extends Component {
   state = {
     currentPage: 0,
     totalCount: 0,
-    pageSize: 3,
+    pageSize: 2,
     loadSpinner: true,
     eventCollapse: true,
     collapse: false,
