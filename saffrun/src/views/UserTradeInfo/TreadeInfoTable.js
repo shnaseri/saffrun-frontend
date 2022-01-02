@@ -1,26 +1,52 @@
 import React from "react";
 import { Card, CardBody, CardHeader, CardTitle, Table } from "reactstrap";
 import DataTable from "react-data-table-component";
+import isAuthenticated from './../../utility/authenticated';
+import { history } from './../../history';
+import urlDomain from './../../utility/urlDomain';
+import  axios  from 'axios';
+import ReactPaginate from "react-paginate";
+import {
+  ChevronLeft,
+  ChevronRight,
+  ChevronDown,
+  ArrowDown,
+  ArrowUp,
+  Filter,
+} from "react-feather";
 
+const dateConverter = (date) => {
+  return new Date(date).toLocaleDateString("fa-IR");
+};
 const columns = [
   {
     name: "تاریخ",
     selector: "date",
     sortable: true,
+    cell: (row) => (
+      <div className="d-flex flex-xl-row flex-column align-items-xl-center align-items-start py-xl-0 py-1">
+        <div className="user-info text-truncate ml-xl-50 ml-0">
+          <span className="d-block text-bold-500 text-truncate mb-0">
+            {dateConverter(row.date)}
+          </span>
+          {/* <small>{this.dayOfWeek(row.date)}</small> */}
+        </div>
+      </div>
+    ),
   },
   {
     name: "تعداد رویدادها",
-    selector: "events",
+    selector: "count_event",
     sortable: true,
   },
   {
     name: "تعداد نوبت ها",
-    selector: "reserves",
+    selector: "count_reserve",
     sortable: true,
   },
   {
     name: "مبلغ",
-    selector: "totalPrice",
+    selector: "total_payment",
     sortable: true,
   },
 ];
@@ -93,96 +119,7 @@ const data = [
     ],
   },
   
-  // {
-  //   date: "14-1096446",
-  //   name: "Mireielle Quick",
-  //   gender: "Female",
-  //   email: "mquick1@mayoclinic.com",
-  //   Job_title: "Financial Advisor",
-  //   salary: "$2666.37",
-  //   address: "410 Hallows Lane",
-  //   city: "Wonopringgo",
-  // },
-  // {
-  //   id: "28-9140427",
-  //   events: "Blanche Bebbell",
-  //   reserves: "Female",
-  //   TotalPrice: "bbebbell2@webeden.co.uk",
-  //   Job_title: "Desktop Support Technician",
-  //   salary: "$7603.07",
-  //   address: "5 Hagan Plaza",
-  //   city: "Daishan",
-  // },
-  // {
-  //   id: "48-3954041",
-  //   name: "Dasha Caddie",
-  //   gender: "Female",
-  //   email: "dcaddie3@diigo.com",
-  //   Job_title: "Software Engineer I",
-  //   salary: "$3500.71",
-  //   address: "9346 Kinsman Point",
-  //   city: "Taesal-li",
-  // },
-  // {
-  //   id: "75-7908803",
-  //   name: "Shem Boots",
-  //   gender: "Male",
-  //   email: "sboots4@toplist.cz",
-  //   Job_title: "Research Assistant II",
-  //   salary: "$4876.79",
-  //   address: "92 Barby Avenue",
-  //   city: "Milići",
-  // },
-  // {
-  //   id: "57-8600270",
-  //   name: "Dot Karolowski",
-  //   gender: "Female",
-  //   email: "dkarolowski5@usatoday.com",
-  //   Job_title: "Geological Engineer",
-  //   salary: "$1277.40",
-  //   address: "85519 Debs Avenue",
-  //   city: "Zapolyarnyy",
-  // },
-  // {
-  //   id: "96-4074991",
-  //   name: "Gino St Leger",
-  //   gender: "Male",
-  //   email: "gst6@last.fm",
-  //   Job_title: "VP Product Management",
-  //   salary: "$5411.47",
-  //   address: "557 Fieldstone Road",
-  //   city: "Niquero",
-  // },
-  // {
-  //   id: "01-7234530",
-  //   name: "Jermaine Ricold",
-  //   gender: "Female",
-  //   email: "jricold7@facebook.com",
-  //   Job_title: "Recruiter",
-  //   salary: "$6977.39",
-  //   address: "367 2nd Park",
-  //   city: "Gondar",
-  // },
-  // {
-  //   id: "86-5709443",
-  //   name: "Emmott Cicchetto",
-  //   gender: "Male",
-  //   email: "ecicchetto8@ustream.tv",
-  //   Job_title: "Paralegal",
-  //   salary: "$1473.46",
-  //   address: "7174 Service Court",
-  //   city: "Ash Shuhadā’",
-  // },
-  // {
-  //   id: "03-7533373",
-  //   name: "Hadleigh Denman",
-  //   gender: "Male",
-  //   email: "hdenman9@va.gov",
-  //   Job_title: "Assistant Media Planner",
-  //   salary: "$2170.40",
-  //   address: "9 Village Parkway",
-  //   city: "Duiwelskloof",
-  // },
+ 
 ];
 
 const ExpandableTable = ({ data }) => {
@@ -197,14 +134,14 @@ const ExpandableTable = ({ data }) => {
         </tr>
       </thead>
       <tbody>
-        {data.details.map((row, ind) => {
+        {data.payment_detail.map((row, ind) => {
           return (
             <React.Fragment>
               <tr>
                 <td>{row.name}</td>
                 <td>{row.type}</td>
-                <td>{row.time}</td>
-                <td>{row.price}</td>
+                <td>{new Date(row.time).toLocaleTimeString()}</td>
+                <td>{row.amount}</td>
               </tr>
             </React.Fragment>
           );
@@ -215,6 +152,39 @@ const ExpandableTable = ({ data }) => {
 };
 
 class DataTableExpandableRows extends React.Component {
+  state ={
+    loadSpinner :true,
+    tradeData : {},
+    pageCount: 1,
+    currentPage : 1,
+    totalPages : 0
+  }
+  pageChanged = async (data) => {
+    this.setState({ currentPage: data.selected + 1 });
+    let pagination = {
+      page: data.selected + 1,
+      page_count: this.state.pageCount,
+    };
+    let token = localStorage.getItem("access");
+    token = `Bearer ${token}`;
+    let tradeData = await axios.get(`${urlDomain}/payment/web/get-all-payment/`, {
+      headers: { Authorization: token },
+      params : {...pagination}
+    });
+    this.setState({ tradeData: tradeData.data, loadSpinner: false , totalPages : tradeData.data["pages"] });
+  };
+  componentDidMount = async () => {
+    let authenticated = await isAuthenticated();
+    if (!authenticated) history.push("/login");
+    let token = localStorage.getItem("access");
+    token = `Bearer ${token}`;
+    let tradeData = await axios.get(`${urlDomain}/payment/web/get-all-payment/`, {
+      headers: { Authorization: token },
+      params : {page : this.state.currentPage , page_count :this.state.pageCount}
+    });
+    this.setState({ tradeData: tradeData.data, loadSpinner: false , totalPages : tradeData.data["pages"] });
+    // console.log(this.state.userData);
+  };
   render() {
     return (
       <Card>
@@ -223,7 +193,7 @@ class DataTableExpandableRows extends React.Component {
         </CardHeader>
         <CardBody>
           <DataTable
-            data={data}
+            data={this.state.tradeData["payments"]}
             columns={columns}
             noHeader
             expandableRows
@@ -231,6 +201,21 @@ class DataTableExpandableRows extends React.Component {
             expandOnRowClicked
             expandableRowsComponent={<ExpandableTable  />}
           />
+          <ReactPaginate
+                previousLabel={<ChevronLeft size="15" />}
+                nextLabel={<ChevronRight size="15" />}
+                breakLabel={"..."}
+                breakClassName={"break-me"}
+                pageCount={this.state.totalPages}
+                marginPagesDisplayed={1}
+                pageRangeDisplayed={2}
+                containerClassName={
+                  "vx-pagination icon-pagination pagination-center mt-3"
+                }
+                activeClassName={"active"}
+                onPageChange={this.pageChanged}
+                forcePage={this.state.currentPage - 1}
+              />
         </CardBody>
       </Card>
     );
