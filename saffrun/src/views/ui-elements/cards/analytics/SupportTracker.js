@@ -94,7 +94,8 @@ class SupportTracker extends React.Component {
               />
             </Col>
           </Row>
-          <Row>
+
+          <Row style={{ marginTop: "50px" }}>
             <Col sm="12">
               <div className="chart-info d-flex justify-content-sm-between">
                 <div className="text-center">

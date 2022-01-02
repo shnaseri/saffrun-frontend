@@ -12,7 +12,7 @@ import {
 } from "reactstrap";
 import PerfectScrollbar from "react-perfect-scrollbar";
 import axios from "axios";
-import "./pointer.css"
+import "./pointer.css";
 import * as Icon from "react-feather";
 
 import { history } from "../../../history";
@@ -80,13 +80,11 @@ class NavbarUser extends React.PureComponent {
     this.setState({ langDropdown: !this.state.langDropdown });
 
   render() {
- 
-
     return (
       <ul className="nav navbar-nav navbar-nav-user float-right">
         <UncontrolledDropdown tag="li" className="dropdown-user nav-item">
           <DropdownToggle tag="a" className="nav-link dropdown-user-link">
-            <div className="user-nav d-sm-flex d-none">
+            <div className="user-nav d-sm-flex ">
               <span className="user-name text-bold-600">
                 {this.props.userName}
               </span>

@@ -39,44 +39,66 @@ class EventStartTime extends Component {
       new Date(startDateTime) < new Date()
     );
   };
+  loadCardBody = (end_datetime, start_datetime, participants) => {
+    if (new Date(end_datetime) < new Date()) {
+      return (
+        <p className="mt-3 mb-5">
+          رویداد شما با تعداد {participants} شرکت‌کننده به اتمام رسید
+        </p>
+      );
+    } else if (new Date(start_datetime) > new Date()) {
+      return (
+        <div
+          style={{ color: "orange", fontSize: "14px" }}
+          className="text-center   d-flex justify-content-center flex-wrap"
+        >
+          <Countdown
+            date={this.loadTimer(start_datetime)}
+            renderer={this.renderTimer}
+            onComplete={() => {
+              toast.success("رویداد شما فرارسیده است.", {
+                position: toast.POSITION.TOP_CENTER,
+              });
+            }}
+          />
+          <p style={{ fontSize: "14px", color: "black" }} className="mt-3 mb-5">
+            رویداد شما با تعداد {participants} شرکت‌کننده طبق زمان بالا شروع
+            می‌شود
+          </p>
+        </div>
+      );
+    } else if (new Date(end_datetime) > new Date()) {
+      return (
+        <div
+          style={{ color: "orange", fontSize: "14px" }}
+          className="text-center   d-flex justify-content-center flex-wrap"
+        >
+          <Countdown
+            date={this.loadTimer(end_datetime)}
+            renderer={this.renderTimer}
+            onComplete={() => {
+              toast.success("رویداد شما فرارسیده است.", {
+                position: toast.POSITION.TOP_CENTER,
+              });
+            }}
+          />
+          <p style={{ fontSize: "14px", color: "black" }} className="mt-3 mb-5">
+            رویداد شما با تعداد {participants} شرکت‌کننده طبق زمان بالا به اتمام 
+            می‌رسد
+          </p>
+        </div>
+      );
+    }
+  };
   render() {
-    let { participants, datetime, start_datetime } = this.props;
+    let { participants, end_datetime, start_datetime } = this.props;
     return (
       <Card>
         <CardHeader>
-          <CardTitle>زمان پایان</CardTitle>
+          <CardTitle>زمان نوبت</CardTitle>
         </CardHeader>
         <CardBody className="justify-content-center d-flex">
-          {this.compareDateTimes(datetime, start_datetime) && (
-            <div
-              style={{ color: "orange", fontSize: "14px" }}
-              className="text-center   d-flex justify-content-center flex-wrap"
-            >
-              <Countdown
-                date={this.loadTimer(datetime)}
-                renderer={this.renderTimer}
-                onComplete={() => {
-                  toast.success("رویداد شما فرارسیده است.", {
-                    position: toast.POSITION.TOP_CENTER,
-                  });
-                }}
-              />
-              <p
-                style={{ fontSize: "14px", color: "black" }}
-                className="mt-3 mb-5"
-              >
-                رویداد شما با تعداد {participants} شرکت‌کننده در حال اجراست
-              </p>
-            </div>
-          )}
-          {!this.compareDateTimes(datetime, start_datetime) && (
-            <React.Fragment>
-              <p className="mt-3 mb-5">
-                رویداد شما با تعداد {participants} شرکت‌کننده در حال اجرا
-                نمی‌باشد
-              </p>
-            </React.Fragment>
-          )}
+          {this.loadCardBody(end_datetime, start_datetime, participants)}
         </CardBody>
       </Card>
     );

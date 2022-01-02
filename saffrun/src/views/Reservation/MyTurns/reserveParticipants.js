@@ -7,7 +7,7 @@ class ReserveParticipants extends React.Component {
     return (
       <div style={{ height: "440px", overflow: "auto" }}>
         <Card style={{ boxShadow: "none" }}>
-          <CardHeader></CardHeader>
+          
           <CardBody>
             {this.props.participants.map((item) => (
               <div className="d-flex justify-content-between align-items-center mb-1">
@@ -25,9 +25,9 @@ class ReserveParticipants extends React.Component {
                     {/* <span className="font-small-2">6 Mutual Friends</span> */}
                   </div>
                 </div>
-                <Button color="danger" className="btn-icon ml-auto">
+                {/* <Button color="danger" className="btn-icon ml-auto">
                   <Trash size={17} />
-                </Button>
+                </Button> */}
               </div>
             ))}
           </CardBody>

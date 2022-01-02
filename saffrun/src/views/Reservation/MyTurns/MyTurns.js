@@ -25,7 +25,7 @@ import "../../../assets/scss/pages/coming-soon.scss";
 import "../../../assets/scss/pages/dashboard-analytics.scss";
 import ClosestReserve from "./closestReserve";
 import CurrentReserve from "./currentReserve";
-import defaultImg from "../../../assets/img/profile/Generic-profile-picture.jpg.webp"
+import defaultImg from "../../../assets/img/profile/Generic-profile-picture.jpg.webp";
 
 class MyReservation extends React.Component {
   state = {
@@ -35,6 +35,8 @@ class MyReservation extends React.Component {
     active: "1",
     page: 1,
     page_count: 5,
+    totalPagesFuture: 0,
+    totalPagesPast: 0,
     currentPageFuture: 0,
     currentPagePast: 0,
     curIdx: 0,
@@ -43,7 +45,9 @@ class MyReservation extends React.Component {
     currentReserveModal: false,
   };
   imgGenerator = (x) => {
-    return x.image.image ? `${imgUrlDomain}${x.image.image.thumbnail}` : defaultImg;
+    return x.image.image
+      ? `${imgUrlDomain}${x.image.image.thumbnail}`
+      : defaultImg;
   };
   participantsGenreator = (participants) => {
     return participants.map((x) => {
@@ -57,18 +61,27 @@ class MyReservation extends React.Component {
     let token = localStorage.getItem("access");
     let pagination = { page, page_count };
     try {
-      let FutureReserves = await axios.get(`${urlDomain}/reserve/get-future-reserves/`, {
-        headers: { Authorization: `Bearer ${token}` },
-        params: pagination,
-      });
-      let PastReserves = await axios.get(`${urlDomain}/reserve/get-past-reserves/`, {
-        headers: { Authorization: `Bearer ${token}` },
-        params: pagination,
-      });
+      let FutureReserves = await axios.get(
+        `${urlDomain}/reserve/get-future-reserves/`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+          params: pagination,
+        }
+      );
+      let PastReserves = await axios.get(
+        `${urlDomain}/reserve/get-past-reserves/`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+          params: pagination,
+        }
+      );
+      console.log(FutureReserves);
       await this.loadCurrentReserve();
       this.setState({
-        futureReserves : FutureReserves.data.reserves,
-        pastReserves : PastReserves.data.reserves,
+        totalPagesFuture: FutureReserves.data["pages "],
+        totalPagesPast: PastReserves.data["pages "],
+        futureReserves: FutureReserves.data.reserves,
+        pastReserves: PastReserves.data.reserves,
         loadSpinner: false,
       });
     } catch (e) {
@@ -83,12 +96,9 @@ class MyReservation extends React.Component {
         headers: { Authorization: `Bearer ${token}` },
       }
     );
-    let userInfo = await axios.get(
-      `${urlDomain}/profile/user/`,
-      {
-        headers: { Authorization: `Bearer ${token}` },
-      }
-    );
+    let userInfo = await axios.get(`${urlDomain}/profile/user/`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
 
     let { current_reserve, nearest_reserves } = response.data;
     let currentReserve = current_reserve
@@ -108,7 +118,7 @@ class MyReservation extends React.Component {
     nearest_reserves = nearest_reserves.map((item) => {
       return {
         ...item,
-        location : userInfo.data.address,
+        location: userInfo.data.address,
         participants: this.participantsGenreator(item.participants),
       };
     });
@@ -136,13 +146,16 @@ class MyReservation extends React.Component {
     let token = localStorage.getItem("access");
     let pagination = { page: selectedPage, page_count };
     try {
-      let reserves = await axios.get(`${urlDomain}/reserve/get-future-reserves/`, {
-        headers: { Authorization: `Bearer ${token}` },
-        params: pagination,
-      });
+      let reserves = await axios.get(
+        `${urlDomain}/reserve/get-future-reserves/`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+          params: pagination,
+        }
+      );
       console.log(reserves);
       this.setState({
-        futureReserves : reserves.data.reserves,
+        futureReserves: reserves.data.reserves,
         currentPageFuture: selectedPage - 1,
         loadSpinner: false,
       });
@@ -156,12 +169,15 @@ class MyReservation extends React.Component {
     let token = localStorage.getItem("access");
     let pagination = { page: selectedPage, page_count };
     try {
-      let reserves = await axios.get(`${urlDomain}/reserve/get-past-reserves/`, {
-        headers: { Authorization: `Bearer ${token}` },
-        params: pagination,
-      });
+      let reserves = await axios.get(
+        `${urlDomain}/reserve/get-past-reserves/`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+          params: pagination,
+        }
+      );
       this.setState({
-        pastReserves : reserves.data.reserves,
+        pastReserves: reserves.data.reserves,
         loadSpinner: false,
         currentPagePast: selectedPage - 1,
       });
@@ -287,6 +303,7 @@ class MyReservation extends React.Component {
                       futurePageChanged={this.futurePageChanged}
                       futureReserves={futureReserves}
                       currentPageFuture={this.state.currentPageFuture}
+                      totalPages={this.state.totalPagesFuture}
                     />
                   </TabPane>
                   <TabPane tabId="2">
@@ -294,6 +311,7 @@ class MyReservation extends React.Component {
                       pastPageChanged={this.pastPageChanged}
                       pastReserves={pastReserves}
                       currentPagePast={this.state.currentPagePast}
+                      totalPages={this.state.totalPagesPast}
                     />
                   </TabPane>
                 </TabContent>

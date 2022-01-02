@@ -64,6 +64,7 @@ class MyEvents extends React.Component {
     loadSpinner: true,
     currentPage: 1,
     pageCount: 6,
+    totalPages: 0,
     sortStates: [
       {
         basedOn: "start_datetime",
@@ -99,9 +100,12 @@ class MyEvents extends React.Component {
       let categories = await axios.get(`${urlDomain}/category/get-all/`, {
         headers: { Authorization: token },
       });
-      console.log(events.data.events);
       this.loadCategories(categories.data);
-      this.setState({ events: events.data.events, loadSpinner: false });
+      this.setState({
+        events: events.data.events,
+        totalPages: events.data.pages,
+        loadSpinner: false,
+      });
     } catch (e) {
       this.setState({ loadSpinner: false });
     }
@@ -584,7 +588,7 @@ class MyEvents extends React.Component {
                 nextLabel={<ChevronRight size="15" />}
                 breakLabel={"..."}
                 breakClassName={"break-me"}
-                pageCount={20}
+                pageCount={this.state.totalPages}
                 marginPagesDisplayed={1}
                 pageRangeDisplayed={2}
                 containerClassName={

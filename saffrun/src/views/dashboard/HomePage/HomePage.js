@@ -76,7 +76,6 @@ class Home extends React.Component {
                   {this.state.homeData["first_name"]}{" "}
                   {this.state.homeData["last_name"]}
                 </h4>
-                <p>نام کسب و کار</p>
                 <div className="d-flex justify-content-between mt-2">
                   <div className="uploads">
                     <p className="font-weight-bold font-medium-2 mb-0">
@@ -101,7 +100,7 @@ class Home extends React.Component {
                     className=" activity-timeline timeline-left list-unstyled"
                     style={{ textAlign: "right" }}
                   >
-                    {this.state.last_comments.map((comment) => {
+                    {this.state.last_comments.slice(0,2).map((comment) => {
                       return (
                         <li>
                           <div className="timeline-icon bg-primary">

@@ -19,7 +19,7 @@ import userImg from "../../../assets/img/profile/Generic-profile-picture.jpg.web
 class DispatchedOrders extends React.Component {
   render() {
     return (
-      <Card style={{height:"450px"}}>
+      <Card style={{height:"460px"}}>
         <CardHeader>
           <CardTitle>{this.props.cardName}</CardTitle>
         </CardHeader>

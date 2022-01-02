@@ -81,11 +81,13 @@ class EditEvent extends React.Component {
       end_datetime,
       category,
       images,
+      price,
     } = this.props.event;
     this.setState({
       title,
       description,
       discount,
+      price,
       initialStartDate: this.handleInitialDate(start_datetime),
       initialEndDate: this.handleInitialDate(end_datetime),
       jobCategory: this.handleIntitalCategory(category),
@@ -252,7 +254,7 @@ class EditEvent extends React.Component {
     }
     return imageIds;
   };
-  eventObject = () => {
+  eventObject = (imageIds) => {
     let {
       title,
       description,
@@ -271,20 +273,22 @@ class EditEvent extends React.Component {
       end_datetime: !editDate
         ? this.props.event.end_datetime
         : this.acceptableDateFormat(this.createDate("to")),
-      category_id: jobCategory.value,
+      category: jobCategory.value,
       price,
+      images: imageIds,
+      owner : this.props.ownerId
     };
     return event;
   };
-  postEvent = async () => {
+  postEvent = async (imageIds) => {
     var token = "Bearer " + localStorage.getItem("access");
     var headers = {
       Authorization: token,
     };
     try {
       let response = await axios.put(
-        `${urlDomain}/event/${this.props.id}/`,
-        { ...this.eventObject() },
+        `${urlDomain}/event/${this.props.id}`,
+        { ...this.eventObject(imageIds) },
         { headers }
       );
       return response;
@@ -303,29 +307,13 @@ class EditEvent extends React.Component {
     var headers = {
       Authorization: token,
     };
-    let imageIds = false;
+    let imageIds = [];
     if (this.state.files.length > 0) {
       imageIds = await this.uploadImage();
     }
-    let eventResponse = await this.postEvent();
+    let eventResponse = await this.postEvent(imageIds);
     if (!eventResponse) return false;
-    if (imageIds) {
-      for (let index = 0; index < imageIds.length; index++) {
-        try {
-          let postImageEvent = await axios.post(
-            `${urlDomain}/event/add-image/`,
-            {
-              event_id: eventResponse.data.event_id,
-              image_id: imageIds[index],
-            },
-            { headers }
-          );
-        } catch (e) {
-          console.log(e);
-          return false;
-        }
-      }
-    }
+
     return true;
   };
   initialDateInput = (dateTime, label) => {

@@ -11,14 +11,15 @@ import {
 } from "reactstrap";
 import Chart from "react-apexcharts";
 import { ChevronDown } from "react-feather";
-import isAuthenticated from './../../../utility/authenticated';
-import  axios  from 'axios';
-import urlDomain from './../../../utility/urlDomain';
-import { history } from './../../../history';
+import isAuthenticated from "./../../../utility/authenticated";
+import axios from "axios";
+import urlDomain from "./../../../utility/urlDomain";
+import { history } from "./../../../history";
+import "./chartStyle.css";
 class ApexLineCharts extends React.Component {
   state = {
-    loadSpinner : true,
-    year:1400,
+    loadSpinner: true,
+    year: 1400,
     options: {
       chart: {
         id: "lineChart",
@@ -41,6 +42,10 @@ class ApexLineCharts extends React.Component {
       },
       yaxis: {
         fontFamily: "Dana-FaNum",
+        labels: {
+          offsetX: -22,
+          offsetY: 0,
+        },
       },
       stroke: {
         curve: "straight",
@@ -66,57 +71,56 @@ class ApexLineCharts extends React.Component {
     },
     series: [
       {
-        name: "نوبت ها",
+        name: " نوبت‌ها ",
         data: [],
       },
       {
-        name: "رویداد ها",
+        name: " رویدادها ",
         data: [],
       },
     ],
   };
-  fillDataList = (data)=>{
-    let reservData =[];
+  fillDataList = (data) => {
+    let reservData = [];
     let eventData = [];
-    data.map(obj =>{
-      reservData.push(obj.reserve)
-      eventData.push(obj.event)
-    })
+    data.map((obj) => {
+      reservData.push(obj.reserve);
+      eventData.push(obj.event);
+    });
     let series = [...this.state.series];
-    series[0].data = reservData
-    series[1].data = eventData
-    this.setState(series)
-  }
+    series[0].data = reservData;
+    series[1].data = eventData;
+    this.setState(series);
+  };
   async componentDidMount() {
-
     let authenticated = await isAuthenticated();
     if (!authenticated) history.push("/login");
-    this.callCardApi(new Date().getFullYear())
-    
-    
+    this.callCardApi(new Date().getFullYear());
   }
-  callCardApi = async (date)=>{
+  callCardApi = async (date) => {
     let token = localStorage.getItem("access");
     token = `Bearer ${token}`;
     try {
-      let chartData = await axios.get(`${urlDomain}/core/web/get-yearly-details/`, {
-        headers: { Authorization: token },
-        params: { year:date },
-      });
-      this.fillDataList(chartData.data.result)
-      this.setState({  loadSpinner: false });
-      
+      let chartData = await axios.get(
+        `${urlDomain}/core/web/get-yearly-details/`,
+        {
+          headers: { Authorization: token },
+          params: { year: date },
+        }
+      );
+      this.fillDataList(chartData.data.result);
+      this.setState({ loadSpinner: false });
     } catch (e) {
       this.setState({ loadSpinner: false });
     }
-  }
-  setValue = async (e)=>{
-    this.setState({  loadSpinner: true , year : e.target.childNodes[0].data });
-    await this.callCardApi(e.target.value)
-  }
+  };
+  setValue = async (e) => {
+    this.setState({ loadSpinner: true, year: e.target.childNodes[0].data });
+    await this.callCardApi(e.target.value);
+  };
   render() {
     return (
-      <Card style={{ height: "450px" }}>
+      <Card style={{ height: "460px" }}>
         <CardHeader>
           <CardTitle>وضعیت رویداد ونوبت به تفکیک ماه</CardTitle>
           <UncontrolledDropdown>
@@ -124,21 +128,33 @@ class ApexLineCharts extends React.Component {
               {this.state.year} <ChevronDown size={10} />
             </DropdownToggle>
             <DropdownMenu right>
-              <DropdownItem value={2022} onClick={(e)=>this.setValue(e)}>1401</DropdownItem>
-              <DropdownItem value={2021} onClick={(e)=>this.setValue(e)}>1400</DropdownItem>
-              <DropdownItem value={2020} onClick={(e)=>this.setValue(e)}>1399</DropdownItem>
-              <DropdownItem value={2019} onClick={(e)=>this.setValue(e)}>1398</DropdownItem>
-              <DropdownItem value={2018} onClick={(e)=>this.setValue(e)}>1397</DropdownItem>
+              <DropdownItem value={2022} onClick={(e) => this.setValue(e)}>
+                1401
+              </DropdownItem>
+              <DropdownItem value={2021} onClick={(e) => this.setValue(e)}>
+                1400
+              </DropdownItem>
+              <DropdownItem value={2020} onClick={(e) => this.setValue(e)}>
+                1399
+              </DropdownItem>
+              <DropdownItem value={2019} onClick={(e) => this.setValue(e)}>
+                1398
+              </DropdownItem>
+              <DropdownItem value={2018} onClick={(e) => this.setValue(e)}>
+                1397
+              </DropdownItem>
             </DropdownMenu>
           </UncontrolledDropdown>
         </CardHeader>
         <CardBody>
-          {!this.state.loadSpinner && <Chart
-            options={this.state.options}
-            series={this.state.series}
-            type="line"
-            height={350}
-          />}
+          {!this.state.loadSpinner && (
+            <Chart
+              options={this.state.options}
+              series={this.state.series}
+              type="line"
+              height={350}
+            />
+          )}
         </CardBody>
       </Card>
     );

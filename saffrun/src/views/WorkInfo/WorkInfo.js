@@ -51,6 +51,7 @@ class workInfo extends React.Component {
       headers: { Authorization: token },
     });
     this.loadCategories(category.data);
+    this.showDateTime(workData.data["establishment_date"]);
     this.setState({
       workData: workData.data,
       loadSpinner: false,
@@ -60,6 +61,9 @@ class workInfo extends React.Component {
 
     // this.extractUrl(workData.data["images"]);
   };
+  showDateTime = (establishment_date) => {
+    if (!establishment_date) this.setState({ showDate: false });
+  };
   extractUrl = (imagesObj) => {
     let images = [...this.state.images];
     imagesObj.forEach((img) => {
@@ -68,6 +72,7 @@ class workInfo extends React.Component {
     return images;
   };
   standardCategoryFormat = (category) => {
+    if (!category) return { id: "", name: "" };
     if ("value" in category) {
       return { id: category.value, name: category.label };
     }
@@ -163,16 +168,22 @@ class workInfo extends React.Component {
     return dateStringify.substring(1, dateStringify.length - 1);
   };
   putData = async () => {
+    if (!this.state.workData["category"]) {
+      toast.error("لطفا گروه شغلی را انتخاب کنید", {
+        position: toast.POSITION.TOP_CENTER,
+      });
+      return;
+    }
     let token = localStorage.getItem("access");
     let imageIds = await this.uploadImage();
     let workDataToPut = {
       ...this.state.workData,
       category: this.state.workData["category"]["id"],
       images: imageIds,
-      phone_number: this.state.workData["phone_number"].replace(/\s/g, ""),
-      establishment_date: this.acceptableDateFormat(
-        this.state.workData["establishment_date"]
-      ),
+      phone_number: this.state.workData["phone_number"] ? this.state.workData["phone_number"].replace(/\s/g, "") : null,
+      establishment_date: this.state.workData["establishment_date"]
+        ? this.acceptableDateFormat(this.state.workData["establishment_date"])
+        : null,
     };
     token = `Bearer ${token}`;
     let x = await axios.put(
@@ -244,11 +255,7 @@ class workInfo extends React.Component {
                             </FormGroup>
                           </Col>
 
-                          <Col
-                            md="6"
-                            sm="12"
-                            
-                          >
+                          <Col md="6" sm="12">
                             {this.state.showDate ? (
                               <FormGroup>
                                 <Label for="title"> تاریخ تاسیس</Label>
