@@ -11,7 +11,7 @@ import {
   Table,
   ButtonGroup,
   ButtonDropdown,
-  Dropdown,
+  UncontrolledButtonDropdown,
   DropdownItem,
   DropdownMenu,
   DropdownToggle,
@@ -22,6 +22,10 @@ import userImg from "../../assets/img/profile/Generic-profile-picture.jpg.webp";
 import Checkbox from "../../components/@vuexy/checkbox/CheckboxesVuexy";
 import { Check, Lock } from "react-feather";
 import axios from "axios";
+import { history } from "../../history";
+import isAuthenticated from "../../utility/authenticated";
+import urlDomain from "../../utility/urlDomain";
+import { toast } from "react-toastify";
 // import { Avatar } from 'react-native-elements';
 
 class UserAccountTab extends React.Component {
@@ -31,13 +35,40 @@ class UserAccountTab extends React.Component {
     this.toggle = this.toggle.bind(this);
     this.state = {
       dropdownOpen: false,
+      currPass: "",
+      newPass: "",
+      repPass: "",
     };
   }
-  state = {
-    currPass: "",
-    newPass: "",
-    repPass: "",
+
+  postPassword = async () => {
+    var token = "Bearer " + localStorage.getItem("access");
+    var headers = {
+      Authorization: token,
+    };
+    try {
+      let response = await axios.post(
+        `${urlDomain}/auth/change_password/`,
+        {
+          old_password: this.state.currPass,
+          new_password: this.state.newPass,
+          username: "admin",
+        },
+        { headers }
+      );
+      toast.success("رمز شما با موفقیت تغییر پیدا کرد", {
+        position: toast.POSITION.TOP_CENTER,
+      });
+      return response;
+    } catch (e) {
+      console.log(e);
+      toast.error("عملیات با خطا روبرو شد.", {
+        position: toast.POSITION.TOP_CENTER,
+      });
+      return false;
+    }
   };
+
   toggle() {
     this.setState((prevState) => ({
       dropdownOpen: !prevState.dropdownOpen,
@@ -45,25 +76,55 @@ class UserAccountTab extends React.Component {
   }
   hiddenFileInput = React.createRef();
   handleClick = (event) => {
-    
     console.log(this.hiddenFileInput.current);
     this.hiddenFileInput.current.click();
   };
   handleChange = (event) => {
     const fileUploaded = event.target.files[0];
+    this.setState({
+      isUploadedImg: true,
+      uploadedUrl: URL.createObjectURL(fileUploaded),
+    });
+    this.postImg(fileUploaded);
     this.props.updateImg(URL.createObjectURL(fileUploaded));
     console.log(URL.createObjectURL(fileUploaded));
+  };
+
+  postImg = async (file) => {
+    try {
+      var token = "Bearer " + localStorage.getItem("access");
+      var headers = {
+        "Content-type": "multipart/form-data",
+        Authorization: token,
+      };
+      const formData = new FormData();
+      formData.append("image", file);
+      let response = await axios.post(
+        `${urlDomain}/core/image/upload/`,
+        formData,
+        {
+          headers,
+        }
+      );
+      this.props.updateImg(response.data.id);
+    } catch (e) {
+      console.log(e);
+      return false;
+    }
   };
   handleDel = () => {
     this.props.delImg();
   };
-  
+
   handleAvatar = () => {
-    // if (this.props.userData["avatar"] != "")
-    //   return this.props.userData["avatar"];
-    // else {
-    return userImg;
-    // }
+    if (this.props.userData["avatar"]["image"]) {
+      return this.state.isUploadedImg
+        ? this.state.uploadedUrl
+        : "http://127.0.0.1:8000" +
+            this.props.userData["avatar"]["image"]["thumbnail"];
+    } else {
+      return userImg;
+    }
   };
   render() {
     return (
@@ -81,28 +142,29 @@ class UserAccountTab extends React.Component {
                 width="84"
               />
 
-              <Dropdown
-                direction="left"
+              <UncontrolledButtonDropdown
+                direction="right"
                 isOpen={this.state.dropdownOpen}
                 toggle={this.toggle}
-                style={{ marginTop: -15 }}
+                style={{ marginTop: 58, marginRight: -20 }}
               >
                 <DropdownToggle
-                  style={{ padding: 0, color: "#ff9f43", float: "left" }}
+                  style={{ padding: 3, backgroundColor: "#fff", float: "left" }}
                   caret
                 >
-                  <Edit style={{ right: 0 }} />
+                  <Edit style={{ right: 0, borderRadius: "5px" }} />
                 </DropdownToggle>
-                <DropdownMenu style={{ position: "relative" }}>
+                <DropdownMenu style={{ marginRight: 35 }}>
                   <DropdownItem onClick={this.handleClick}>تغییر</DropdownItem>
                   <DropdownItem divider />
-                  <DropdownItem onClick={this.props.delImg}>حذف</DropdownItem>
+                  <DropdownItem onClick={this.handleDel}>حذف</DropdownItem>
                 </DropdownMenu>
-              </Dropdown>
+              </UncontrolledButtonDropdown>
             </Media>
             <Media className="mt-2" body>
               <Media className="font-medium-1 text-bold-600" tag="p" heading>
                 {this.props.userData["first_name"]}
+                <span> </span>
                 {this.props.userData["last_name"]}
               </Media>
               <input
@@ -121,7 +183,11 @@ class UserAccountTab extends React.Component {
                 <FormGroup>
                   <Label for="username">نام کاربری</Label>
                   <Input
-                    style={{direction : this.props.changeDIR(this.props.userData["username"])}}
+                    style={{
+                      direction: this.props.changeDIR(
+                        this.props.userData["username"]
+                      ),
+                    }}
                     type="text"
                     value={this.props.userData["username"]}
                     id="username"
@@ -134,7 +200,11 @@ class UserAccountTab extends React.Component {
                 <FormGroup>
                   <Label for="email">ایمیل</Label>
                   <Input
-                  style={{direction : this.props.changeDIR(this.props.userData["email"])}}
+                    style={{
+                      direction: this.props.changeDIR(
+                        this.props.userData["email"]
+                      ),
+                    }}
                     type="text"
                     value={this.props.userData["email"]}
                     id="email"
@@ -148,7 +218,11 @@ class UserAccountTab extends React.Component {
                 <FormGroup>
                   <Label for="name">نام</Label>
                   <Input
-                  style={{direction : this.props.changeDIR(this.props.userData["first_name"])}}
+                    style={{
+                      direction: this.props.changeDIR(
+                        this.props.userData["first_name"]
+                      ),
+                    }}
                     type="text"
                     value={this.props.userData["first_name"]}
                     id="first_name"
@@ -161,7 +235,11 @@ class UserAccountTab extends React.Component {
                 <FormGroup>
                   <Label for="lName">نام خانوادگی</Label>
                   <Input
-                  style={{direction : this.props.changeDIR(this.props.userData["last_name"])}}
+                    style={{
+                      direction: this.props.changeDIR(
+                        this.props.userData["last_name"]
+                      ),
+                    }}
                     type="text"
                     value={this.props.userData["last_name"]}
                     name="lName"
@@ -183,7 +261,7 @@ class UserAccountTab extends React.Component {
                 </FormGroup>
               </Col>
               <Col md="6" sm="12">
-              <FormGroup>
+                <FormGroup>
                   <Label for="company"> شماره تلفن همراه</Label>
                   <InputMask
                     style={{ direction: "ltr" }}
@@ -191,7 +269,7 @@ class UserAccountTab extends React.Component {
                     mask="0999 999 9999"
                     value={this.props.userData["phone"]}
                     onChange={this.props.updateData}
-                    id = "phone"
+                    id="phone"
                     // placeholder="شماره تلفن"
                   />
                 </FormGroup>
@@ -221,6 +299,7 @@ class UserAccountTab extends React.Component {
                           type="password"
                           value={this.state.currPass}
                           id="password"
+                          required
                           placeholder="رمز قبلی"
                           onChange={(e) =>
                             this.setState({ currPass: e.target.value })
@@ -236,6 +315,7 @@ class UserAccountTab extends React.Component {
                           value={this.state.newPass}
                           name="newpassword"
                           id="newpassword"
+                          required
                           placeholder="رمز جدید"
                           onChange={(e) =>
                             this.setState({ newPass: e.target.value })
@@ -252,6 +332,7 @@ class UserAccountTab extends React.Component {
                           value={this.state.repPass}
                           id="RepPass"
                           placeholder="تکرار رمز"
+                          required
                           invalid={this.state.repPass !== this.state.newPass}
                           onChange={(e) =>
                             this.setState({ repPass: e.target.value })
@@ -272,7 +353,11 @@ class UserAccountTab extends React.Component {
                       <Button
                         className="mr-1"
                         color="primary"
-                        // onClick={this.props.postData}
+                        disabled={
+                          this.state.repPass !== this.state.newPass ||
+                          this.state.newPass.length === 0
+                        }
+                        onClick={() => this.postPassword()}
                         style={{ margin: 20 }}
                       >
                         تغییر رمز
@@ -282,7 +367,7 @@ class UserAccountTab extends React.Component {
                   </div>
                 </div>
               </Col>
-              <Col sm="12" style={{ marginTop: 35 }}>
+              {/* <Col sm="12" style={{ marginTop: 35 }}>
                 <div className="permissions border px-2">
                   <div className="title pt-2 pb-0">
                     <Lock size={19} />
@@ -413,7 +498,7 @@ class UserAccountTab extends React.Component {
                     </tbody>
                   </Table>
                 </div>
-              </Col>
+              </Col> */}
               <Col
                 className="d-flex justify-content-end flex-wrap mt-2"
                 sm="12"

@@ -15,105 +15,65 @@ import {
   Toast,
   ToastBody,
   ToastHeader,
+  UncontrolledTooltip,
 } from "reactstrap";
 import { history } from "../../../history";
 import EventParticipants from "./EventParticipants";
 import FadeEffectSwiper from "./FadeEffect";
-import {
-  Star,
-  Truck,
-  DollarSign,
-  ShoppingCart,
-  Heart,
-  Facebook,
-  Twitter,
-  Youtube,
-  Instagram,
-  Award,
-  Clock,
-  Shield,
-  MapPin,
-  Info,
-} from "react-feather";
+import { Clock, MapPin, Info, Edit, LogOut, Edit2 } from "react-feather";
 import classnames from "classnames";
-import EventCreation from "../EventCreation/EventCreation"
+import EditEvent from "./editEvent";
 import { Media } from "reactstrap";
 import Comments from "../../UserReceivedComments/receivedComment";
-// import Sidebar from "react-sidebar"
-// import EmailList from "./EmailList"
-// import EmailSidebarContent from "./EmailSidebar"
-import { ContextLayout } from "../../../utility/context/Layout";
-// import "../../../assets/scss/pages/app-email.scss"
-import Swiper from "react-id-swiper";
-import macbook from "../../../assets/img/elements/macbook-pro.png";
-import headphones from "../../../assets/img/elements/beats-headphones.png";
-import laptop from "../../../assets/img/elements/macbook-pro.png";
-import homepod from "../../../assets/img/elements/homepod.png";
-import earphones from "../../../assets/img/elements/wireless-earphones.png";
-import iphoneX from "../../../assets/img/elements/iphone-x.png";
-import watch from "../../../assets/img/elements/apple-watch.png";
-import mouse from "../../../assets/img/elements/magic-mouse.png";
 import "swiper/css/swiper.css";
 import "../../../assets/scss/pages/app-ecommerce-shop.scss";
 import Status from "../../../components/@vuexy/status/status";
 import ShowParticipant from "./ShowParticipant";
+import EventStartTime from "./eventStartTime";
 import Avatar from "../../../components/@vuexy/avatar/AvatarComponent";
-
-const mql = window.matchMedia(`(min-width: 992px)`);
-const swiperParams = {
-  navigation: {
-    nextEl: ".swiper-button-next",
-    prevEl: ".swiper-button-prev",
-  },
-  breakpoints: {
-    1600: {
-      slidesPerView: 5,
-      spaceBetween: 55,
-    },
-    1300: {
-      slidesPerView: 4,
-      spaceBetween: 55,
-    },
-    1260: {
-      slidesPerView: 3,
-      spaceBetween: 55,
-    },
-    900: {
-      slidesPerView: 3,
-      spaceBetween: 55,
-    },
-    768: {
-      slidesPerView: 2,
-      spaceBetween: 55,
-    },
-    375: {
-      slidesPerView: 1,
-      spaceBetween: 55,
-    },
-  },
-};
+import urlDomain from "../../../utility/urlDomain";
+import isAuthenticated from "../../../utility/authenticated";
+import axios from "axios";
 
 class DetailPage extends React.Component {
   state = {
     selectedColor: 1,
     active: "1",
     event: {
-      created_at: "2021-10-27T13:39:14.238Z",
-      updated_at: "2021-10-27T13:39:14.238Z",
-      title: "بازی مافیا",
-      description: "بازی مافیا برای بچه های باحال ایران",
-      image: "events-picture/None/09792300562592260881.jpg",
+      id: "",
+      title: "",
+      description: "",
+      images: [],
       discount: 0,
-      owner: 1,
+      owner: { id: 1 },
       start_datetime: "2021-10-27T13:38:47Z",
       end_datetime: "2021-10-29T19:30:00Z",
-      participants: [1, 3, 4],
+      participants: [],
     },
+    editClicked: false,
   };
-  handleEventState=(e)=>
-  {
-    this.props.history.push('/event-creation', this.state.event); 
+  async componentDidMount() {
+    let authenticated = await isAuthenticated();
+    if (!authenticated) history.push("/login");
+    let token = localStorage.getItem("access");
+    token = `Bearer ${token}`;
+
+    try {
+      let event = await axios.get(
+        `${urlDomain}/event/${this.props.match.params.id}`,
+        {
+          headers: { Authorization: token },
+        }
+      );
+      this.setState({ loadSpinner: false, event: event.data });
+    } catch (e) {
+      this.setState({ loadSpinner: false });
+    }
   }
+
+  handleEventState = (e) => {
+    this.props.history.push("/event-creation", this.state.event);
+  };
   handleComposeSidebar = (status) => {
     if (status === "open") {
       this.setState({
@@ -126,92 +86,6 @@ class DetailPage extends React.Component {
     }
   };
 
-  UNSAFE_componentWillMount() {
-    mql.addListener(this.mediaQueryChanged);
-  }
-
-  componentWillUnmount() {
-    mql.removeListener(this.mediaQueryChanged);
-  }
-
-  onSetSidebarOpen = (open) => {
-    this.setState({ sidebarOpen: open });
-  };
-
-  mediaQueryChanged = () => {
-    this.setState({ sidebarDocked: mql.matches, sidebarOpen: false });
-  };
-
-  handleMainAndComposeSidebar = () => {
-    this.handleComposeSidebar("close");
-    this.onSetSidebarOpen(false);
-  };
-  showComment() {
-    return (
-      <React.Fragment>
-        <Card>
-          <CardBody>
-            <div className="media-list">
-              <Media>
-                <Media left href="#">
-                  <Avatar color="info" className="mr-1" content="A" size="xl" />
-                </Media>
-                <Media body>
-                  <Media heading>اصغر اکبری</Media>
-                  <p>
-                    گیم مستر بازی اصلا خوب نبود و بازی خوب اجرا نشد و راهنمایی
-                    ها بد بود ، روند بازی و معما هیچ ربطی به داستان نداشت ولی
-                    ترس خوبی داشت.
-                  </p>
-                </Media>
-              </Media>
-              <hr></hr>
-            </div>
-            <div className="media-list">
-              <Media>
-                <Media left href="#">
-                  <Avatar
-                    color="success"
-                    className="mr-1"
-                    content="K"
-                    size="xl"
-                  />
-                </Media>
-                <Media body>
-                  <Media heading>کمیل اصغری</Media>
-                  <p>
-                    بی نظیره بهترین اتاق فراری بود که رفتم و فوق‌العاده بود.
-                  </p>
-                </Media>
-              </Media>
-              <hr></hr>
-            </div>
-            <div className="media-list">
-              <Media>
-                <Media left href="#">
-                  <Avatar
-                    color="danger"
-                    className="mr-1"
-                    content="A"
-                    size="xl"
-                  />
-                </Media>
-                <Media body>
-                  <Media heading>امیر مهدی بهکام کیا</Media>
-                  <p>
-                    همه چی عالی بود به خصوص رفتار گیم مستر و افراد و کارکنان
-                    اونجا.
-                  </p>
-                </Media>
-              </Media>
-              <hr></hr>
-            </div>
-          </CardBody>
-        </Card>
-      </React.Fragment>
-    );
-  }
-
   toggle = (tab) => {
     if (this.state.active !== tab) {
       this.setState({ active: tab });
@@ -223,16 +97,41 @@ class DetailPage extends React.Component {
     let result = tmpDate[0] + "،" + rightSide[0] + ":" + rightSide[1];
     return result;
   };
-  compareDateTimes = (eventDateTime) => {
-    return new Date(eventDateTime) > new Date();
+  compareDateTimes = (eventDateTime, startDateTime) => {
+    return (
+      new Date(eventDateTime) > new Date() &&
+      new Date(startDateTime) < new Date()
+    );
   };
-  eventStatus = (date) => {
-    return this.compareDateTimes(date)
+  eventStatus = (date, startDateTime) => {
+    return this.compareDateTimes(date, startDateTime)
       ? " timeline-icon bg-success "
       : "timeline-icon bg-danger";
   };
-  toggleSelectedColor = (color) => this.setState({ selectedColor: color });
-  render() {
+  deleteUser = async (userId) => {
+    let filteredUsers = this.state.event.participants.filter(
+      (x) => x.id !== userId
+    );
+    let event = { ...this.state.event };
+    event.participants = filteredUsers;
+    this.setState({ event });
+    let token = localStorage.getItem("access");
+    token = `Bearer ${token}`;
+    console.log(token);
+    try {
+      await axios.delete(`${urlDomain}/event/remove-participant-event`, {
+        data: {
+          event_id: this.props.match.params.id,
+          user_id: userId,
+        },
+        headers: { Authorization: token },
+      });
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  eventDetailShow = () => {
     return (
       <React.Fragment>
         <Nav tabs className="nav-fill">
@@ -260,224 +159,161 @@ class DetailPage extends React.Component {
               کامنت
             </NavLink>
           </NavItem>
-          {/* <NavItem>
-            <NavLink
-              className={classnames({
-                active: this.state.active === "3",
-              })}
-              onClick={() => {
-                this.toggle("3");
-              }}
-            >
-              شرکت کنندگان
-            </NavLink>
-          </NavItem> */}
         </Nav>
         <TabContent activeTab={this.state.active}>
           <TabPane tabId="1">
-            <FadeEffectSwiper />
-            <Card className="overflow-hidden app-ecommerce-details">
-              <CardHeader>
-                <CardTitle> مشخصات نوبت</CardTitle>
-              </CardHeader>
-              <CardBody className="pb-0">
-                <Row>
-                  <Col
-                    md="3"
-                    sm="12"
-                    style={{ marginRight: "14px", marginTop: "19px" }}
-                  >
-                    <ul className="activity-timeline timeline-left list-unstyled">
-                      <li>
-                        <div className="timeline-icon bg-warning">
-                          <MapPin size={16} />
-                        </div>
-                        <div className="timeline-info">
-                          <p className="font-weight-bold mb-0">نام رویداد:</p>
-                          <span className="font-small-3">مافیا</span>
-                        </div>
-
-                        {/* <small className="text-muted">
-                          مکان حضور شما برای نوبت بعدی
-                        </small> */}
-                      </li>
-                      <li>
-                        <div className="timeline-icon bg-gradient-success">
-                          <Clock size={16} />
-                        </div>
-                        <div className="timeline-info">
-                          <p className="font-weight-bold mb-0">تاریخ شروع:</p>
-                          <span className="font-small-3">
-                            {this.handleDate(
-                              new Date(
-                                this.state.event.start_datetime
-                              ).toLocaleString("fa-IR")
-                            )}
-                          </span>
-                        </div>
-                        {/* <small className="text-muted">
-                          مکان حضور شما برای نوبت بعدی
-                        </small> */}
-                      </li>
-                      <li>
-                        <div className="timeline-icon bg-gradient-info">
-                          <Clock size={16} />
-                        </div>
-                        <div className="timeline-info">
-                          <p className="font-weight-bold mb-0">تاریخ پایان:</p>
-                          <span className="font-small-3">
-                            {this.handleDate(
-                              new Date(
-                                this.state.event.end_datetime
-                              ).toLocaleString("fa-IR")
-                            )}
-                          </span>
-                        </div>
-                        {/* <small className="text-muted">
-                          مکان حضور شما برای نوبت بعدی
-                        </small> */}
-                      </li>
-                      <li>
-                        <div
-                          className={this.eventStatus(
-                            this.state.event.end_datetime
-                          )}
-                        >
-                          <Info size={16} />
-                        </div>
-                        <div className="timeline-info">
-                          <p className="font-weight-bold mb-0">وضعیت نوبت:</p>
-                          <span className="font-small-3">
-                            {this.compareDateTimes(
-                              this.state.event.end_datetime
-                            )
-                              ? "در حال اجرا"
-                              : "پایان یافته"}
-                          </span>
-                        </div>
-                        {/* <small className="text-muted">
-                          مکان حضور شما برای نوبت بعدی
-                        </small> */}
-                      </li>
-                    </ul>
-                  </Col>
-                  <Col
-                    md="4"
-                    sm="12"
-                    style={{ marginRight: "14px", marginTop: "19px" }}
-                  >
-                    <strong>توضیحات:</strong>
-                    <p
-                      style={{
-                        textAlign: "justify",
-                        textJustify: "inter-word",
-                      }}
-                    >
-                      لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ،
-                      و با استفاده از طراحان گرافیک است، چاپگرها و متون بلکه
-                      روزنامه و مجله در ستون و سطرآنچنان که لازم است، و برای
-                      شرایط فعلی تکنولوژی مورد نیاز، و کاربردهای متنوع با هدف
-                      بهبود ابزارهای کاربردی می باشد، کتابهای زیادی در شصت و سه
-                      درصد گذشته حال و آینده، شناخت فراوان جامعه و متخصصان را می
-                      طلبد، تا با نرم افزارها شناخت بیشتری را برای طراحان رایانه
-                      ای علی الخصوص طراحان خلاقی، و فرهنگ پیشرو در زبان فارسی
-                      ایجاد کرد، در این صورت می توان امید داشت که تمام و دشواری
-                      موجود در ارائه راهکارها، و شرایط سخت تایپ به پایان رسد .
-                    </p>
-                  </Col>
-                  <Col md="4" sm="12">
-                    <EventParticipants />
-                  </Col>
-                  </Row>
-                  <Row style={{marginBottom:"15px"}}>
-                  <Col md="8" xs="4"></Col>
-                  <Col style={{textAlign:"left"}} md="4" xs="12">
-                  <Button color="primary" style={{marginLeft:"15px"}}  >ویرایش</Button>
-                  <Button color="primary"  onClick={this.handleEventState} >بازگشت</Button>
-                  </Col>
-                  </Row>
-                {/* <Row className="mb-5 mt-2">
-                  <Col
-                    className="d-flex align-items-center justify-content-center mb-2 mb-md-0"
-                    sm="12"
-                    md="5"
-                  >
-                    <img
-                      src={
-                        "https://upload.wikimedia.org/wikipedia/en/0/0d/Mafia_II_Boxart.jpg"
-                      }
-                      alt="Google Home"
-                      height="350"
-                      width="350"
-                    />
-                  </Col>
-                  <Col md="7" sm="12">
-                    <h3>{this.state.event.title}</h3>
-                    <div className="d-flex flex-wrap">
-                      <h3 className="text-primary">
-                        {" "}
-                        شرکت کنندگان: {this.state.event.participants.length} نفر
-                      </h3>
-                    </div>
-                    <hr />
-                    <p>توضیحات: {this.state.event.description}</p>
-
-                    <hr />
-                    <h4>
-                      تاریخ شروع: */}
-                {/* {new Date().toLocaleDateString('fa-IR',this.state.event.start_datetime)} */}
-                {/* {this.handleDate(
-                        new Date(
-                          this.state.event.start_datetime
-                        ).toLocaleString("fa-IR")
-                      )}
-                    </h4>
-
-                    <br></br>
-                    <h4>
-                      تاریخ پایان: */}
-                {/* {this.state.event.end_datetime.trim(" ")} */}
-                {/* {this.handleDate(
-                        new Date(this.state.event.end_datetime).toLocaleString(
-                          "fa-IR"
-                        )
-                      )}
-                    </h4>
-                    <hr />
-                    <p className="my-50">
-                      <span className="text-success"></span>
-                    </p>
-                    <p>
-                      <Status
-                        currentState={
-                          this.compareDateTimes(this.state.event.end_datetime)
-                            ? "success"
-                            : "danger"
-                        }
+            <Row>
+              <Col md="8" xs="12">
+                <Card>
+                  <CardHeader>
+                    <CardTitle>
+                      مشخصات{" "}
+                      <Edit2
+                        size={16}
+                        id="edit-event"
+                        onMouseOver={(e) => {
+                          e.currentTarget.style.color = "orange";
+                        }}
+                        className="cursor-pointer"
+                        onMouseOut={(e) => (e.currentTarget.style.color = null)}
+                        onClick={() => this.setState({ editClicked: true })}
                       />
-                      {this.compareDateTimes(this.state.event.end_datetime)
-                        ? "فعال"
-                        : "غیرفعال"}
-                    </p>
-                    <div className="action-btns">
-                      <Button className="mr-1 mb-1" color="primary"> */}
-                {/* <ShoppingCart size={15} /> */}
-                {/* <span className="align-middle ml-50">ویرایش</span>
-                      </Button>
-                    </div>
-                  </Col>
-                </Row> */}
-              </CardBody>
-            </Card>
+                    </CardTitle>
+                    <UncontrolledTooltip placement="top" target={`edit-event`}>
+                      ویرایش
+                    </UncontrolledTooltip>
+                  </CardHeader>
+                  <CardBody>
+                    <Row>
+                      <Col style={{ marginTop: "5px" }} md="4" xs="12">
+                        <ul
+                          style={{ borderRight: "none" }}
+                          className="activity-timeline timeline-left list-unstyled"
+                        >
+                          <li>
+                            <div className="timeline-icon bg-warning">
+                              <MapPin size={16} />
+                            </div>
+                            <div className="timeline-info">
+                              <p className="font-weight-bold mb-0">
+                                نام رویداد:
+                              </p>
+                              <span className="font-small-3">
+                                {this.state.event.title}
+                              </span>
+                            </div>
+                          </li>
+                          <li>
+                            <div className="timeline-icon bg-gradient-success">
+                              <Clock size={16} />
+                            </div>
+                            <div className="timeline-info">
+                              <p className="font-weight-bold mb-0">
+                                تاریخ شروع:
+                              </p>
+                              <span className="font-small-3">
+                                {this.handleDate(
+                                  new Date(
+                                    this.state.event.start_datetime
+                                  ).toLocaleString("fa-IR")
+                                )}
+                              </span>
+                            </div>
+                          </li>
+                          <li>
+                            <div className="timeline-icon bg-gradient-info">
+                              <Clock size={16} />
+                            </div>
+                            <div className="timeline-info">
+                              <p className="font-weight-bold mb-0">
+                                تاریخ پایان:
+                              </p>
+                              <span className="font-small-3">
+                                {this.handleDate(
+                                  new Date(
+                                    this.state.event.end_datetime
+                                  ).toLocaleString("fa-IR")
+                                )}
+                              </span>
+                            </div>
+                          </li>
+                          <li>
+                            <div
+                              className={this.eventStatus(
+                                this.state.event.end_datetime,
+                                this.state.event.start_datetime
+                              )}
+                            >
+                              <Info size={16} />
+                            </div>
+                            <div className="timeline-info">
+                              <p className="font-weight-bold mb-0">
+                                وضعیت رویداد:
+                              </p>
+                              <span className="font-small-3">
+                                {this.compareDateTimes(
+                                  this.state.event.end_datetime,
+                                  this.state.event.start_datetime
+                                )
+                                  ? "در حال اجرا"
+                                  : "غیر فعال"}
+                              </span>
+                            </div>
+                          </li>
+                        </ul>
+                      </Col>
+                      <Col md="7" xs="12">
+                        <strong>توضیحات:</strong>
+                        <p
+                          style={{
+                            textAlign: "justify",
+                            textJustify: "inter-word",
+                          }}
+                        >
+                          {this.state.event.description}
+                        </p>
+                      </Col>
+                    </Row>
+                  </CardBody>
+                </Card>
+                <FadeEffectSwiper images={this.state.event.images} />
+              </Col>
+              <Col md="4" xs="12">
+                <EventParticipants
+                  participants={this.state.event.participants}
+                  deleteUser={this.deleteUser}
+                />
+                <EventStartTime
+                  end_datetime={this.state.event.end_datetime}
+                  start_datetime={this.state.event.start_datetime}
+                  participants={this.state.event.participants.length}
+                />
+              </Col>
+            </Row>
+
+            <Row>
+              <Col md="8"></Col>
+            </Row>
           </TabPane>
           <TabPane tabId="2">
-            <Comments />
+            <Comments eventId={this.props.match.params.id} />
           </TabPane>
           <TabPane tabId="3">
             <ShowParticipant userData={this.state.userData} />
           </TabPane>
         </TabContent>
       </React.Fragment>
+    );
+  };
+  render() {
+    return this.state.editClicked ? (
+      <EditEvent
+        event={this.state.event}
+        id={this.state.event.id}
+        ownerId={this.state.event.owner.id}
+      />
+    ) : (
+      this.eventDetailShow()
     );
   }
 }

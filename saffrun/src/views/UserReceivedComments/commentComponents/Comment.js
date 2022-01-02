@@ -24,6 +24,8 @@ import { toast } from "react-toastify";
 // import api from "../../../../utility/api/api";
 import userImage from "../../../assets/img/pages/card-image-5.jpg";
 import { Link } from "react-router-dom";
+import defaultImg from "../../../assets/img/profile/Generic-profile-picture.jpg.webp";
+import { Item } from "react-contexify";
 
 class Comment extends Component {
   state = {
@@ -35,38 +37,17 @@ class Comment extends Component {
     confirmSend: false,
     answer: "",
   };
-  /**
-              creationDate: "1399-09-05T12:29:53.000Z"
-              isActive: true
-              message: "لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است."
-              modificationDate: null
-              parent:
-                  creationDate: "1399-09-04T12:29:53.000Z"
-                  isActive: true
-                  message: "لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است."
-                  modificationDate: null
-                  parent: null
-                  productTitle: "هالوژن گرد"
-                  uid: "255423d4-af61-4c7a-9c51-a5cb03e83f4e"
-                  userFullName: "Hosein Naseri1"
-                  userPhoneNumber: "09381454033"
-              productTitle: "هالوژن گرد"
-              uid: "255423d4-af62-4c7a-9c51-a5cb03e83f4e"
-               */
   toggleParentModal = () => {
     this.setState((prevState) => ({
       parentModal: !prevState.parentModal,
     }));
   };
   toggleReplyModal = () => {
-    // this.setState((prevState) => ({
-    //   replyModal: !prevState.replyModal,
-    // }));
     this.setState({ replyModal: !this.state.replyModal });
   };
-  handleAnswer = () => {
+  handleAnswer = async () => {
     let answer = this.state.answer;
-    this.props.toggleAnswered(answer, this.props.cid);
+    await this.props.toggleAnswered(answer, this.props.cid);
     this.toggleParentModal();
     //call API autosave
   };
@@ -79,48 +60,6 @@ class Comment extends Component {
       e.target.style.direction = "ltr";
     else e.target.style.direction = "rtl";
   };
-  // handleDelete = async () => {
-  //   const { data, onError, reload } = this.props;
-  //   const res = await api.post({ uids: [data.uid] }, null, onError);
-  //   await reload();
-  //   return res;
-  // };
-
-  // handleConfirm = async () => {
-  //   const { data, onError, reload } = this.props;
-  //   const res = await api.post(
-  //     "/Comments/Confirm",
-  //     { uids: [data.uid] },
-  //     null,
-  //     onError
-  //   );
-  //   await reload();
-  //   return res;
-  // };
-
-  // handleAnswer = async () => {
-  //   const { data, onError } = this.props;
-  //   const res = await api.post(
-  //     "/Comments/Answer",
-  //     {
-  //       uid: data.uid,
-  //       response: this.state.answer,
-  //     },
-  //     null,
-  //     onError
-  //   );
-  //   if (res.status) {
-  //     this.toggleReplyModal();
-  //     toast.success("پاسخ نظر با موفقیت ثبت شد");
-  //   } else {
-  //     let message = "";
-  //     res.data.forEach((element) => {
-  //       message += element + "\n";
-  //     });
-  //     toast.error(message);
-  //   }
-  //   this.setState({ answer: "" });
-  // };
 
   handleAlert = (state, value) => {
     this.setState({
@@ -134,35 +73,27 @@ class Comment extends Component {
       <div>
         <div className="comment-item">
           <Row>
-            <Col lg="1"  className="comment-sender-section">
-              {data.userProfilePic ? (
-                <img
-                  src={data.userProfilePic}
-                  className="comment-sender-image"
-                />
-              ) : (
-                <img src={userImage} className="comment-sender-image" />
-              )}
-              <div className="comment-sender-name">
-                {/* <Link to={"/user?" + data.userUid}> {data.userFullName} </Link>  */}
-              </div>
+            <Col lg="1" className="comment-sender-section">
+              <img src={data.imgUrl} className="comment-sender-image" />
             </Col>
             <Col lg="7" xs="6" className="comment-title-container">
               <BiMessageRoundedDetail
                 size="14"
                 className="comment-title-icon"
               />
-              <span className="comment-title"> {data.userFullName} </span>
+              <span className="comment-title"> {data.user.name} </span>
               <Col lg="12" className="comment-body">
-                {data.message.length>=50 ? data.message.substring(0,50) + "..." : data.message}
+                {data.content.length >= 50
+                  ? data.content.substring(0, 50) + "..."
+                  : data.content}
               </Col>
             </Col>
             <Col lg="4" xs="6">
               <Row className="justify-content-end">
-                <div className="chip-wrapper" style={{marginLeft:"10px"}}>
+                <div className="chip-wrapper" style={{ marginLeft: "10px" }}>
                   <div className="chip m-0">
                     <div className="chip-body">
-                      {data.parent.answer.length !== 0 ? (
+                      {data.answer.length !== 0 ? (
                         <span className="chip-text" id="confirm-chip">
                           <span className="bullet bullet-success bullet-xs"></span>
                           <span className="text-capitalize ml-25">
@@ -183,61 +114,35 @@ class Comment extends Component {
                 <Trash2
                   size="20"
                   color="#ff531f"
-                  id="remove-comment"
-                  style={{marginLeft:"10px"}}
+                  id={`remove-comment-${this.props.cid}`}
+                  style={{ marginLeft: "10px" }}
                   onClick={() => this.handleAlert("defaultAlert", true)}
                 />
-                {data.isActive === false && (
-                  <BiMessageRoundedDetail
-                    size="20"
-                    color="green"
-                    id="confirm-comment"
-                    onClick={() => this.handleAlert("confirmAlert", true)}
-                  />
-                )}
-                {/* <BiMessageRoundedDetail
+                <BiMessageRoundedDetail
                   size="20"
-                  color="darkgray"
-                  id="reply-icon"
-                  onClick={() => this.toggleReplyModal()}
-                />  */}
-                {data.parent && (
-                  <BiMessageRoundedDetail
-                    size="20"
-                    color="orange"
-                    id="main-comment"
-                    onClick={() => this.toggleParentModal()}
-                  />
-                )}
+                  color="orange"
+                  id={`main-comment-${this.props.cid}`}
+                  onClick={() => this.toggleParentModal()}
+                />
               </Row>
-              {/* <div style={{height:"30px"}}>
-              
-              </div> */}
-              </Col>
-              
+            </Col>
           </Row>
-          <Row >
-                
-                <Col
-                xs="12"
-                lg="12"
-                  style={{
-                    textAlign: "left",
-                    fontSize: "10px",
-                    width:"100% ",
-
-                    // margin:"10px",
-                    // position: "absolute",
-                    // bottom: 0,
-                  }}
-                >
-                  تاریخ ارسال پیام:{" "}
-                  <span className="fonticon-wrap" style={{ textAlign: "left" }}>
-                    {/* {`${new Date(data.creationDate).toLocaleString()}`} */}
-                    12:38 , 1400/12/8
-                  </span>
-                </Col>
-              </Row>
+          <Row>
+            <Col
+              xs="12"
+              lg="12"
+              style={{
+                textAlign: "left",
+                fontSize: "10px",
+                width: "100% ",
+              }}
+            >
+              تاریخ ارسال پیام:{" "}
+              <span className="fonticon-wrap" style={{ textAlign: "left" }}>
+                {data.date}
+              </span>
+            </Col>
+          </Row>
         </div>
         <SweetAlert
           title="آیا از حذف این مورد اطمینان دارید؟"
@@ -249,20 +154,6 @@ class Comment extends Component {
           confirmBtnBsStyle="danger"
           confirmBtnText="بله؛ حذف کن"
           cancelBtnText="لغو"
-          // onConfirm={async () => {
-          //   const res = await this.handleDelete();
-          //   if (res.status) {
-          //     this.handleAlert("defaultAlert", false);
-          //     this.handleAlert("successAlert", true);
-          //   } else {
-          //     let message = "";
-          //     res.data.forEach((element) => {
-          //       message += element + "\n";
-          //     });
-          //     this.handleAlert("defaultAlert", false);
-          //     toast.error(message);
-          //   }
-          // }}
           onConfirm={() => {
             this.props.handleDelete(this.props.cid);
             this.handleAlert("defaultAlert", false);
@@ -273,35 +164,7 @@ class Comment extends Component {
         >
           بعد از حذف نمیتوانید دوباره این مورد را بازگردانی کنید!
         </SweetAlert>
-        {/* <SweetAlert
-          title="آیا از تایید این مورد اطمینان دارید؟"
-          success
-          show={this.state.confirmAlert}
-          showCancel
-          reverseButtons
-          cancelBtnBsStyle="success"
-          confirmBtnText="بله؛ تایید کن"
-          cancelBtnText="لغو"
-          onConfirm={async () => {
-            const res = await this.handleConfirm();
-            if (res.status) {
-              this.handleAlert("confirmAlert", false);
-              this.handleAlert("successAlert", true);
-            } else {
-              let message = "";
-              res.data.forEach((element) => {
-                message += element + "\n";
-              });
-              this.handleAlert("confirmAlert", false);
-              toast.error(message);
-            }
-          }}
-          onCancel={() => {
-            this.handleAlert("confirmAlert", false);
-          }}
-        >
-          بعد از تایید نمیتوانید دوباره این مورد را بازگردانی کنید!
-        </SweetAlert>  */}
+
         <SweetAlert
           success
           title="عملیات موفق"
@@ -316,238 +179,130 @@ class Comment extends Component {
         >
           <p className="sweet-alert-text"> مورد انتخابی با موفقیت حذف شد </p>
         </SweetAlert>
-        {/* <Modal
-          isOpen={this.state.replyModal}
-          toggle={this.toggleReplyModal}
+        <Modal
+          isOpen={this.state.parentModal}
+          toggle={this.toggleParentModal}
           className="modal-dialog-centered"
         >
-          <ModalHeader toggle={this.toggleReplyModal}>
-            پاسخ به پیام ارسال شده 
-          </ModalHeader> 
+          <ModalHeader toggle={this.toggleParentModal}>پیام اصلی</ModalHeader>
           <ModalBody>
-            <div>
-              <div className="form-label-group mt-2 mb-0">
-                <Input
-                  type="textarea"
-                  name="text"
-                  id="exampleText"
-                  rows="3"
-                  value={this.state.answer}
-                  placeholder="پاسخ"
-                  maxLength="500"
-                  onChange={(e) => this.setState({ answer: e.target.value })}
-                /> 
-                <Label> پاسخ: </Label> 
-                api
-              </div> 
-              <small
-                className={`counter-value float-right ${
-                  this.state.answer.length >= 500 ? "bg-danger" : ""
-                }`}
+            <Row className="pr-1 pl-1 pt-1">
+              <span
+                style={{ fontSize: 14, color: "#ff9f43", fontWeight: "bold" }}
               >
-                {`${this.state.answer.length}/500`} 
-              </small> 
-              <Button
-                outline
-                color="success"
-                
-                onClick={this.handleAnswer}
-                className="mt-1"
+                {" "}
+                ارسال شده توسط:{" "}
+              </span>
+              <span style={{ fontWeight: 300, fontSize: 14 }}>
+                {data.user.name}
+              </span>
+            </Row>
+            <Row className="pr-1 pl-1 pt-1">
+              <span
+                style={{ fontSize: 15, color: "#ff9f43", fontWeight: "bold" }}
               >
-                ارسال پاسخ 
-              </Button> 
-            </div> 
-          </ModalBody> 
-        </Modal>  */}
-        {data.parent && (
-          <Modal
-            isOpen={this.state.parentModal}
-            toggle={this.toggleParentModal}
-            className="modal-dialog-centered"
-          >
-            <ModalHeader toggle={this.toggleParentModal}>پیام اصلی</ModalHeader>
-            <ModalBody>
+                {" "}
+                متن پیام:{" "}
+              </span>
+              <span style={{ fontWeight: 300, fontSize: 15 }}>
+                {data.content}
+              </span>
+            </Row>
+            <Row className="pr-1 pl-1 pt-1">
+              <span
+                style={{ fontSize: 14, color: "#ff9f43", fontWeight: "bold" }}
+              >
+                {" "}
+                تاریخ ارسال:{" "}
+              </span>
+              <span style={{ fontWeight: 300, fontSize: 14 }}>{data.date}</span>
+            </Row>
+
+            <SweetAlert
+              title="آیا از ارسال این مورد اطمینان دارید؟"
+              warning
+              show={this.state.confirmSend}
+              showCancel
+              reverseButtons
+              confirmBtnBsStyle="success"
+              cancelBtnBsStyle="danger"
+              confirmBtnText="بله،ارسال کن"
+              cancelBtnText="لغو"
+              //ersal api onConfirm
+              onConfirm={() => {
+                this.handleAnswer();
+                this.setState({ confirmSend: false });
+              }}
+              onCancel={() => {
+                this.setState({ confirmSend: false });
+              }}
+            >
+              بعد از فرستادن نمیتوانید دوباره این کامنت را ویرایش کنید!
+            </SweetAlert>
+            {data.answer.length === 0 ? (
+              <div>
+                <div className="form-label-group mt-2 mb-0">
+                  <Input
+                    type="textarea"
+                    name="text"
+                    id="exampleText"
+                    rows="3"
+                    value={this.state.answer}
+                    placeholder="پاسخ"
+                    maxLength="500"
+                    onChange={(e) => this.updateInput(e, "answer")}
+                  ></Input>
+                  <Label> پاسخ: </Label>
+                  <small
+                    className={`counter-value float-right ${
+                      this.state.answer.length >= 500 ? "bg-danger" : ""
+                    }`}
+                  >
+                    {`${this.state.answer.trim().length}/500`}
+                  </small>
+                </div>
+
+                <Button
+                  outline
+                  color="success"
+                  onClick={() => this.setState({ confirmSend: true })}
+                  disabled={this.state.answer.trim() === ""}
+                  className="mt-1"
+                >
+                  ارسال پاسخ
+                </Button>
+              </div>
+            ) : (
               <Row className="pr-1 pl-1 pt-1">
                 <span
-                  style={{ fontSize: 14, color: "#ff9f43", fontWeight: "bold" }}
+                  style={{
+                    fontSize: 15,
+                    color: "#ff9f43",
+                    fontWeight: "bold",
+                  }}
                 >
                   {" "}
-                  ارسال شده توسط:{" "}
-                </span>
-                <span style={{ fontWeight: 300, fontSize: 14 }}>
-                  {data.userFullName}
-                </span>
-              </Row>
-              <Row className="pr-1 pl-1 pt-1">
-                <span
-                  style={{ fontSize: 15, color: "#ff9f43", fontWeight: "bold" }}
-                >
-                  {" "}
-                  متن پیام:{" "}
+                  متن پاسخ:{" "}
                 </span>
                 <span style={{ fontWeight: 300, fontSize: 15 }}>
-                  {data.message}
+                  {data.answer}
                 </span>
               </Row>
-              <Row className="pr-1 pl-1 pt-1">
-                {/* <Col lg="6">
-                  <span style={{ fontSize: 14 }}> تاریخ ارسال: </span> 
-                  <span style={{ fontWeight: 300, fontSize: 14 }}>
-                     
-                   1
-                  </span> 
-                </Col>  */}
-                <span
-                  style={{ fontSize: 14, color: "#ff9f43", fontWeight: "bold" }}
-                >
-                  {" "}
-                  تاریخ ارسال:{" "}
-                </span>
-                <span style={{ fontWeight: 300, fontSize: 14 }}></span>
-              </Row>
-              {/* <ModalHeader toggle={this.toggleReplyModal}>
-            پاسخ به پیام ارسال شده 
-          </ModalHeader>  */}
-              <SweetAlert
-                title="آیا از ارسال این مورد اطمینان دارید؟"
-                warning
-                show={this.state.confirmSend}
-                showCancel
-                reverseButtons
-                confirmBtnBsStyle="success"
-                cancelBtnBsStyle="danger"
-                confirmBtnText="بله،ارسال کن"
-                cancelBtnText="لغو"
-                //ersal api onConfirm
-                onConfirm={() => {
-                  this.handleAnswer();
-                  this.setState({ confirmSend: false });
-                }}
-                onCancel={() => {
-                  this.setState({ confirmSend: false });
-                }}
-              >
-                بعد از فرستادن نمیتوانید دوباره این کامنت را ویرایش کنید!
-              </SweetAlert>
-              <SweetAlert
-                title="آیا از تایید این مورد اطمینان دارید؟"
-                success
-                show={this.state.confirmAlert}
-                showCancel
-                reverseButtons
-                cancelBtnBsStyle="success"
-                confirmBtnText="بله؛ تایید کن"
-                cancelBtnText="لغو"
-                onConfirm={async () => {
-                  const res = await this.handleConfirm();
-                  if (res.status) {
-                    this.handleAlert("confirmAlert", false);
-                    this.handleAlert("successAlert", true);
-                  } else {
-                    let message = "";
-                    res.data.forEach((element) => {
-                      message += element + "\n";
-                    });
-                    this.handleAlert("confirmAlert", false);
-                    toast.error(message);
-                  }
-                }}
-                onCancel={() => {
-                  this.handleAlert("confirmAlert", false);
-                }}
-              >
-                بعد از تایید نمیتوانید دوباره این مورد را بازگردانی کنید!
-              </SweetAlert>
-              <SweetAlert
-                success
-                title="عملیات موفق"
-                confirmBtnBsStyle="success"
-                confirmBtnText="باشه"
-                show={this.state.successAlert}
-                onConfirm={() => {
-                  this.handleAlert("defaultAlert", false);
-                  this.handleAlert("confirmAlert", false);
-                  this.handleAlert("successAlert", false);
-                }}
-              >
-                <p className="sweet-alert-text">
-                  {" "}
-                  مورد انتخابی با موفقیت حذف شد{" "}
-                </p>
-              </SweetAlert>
-              {data.parent.answer.length === 0 ? (
-                <div>
-                  <div className="form-label-group mt-2 mb-0">
-                    <Input
-                      type="textarea"
-                      name="text"
-                      id="exampleText"
-                      rows="3"
-                      value={this.state.answer}
-                      placeholder="پاسخ"
-                      maxLength="500"
-                      onChange={(e) => this.updateInput(e, "answer")}
-                    ></Input>
-                    <Label> پاسخ: </Label>
-                    <small
-                      className={`counter-value float-right ${
-                        this.state.answer.length >= 500 ? "bg-danger" : ""
-                      }`}
-                    >
-                      {`${this.state.answer.trim().length}/500`}
-                    </small>
-                  </div>
+            )}
+          </ModalBody>
+        </Modal>
 
-                  <Button
-                    outline
-                    color="success"
-                    onClick={() => this.setState({ confirmSend: true })}
-                    disabled={this.state.answer.trim() === ""}
-                    className="mt-1"
-                  >
-                    ارسال پاسخ
-                  </Button>
-                </div>
-              ) : (
-                <Row className="pr-1 pl-1 pt-1">
-                  <span
-                    style={{
-                      fontSize: 15,
-                      color: "#ff9f43",
-                      fontWeight: "bold",
-                    }}
-                  >
-                    {" "}
-                    متن پاسخ:{" "}
-                  </span>
-                  <span style={{ fontWeight: 300, fontSize: 15 }}>
-                    {data.parent.answer}
-                  </span>
-                </Row>
-              )}
-            </ModalBody>
-          </Modal>
-        )}
-        {/* <UncontrolledTooltip placement="top" target="reply-icon">
-          پاسخ دادن 
-        </UncontrolledTooltip>  */}
-        {/* {data.isActive && (
-          <UncontrolledTooltip placement="top" target="confirm-chip">
-            {getPersianDateFormat(data.modificationDate)}
-          </UncontrolledTooltip>
-        )}  */}
-        {data.parent && (
-          <UncontrolledTooltip placement="top" target="main-comment">
-            پیام اصلی
-          </UncontrolledTooltip>
-        )}
+        <UncontrolledTooltip
+          placement="top"
+          target={`main-comment-${this.props.cid}`}
+        >
+          پیام اصلی
+        </UncontrolledTooltip>
 
-        {data.isActive === false && (
-          <UncontrolledTooltip placement="top" target="confirm-comment">
-            تایید کردن
-          </UncontrolledTooltip>
-        )}
-        <UncontrolledTooltip placement="top" target="remove-comment">
+        <UncontrolledTooltip
+          placement="top"
+          target={`remove-comment-${this.props.cid}`}
+        >
           حذف کردن
         </UncontrolledTooltip>
       </div>
@@ -555,7 +310,4 @@ class Comment extends Component {
   }
 }
 
-/*
-<div class="chip-wrapper"><div class="chip mb-0"><div class="chip-body"><span class="chip-text"><span class="bullet bullet-primary bullet-xs"></span><span class="text-capitalize ml-25">frontend</span></span></div></div><div class="chip mb-0"><div class="chip-body"><span class="chip-text"><span class="bullet bullet-warning bullet-xs"></span><span class="text-capitalize ml-25">backend</span></span></div></div><div class="chip mb-0"><div class="chip-body"><span class="chip-text"><span class="bullet bullet-success bullet-xs"></span><span class="text-capitalize ml-25">doc</span></span></div></div></div>
-*/
 export default Comment;

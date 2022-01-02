@@ -2,6 +2,7 @@ import React from "react";
 import * as Icon from "react-feather";
 import { Badge } from "reactstrap";
 import img2 from "../../../assets/img/slider/banner-20.jpg";
+import { Link } from "react-router-dom";
 import {
   Card,
   CardBody,
@@ -22,6 +23,8 @@ import {
   DropdownItem,
   DropdownMenu,
   UncontrolledCarousel,
+  NavLink,
+  NavItem,
 } from "reactstrap";
 import ReactPaginate from "react-paginate";
 import "./carousel.css";
@@ -36,38 +39,32 @@ import {
   Filter,
 } from "react-feather";
 import "../../../assets/scss/plugins/forms/react-select/_react-select.scss";
-import {
-  DatePicker,
-  DateTimePicker,
-  DateRangePicker,
-  DateTimeRangePicker,
-} from "react-advance-jalaali-datepicker";
+import { DatePicker } from "react-advance-jalaali-datepicker";
 import axios from "axios";
 import classnames from "classnames";
 import { history } from "../../../history";
 import isAuthenticated from "../../../utility/authenticated";
 import Status from "../../../components/@vuexy/status/status";
 import Select from "react-select";
-import moment from "moment-jalaali";
 import ComponentSpinner from "../../../components/@vuexy/spinner/Loading-spinner";
 import "../../../assets/scss/plugins/tables/_agGridStyleOverride.scss";
 import "../../../assets/scss/pages/users.scss";
 import urlDomain from "../../../utility/urlDomain";
-import sliderImage1 from "../../../assets/img/slider/03.jpg";
-import sliderImage2 from "../../../assets/img/slider/04.jpg";
-import sliderImage3 from "../../../assets/img/slider/05.jpg";
+import sliderImage1 from "../../../assets/img/pages/not-found-image.jpg";
 
 class MyEvents extends React.Component {
   state = {
     collapse: false,
     events: [],
-    pageCards: 6,
     startDate: "",
     endDate: "",
     eventState: "all",
     eventTitle: "",
     eventCollapse: true,
     loadSpinner: true,
+    currentPage: 1,
+    pageCount: 6,
+    totalPages: 0,
     sortStates: [
       {
         basedOn: "start_datetime",
@@ -77,12 +74,7 @@ class MyEvents extends React.Component {
       },
       { basedOn: "title", label: "عنوان", status: null, enabled: false },
     ],
-    categories: [
-      { value: "پزشک", label: "پزشک" },
-      { value: "بغالی", label: "بغالی" },
-      { value: "استادیار", label: "استادیار" },
-      { value: "سلمونی", label: "سلمونی" },
-    ],
+    categories: [],
     selectedCategory: null,
     images: [
       {
@@ -96,16 +88,37 @@ class MyEvents extends React.Component {
     if (!authenticated) history.push("/login");
     let token = localStorage.getItem("access");
     token = `Bearer ${token}`;
+    let pagination = {
+      page: this.state.currentPage,
+      page_count: this.state.pageCount,
+    };
     try {
       let events = await axios.get(`${urlDomain}/event/get-all/`, {
         headers: { Authorization: token },
-        params: { search_query: "" },
+        params: { search_query: "", ...pagination },
       });
-      this.setState({ events: events.data.events, loadSpinner: false });
+      let categories = await axios.get(`${urlDomain}/category/get-all/`, {
+        headers: { Authorization: token },
+      });
+      this.loadCategories(categories.data);
+      this.setState({
+        events: events.data.events,
+        totalPages: events.data.pages,
+        loadSpinner: false,
+      });
     } catch (e) {
       this.setState({ loadSpinner: false });
     }
   }
+  loadCategories = (categories) => {
+    let categoryItems = categories.map((item) => {
+      return {
+        label: item.name,
+        value: item.id,
+      };
+    });
+    this.setState({ categories: categoryItems });
+  };
   toggleCollapse = () => {
     this.setState((state) => ({
       collapse: !state.collapse,
@@ -118,9 +131,13 @@ class MyEvents extends React.Component {
       collapse: false,
     }));
   };
-  compareDateTimes = (eventDateTime) => {
-    return new Date(eventDateTime) > new Date();
+  compareDateTimes = (eventDateTime, startDateTime) => {
+    return (
+      new Date(eventDateTime) > new Date() &&
+      new Date(startDateTime) < new Date()
+    );
   };
+
   loadImg = (img) => {
     return `http://localhost:8000${img.image.full_size}`;
   };
@@ -135,8 +152,6 @@ class MyEvents extends React.Component {
   dateRound = (event) => {
     let totalDate = `${new Date(event.end_datetime).toLocaleString("fa-IR")}`;
     let splitted = totalDate.split("،");
-    console.log(splitted);
-    console.log(splitted[0].split(":")[0]);
     return `${splitted[0]}،${splitted[1].split(":")[0]}:${
       splitted[1].split(":")[1]
     }`;
@@ -169,7 +184,7 @@ class MyEvents extends React.Component {
               <Row>
                 <Col md="5" lg="6" sm="12" xl="6">
                   <p style={{ height: "42px" }}>
-                    {ev.description.length >= 40
+                    {ev.description && ev.description.length >= 40
                       ? ev.description.substring(0, 40) + "..."
                       : ev.description}
                   </p>
@@ -193,7 +208,10 @@ class MyEvents extends React.Component {
                     <div className="fonticon-wrap">
                       <Status
                         currentState={
-                          this.compareDateTimes(ev.end_datetime)
+                          this.compareDateTimes(
+                            ev.end_datetime,
+                            ev.start_datetime
+                          )
                             ? "success"
                             : "danger"
                         }
@@ -204,7 +222,10 @@ class MyEvents extends React.Component {
                           fontWeight: "bold",
                         }}
                       >
-                        {this.compareDateTimes(ev.end_datetime)
+                        {this.compareDateTimes(
+                          ev.end_datetime,
+                          ev.start_datetime
+                        )
                           ? "فعال"
                           : "غیرفعال"}
                       </span>
@@ -274,8 +295,9 @@ class MyEvents extends React.Component {
   SelectChanged = (selectedOption) => {
     this.setState({ selectedCategory: selectedOption });
   };
-  RadioChanged = ({ currentTarget: input }) => {
+  RadioChanged = async ({ currentTarget: input }) => {
     this.setState({ eventState: input.id });
+    await this.handleFilter(this.state.sortStates, input.id);
   };
   clearFilters = () => {
     this.setState({
@@ -289,17 +311,22 @@ class MyEvents extends React.Component {
     let dateStringify = JSON.stringify(date);
     return dateStringify.substring(1, dateStringify.length - 1);
   };
-  handleFilter = async (sortList = false) => {
+  handleFilter = async (
+    sortList = false,
+    radioSelected,
+    newPagination = false
+  ) => {
     this.setState({ loadSpinner: true, events: [] });
-    let {
-      endDate,
-      startDate,
-      eventTitle,
-      sortStates,
-      selectedCategory,
-    } = this.state;
+    let { endDate, startDate, eventTitle } = this.state;
+    let pagination = newPagination
+      ? newPagination
+      : { page: 1, page_count: this.state.pageCount };
+    if (!newPagination) {
+      this.setState({ currentPage: 1 });
+    }
     let filters = {
       search_query: eventTitle,
+      type: radioSelected,
       from_datetime:
         startDate === ""
           ? ""
@@ -308,6 +335,7 @@ class MyEvents extends React.Component {
         endDate === ""
           ? ""
           : this.acceptableDateFormat(new Date(endDate * 1000)),
+      ...pagination,
     };
 
     if (sortList) {
@@ -317,8 +345,6 @@ class MyEvents extends React.Component {
       }
       if (enabled) filters["sort"] = enabled;
     }
-
-    console.log(filters);
     let token = localStorage.getItem("access");
     token = `Bearer ${token}`;
     try {
@@ -347,7 +373,19 @@ class MyEvents extends React.Component {
       sortStates[i] = item;
     }
     this.setState({ sortStates });
-    await this.handleFilter(sortStates);
+    await this.handleFilter(sortStates, this.state.eventState);
+  };
+  pageChanged = async (data) => {
+    this.setState({ currentPage: data.selected + 1 });
+    let pagination = {
+      page: data.selected + 1,
+      page_count: this.state.pageCount,
+    };
+    await this.handleFilter(
+      this.state.sortStates,
+      this.state.eventState,
+      pagination
+    );
   };
   render() {
     return (
@@ -371,7 +409,7 @@ class MyEvents extends React.Component {
               <Collapse isOpen={this.state.collapse}>
                 <CardBody>
                   <Row>
-                    <Col lg="3" md="6" sm="12">
+                    <Col md="4" sm="12">
                       <FormGroup>
                         <Label for="search-events">عنوان</Label>
                         <Input
@@ -384,7 +422,7 @@ class MyEvents extends React.Component {
                         />
                       </FormGroup>
                     </Col>
-                    <Col lg="3" md="6" sm="12">
+                    <Col md="4" sm="12">
                       <FormGroup>
                         <Label for="datePicker_1">تاریخ شروع</Label>
                         <DatePicker
@@ -397,7 +435,7 @@ class MyEvents extends React.Component {
                         />
                       </FormGroup>
                     </Col>
-                    <Col lg="3" md="6" sm="12">
+                    <Col md="4" sm="12">
                       <FormGroup>
                         <Label for="datePicker_2">تاریخ پایان</Label>
                         <DatePicker
@@ -406,23 +444,6 @@ class MyEvents extends React.Component {
                           format="jYYYY/jMM/jDD"
                           onChange={this.endDateSelected}
                           id="datePicker_2"
-                        />
-                      </FormGroup>
-                    </Col>
-                    <Col lg="3" md="6" sm="12">
-                      <FormGroup>
-                        <Label for="asdsad">دسته‌بندی</Label>
-                        <Select
-                          id="asdsad"
-                          className="React"
-                          classNamePrefix="select"
-                          // defaultValue={colourOptions[0]}
-                          name="color"
-                          options={this.state.categories}
-                          isClearable={true}
-                          placeholder="دسته‌بندی..."
-                          value={this.state.selectedCategory}
-                          onChange={this.SelectChanged}
                         />
                       </FormGroup>
                     </Col>
@@ -457,7 +478,12 @@ class MyEvents extends React.Component {
                           marginTop: "9px",
                         }}
                         color="warning"
-                        onClick={this.handleFilter}
+                        onClick={() =>
+                          this.handleFilter(
+                            this.state.sortStates,
+                            this.state.eventState
+                          )
+                        }
                       >
                         اعمال
                       </Button>
@@ -501,7 +527,7 @@ class MyEvents extends React.Component {
                       <Radio
                         label="در حال اجرا"
                         onChange={this.RadioChanged}
-                        id="inProgress"
+                        id="running"
                         name="eventStatus"
                       />
                     </Col>
@@ -509,7 +535,7 @@ class MyEvents extends React.Component {
                       <Radio
                         label="اتمام رسیده"
                         onChange={this.RadioChanged}
-                        id="finished"
+                        id="done"
                         name="eventStatus"
                       />
                     </Col>
@@ -562,15 +588,15 @@ class MyEvents extends React.Component {
                 nextLabel={<ChevronRight size="15" />}
                 breakLabel={"..."}
                 breakClassName={"break-me"}
-                pageCount={Math.ceil(
-                  this.state.events.length / this.state.pageCards
-                )}
-                marginPagesDisplayed={2}
-                pageRangeDisplayed={5}
+                pageCount={this.state.totalPages}
+                marginPagesDisplayed={1}
+                pageRangeDisplayed={2}
                 containerClassName={
                   "vx-pagination icon-pagination pagination-center mt-3"
                 }
                 activeClassName={"active"}
+                onPageChange={this.pageChanged}
+                forcePage={this.state.currentPage - 1}
               />
             )}
           </Col>

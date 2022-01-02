@@ -15,11 +15,11 @@ import avatar5 from "../../../assets/img/portrait/small/avatar-s-1.jpg";
 import avatar6 from "../../../assets/img/portrait/small/avatar-s-2.jpg";
 import avatar7 from "../../../assets/img/portrait/small/avatar-s-3.jpg";
 import avatar8 from "../../../assets/img/portrait/small/avatar-s-4.jpg";
-
+import userImg from "../../../assets/img/profile/Generic-profile-picture.jpg.webp";
 class DispatchedOrders extends React.Component {
   render() {
     return (
-      <Card>
+      <Card style={{height:"460px"}}>
         <CardHeader>
           <CardTitle>{this.props.cardName}</CardTitle>
         </CardHeader>
@@ -43,33 +43,40 @@ class DispatchedOrders extends React.Component {
               <tr>
                 <td className="p-1">
                   <ul className="list-unstyled users-list m-0 d-flex">
-                    {row["Recipient"].map(R=>
+                    { row["list_participants"]&& row["list_participants"].map((R) => (
                       <li className="avatar pull-up">
                         <img
-                          src={R["imgUrl"]}
+                          src={
+                            "id" in R["image"]
+                              ? "http://127.0.0.1:8000" + R["image"]["image"]["thumbnail"]
+                              : userImg 
+                          }
                           alt="avatar"
                           height="30"
                           width="30"
-                          id={R["name"]}
+                          id={"id"+R["first_name"]}
                         />
                         <UncontrolledTooltip
                           placement="bottom"
-                          target={R["name"]}
+                          target={"id"+R["first_name"]}
                         >
-                          {R["name"]}
+                          {R["first_name"]}
+                          {" "}
+                          {R["last_name"]}
                         </UncontrolledTooltip>
                       </li>
-                    )}
+                    ))}
                   </ul>
-            {row["eventName"]}
+                  {row["title"]}
                 </td>
-                    <td>{row["Place"]}</td>
-                <td>{row["Time"]} {row["Date"]}</td>
-                <td>{row["Duration"]}</td>
-                {row["Participant"] && <td>{row["Participant"]}</td>}
+                <td>{row["province"]}</td>
+                <td>
+                  {new Date(row["start_datetime"]).toLocaleDateString("fa-IR")} <br/> {new Date(row["start_datetime"]).toLocaleTimeString("en-GB")}
+                </td>
+                <td>{parseInt(((new Date(row["end_datetime"])-new Date(row["start_datetime"]))/60000)).toLocaleString()} دقیقه</td>
+                {row["participant_count"] && <td>{row["participant_count"]}</td>}
               </tr>
             ))}
-
           </tbody>
         </Table>
       </Card>

@@ -30,6 +30,7 @@ class RegisterJWT extends React.Component {
         `${urlDomain}/auth/register/`,
         {
           ...this.state,
+          client: "web"
         },
         // { headers: { Client: "web" }}
       );

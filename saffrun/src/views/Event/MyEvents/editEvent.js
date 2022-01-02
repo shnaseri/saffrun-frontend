@@ -15,21 +15,22 @@ import {
   CardTitle,
   CardHeader,
   Button,
-  // Button
+  UncontrolledTooltip,
 } from "reactstrap";
+import { Clock, MapPin, Info, Edit, LogOut, Edit2 } from "react-feather";
 import Checkbox from "../../../components/@vuexy/checkbox/CheckboxesVuexy";
 import { Check } from "react-feather";
 import Select from "react-select";
 import DropzoneBasic from "../../../components/@vuexy/dropZone/dropZone";
 import { DatePicker, RangeDatePicker } from "jalali-react-datepicker";
-import "./input-datepicker.css";
+import "../EventCreation/input-datepicker.css";
 import "../../../assets/scss/plugins/extensions/sweet-alerts.scss";
 import axios from "axios";
 import theme from "../../../assets/datePickerTheme/theme";
 import { history } from "../../../history";
 import isAuthenticated from "../../../utility/authenticated";
 
-class EventCreation extends React.Component {
+class EditEvent extends React.Component {
   state = {
     title: "",
     jobCategory: "",
@@ -47,14 +48,19 @@ class EventCreation extends React.Component {
     startMinute: { value: 0, label: "00" },
     endMinute: { value: 0, label: "00" },
     discount: 0,
-    price : 0,
+    price: 0,
     files: [],
     successAlert: false,
     errorAlert: false,
+    editDate: false,
+    initialStartDate: "",
+    initialEndDate: "",
+    initialImages: [],
   };
   async componentDidMount() {
     let authenticated = await isAuthenticated();
     if (!authenticated) history.push("/login");
+    this.loadEventFields();
     let token = localStorage.getItem("access");
     token = `Bearer ${token}`;
     try {
@@ -62,11 +68,56 @@ class EventCreation extends React.Component {
         headers: { Authorization: token },
       });
       this.loadCategories(categories.data);
-    }
-    catch {
+    } catch {
       history.push("/login");
     }
   }
+  loadEventFields = () => {
+    let {
+      title,
+      description,
+      discount,
+      start_datetime,
+      end_datetime,
+      category,
+      images,
+      price,
+    } = this.props.event;
+    this.setState({
+      title,
+      description,
+      discount,
+      price,
+      initialStartDate: this.handleInitialDate(start_datetime),
+      initialEndDate: this.handleInitialDate(end_datetime),
+      jobCategory: this.handleIntitalCategory(category),
+      initialImages: images,
+      startHour: this.handleInitialHour(start_datetime),
+      endHour: this.handleInitialHour(end_datetime),
+      startMinute: this.handleInitialMinute(start_datetime),
+      endMinute: this.handleInitialMinute(end_datetime),
+    });
+  };
+  handleInitialHour = (datetime) => {
+    let date = new Date(datetime);
+    let minute = date.getHours();
+    return { value: minute, label: String(minute).padStart(2, "0") };
+  };
+  handleInitialMinute = (datetime) => {
+    let date = new Date(datetime);
+    let minute = date.getMinutes();
+    return { value: minute, label: String(minute).padStart(2, "0") };
+  };
+  handleIntitalCategory = (cat) => {
+    return {
+      value: cat.id,
+      label: cat.title,
+    };
+  };
+  handleInitialDate = (datetime) => {
+    let date = new Date(datetime);
+    return date.toLocaleDateString("fa-IR");
+  };
   loadCategories = (categories) => {
     let categoryItems = categories.map((item) => {
       return {
@@ -203,29 +254,41 @@ class EventCreation extends React.Component {
     }
     return imageIds;
   };
-  eventObject = () => {
-    let { title, description, discount, jobCategory ,price } = this.state;
+  eventObject = (imageIds) => {
+    let {
+      title,
+      description,
+      discount,
+      jobCategory,
+      price,
+      editDate,
+    } = this.state;
     let event = {
       title,
       description,
       discount,
-      start_datetime: this.acceptableDateFormat(this.createDate("from")),
-      end_datetime: this.acceptableDateFormat(this.createDate("to")),
-      category_id : jobCategory.value,
-      price : price,
+      start_datetime: !editDate
+        ? this.props.event.start_datetime
+        : this.acceptableDateFormat(this.createDate("from")),
+      end_datetime: !editDate
+        ? this.props.event.end_datetime
+        : this.acceptableDateFormat(this.createDate("to")),
+      category: jobCategory.value,
+      price,
+      images: imageIds,
+      owner : this.props.ownerId
     };
     return event;
   };
-  postEvent = async () => {
+  postEvent = async (imageIds) => {
     var token = "Bearer " + localStorage.getItem("access");
     var headers = {
       Authorization: token,
     };
-    console.log({ ...this.eventObject() })
     try {
-      let response = await axios.post(
-        `${urlDomain}/event/add/`,
-        { ...this.eventObject() },
+      let response = await axios.put(
+        `${urlDomain}/event/${this.props.id}`,
+        { ...this.eventObject(imageIds) },
         { headers }
       );
       return response;
@@ -244,34 +307,43 @@ class EventCreation extends React.Component {
     var headers = {
       Authorization: token,
     };
-    let imageIds = false;
+    let imageIds = [];
     if (this.state.files.length > 0) {
       imageIds = await this.uploadImage();
     }
-    let eventResponse = await this.postEvent();
+    let eventResponse = await this.postEvent(imageIds);
     if (!eventResponse) return false;
-    if (imageIds) {
-      for (let index = 0; index < imageIds.length; index++) {
-        try {
-          let postImageEvent = await axios.post(
-            `${urlDomain}/event/add-image/`,
-            {
-              event_id: eventResponse.data.event_id,
-              image_id: imageIds[index],
-            },
-            { headers }
-          );
-        } catch (e) {
-          console.log(e);
-          return false;
-        }
-      }
-    }
+
     return true;
   };
-
+  initialDateInput = (dateTime, label) => {
+    return (
+      <React.Fragment>
+        <Label style={{ marginBottom: "6px" }}>
+          تاریخ {label}{" "}
+          <Edit2
+            size={16}
+            id="edit-event"
+            onMouseOver={(e) => {
+              e.currentTarget.style.color = "orange";
+            }}
+            className="cursor-pointer"
+            onMouseOut={(e) => (e.currentTarget.style.color = null)}
+            onClick={() => this.setState({ editDate: true })}
+          />
+          <UncontrolledTooltip placement="top" target={`edit-event`}>
+            ویرایش
+          </UncontrolledTooltip>
+        </Label>
+        <Input value={dateTime} disabled />
+      </React.Fragment>
+    );
+  };
+  initialImagesGenerator = () => {
+    return this.state.initialImages.map((item) => item.image.full_size);
+  };
   stepsGenerator() {
-    let { description, title, discount ,price } = this.state;
+    let { description, title, discount, price, editDate } = this.state;
     let jobSelect = this.state.jobCategory ? this.state.jobCategory.value : "";
     return [
       {
@@ -332,7 +404,7 @@ class EventCreation extends React.Component {
               </FormGroup>
             </Col>
             <Col md="6" sm="12">
-            <FormGroup>
+              <FormGroup>
                 <Label> قیمت </Label>
                 <span style={{ color: "red" }}>*</span>
                 <Input
@@ -341,7 +413,7 @@ class EventCreation extends React.Component {
                   type="number"
                   placeholder="هزینه رویداد را به تومان وارد کنید"
                 />
-                {(price < 0 ||  discount === "") && (
+                {(price < 0 || discount === "") && (
                   <small style={{ color: "red", fontSize: "11px" }}>
                     عدد معتبر وارد کنید
                   </small>
@@ -370,23 +442,30 @@ class EventCreation extends React.Component {
       {
         title: "۲",
         buttonDisabled:
-          !this.compareDates() ||
-          this.greaterThanToday("from") ||
-          this.greaterThanToday("to"),
+          editDate &&
+          (!this.compareDates() ||
+            this.greaterThanToday("from") ||
+            this.greaterThanToday("to")),
         content: (
           <Row>
             <Col lg="4" md="4" xs="12">
               <FormGroup>
-                <DatePicker
-                  label="تاریخ شروع"
-                  className="my-datepicker-style"
-                  onClickSubmitButton={(selectedTime) =>
-                    this.DateTimeChanged(selectedTime, "startDate")
-                  }
-                  theme={theme}
-                  timePicker={false}
-                />
-                {this.showDateErrorStart()}
+                {editDate ? (
+                  <React.Fragment>
+                    <DatePicker
+                      label="تاریخ شروع"
+                      className="my-datepicker-style"
+                      onClickSubmitButton={(selectedTime) =>
+                        this.DateTimeChanged(selectedTime, "startDate")
+                      }
+                      theme={theme}
+                      timePicker={false}
+                    />
+                    {this.showDateErrorStart()}
+                  </React.Fragment>
+                ) : (
+                  this.initialDateInput(this.state.initialStartDate, "شروع")
+                )}
               </FormGroup>
             </Col>
             <Col lg="4" md="4" xs="6">
@@ -395,6 +474,7 @@ class EventCreation extends React.Component {
                 <span style={{ color: "red" }}>*</span>
               </Label>
               <Select
+                isDisabled={!editDate}
                 className="React hour-minute-style"
                 classNamePrefix="select"
                 name="clear"
@@ -410,6 +490,7 @@ class EventCreation extends React.Component {
                 <span style={{ color: "red" }}>*</span>
               </Label>
               <Select
+                isDisabled={!editDate}
                 className="React hour-minute-style"
                 classNamePrefix="select"
                 name="clear"
@@ -421,16 +502,22 @@ class EventCreation extends React.Component {
             </Col>
             <Col lg="4" md="4" xs="12">
               <FormGroup>
-                <DatePicker
-                  label="تاریخ پایان"
-                  className="my-datepicker-style"
-                  onClickSubmitButton={(selectedTime) =>
-                    this.DateTimeChanged(selectedTime, "endDate")
-                  }
-                  timePicker={false}
-                  theme={theme}
-                />
-                {this.showDateErrorEnd()}
+                {editDate ? (
+                  <React.Fragment>
+                    <DatePicker
+                      label="تاریخ پایان"
+                      className="my-datepicker-style"
+                      onClickSubmitButton={(selectedTime) =>
+                        this.DateTimeChanged(selectedTime, "endDate")
+                      }
+                      timePicker={false}
+                      theme={theme}
+                    />
+                    {this.showDateErrorEnd()}
+                  </React.Fragment>
+                ) : (
+                  this.initialDateInput(this.state.initialEndDate, "پایان")
+                )}
               </FormGroup>
             </Col>
             <Col lg="4" md="4" xs="6">
@@ -443,6 +530,7 @@ class EventCreation extends React.Component {
                 classNamePrefix="select"
                 name="clear"
                 options={this.hoursGenerator()}
+                isDisabled={!editDate}
                 placeholder=""
                 value={this.state.endHour}
                 onChange={(value) => this.setState({ endHour: value })}
@@ -459,6 +547,7 @@ class EventCreation extends React.Component {
                 classNamePrefix="select"
                 name="clear"
                 options={this.minutesGenerator()}
+                isDisabled={!editDate}
                 placeholder=""
                 value={this.state.endMinute}
                 onChange={(value) => this.setState({ endMinute: value })}
@@ -471,8 +560,9 @@ class EventCreation extends React.Component {
       {
         title: "۳",
         buttonDisabled: false,
-        content: (
+        content: this.state.title !== "" && (
           <DropzoneBasic
+            imageUrlList={this.initialImagesGenerator()}
             imageUploaded={this.imageUploaded}
             files={this.state.files}
           />
@@ -489,7 +579,7 @@ class EventCreation extends React.Component {
       <div>
         <Card>
           <CardHeader>
-            <CardTitle>ایجاد رویداد</CardTitle>
+            <CardTitle>ویرایش رویداد</CardTitle>
           </CardHeader>
           <CardBody>
             <Wizard
@@ -525,4 +615,4 @@ class EventCreation extends React.Component {
     );
   }
 }
-export default EventCreation;
+export default EditEvent;

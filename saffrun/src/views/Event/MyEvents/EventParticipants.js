@@ -1,69 +1,112 @@
-import React from "react"
-import { Card, CardHeader, CardTitle, CardBody, Button } from "reactstrap"
-import { MoreHorizontal, UserPlus, Plus,Trash } from "react-feather"
-import img1 from "../../../assets/img/portrait/small/avatar-s-5.jpg"
-import img2 from "../../../assets/img/portrait/small/avatar-s-6.jpg"
-import img3 from "../../../assets/img/portrait/small/avatar-s-7.jpg"
-import img4 from "../../../assets/img/portrait/small/avatar-s-8.jpg"
-import img5 from "../../../assets/img/portrait/small/avatar-s-9.jpg"
-import img6 from "../../../assets/img/portrait/small/avatar-s-10.jpg"
-import img7 from "../../../assets/img/portrait/small/avatar-s-11.jpg"
-import img8 from "../../../assets/img/portrait/small/avatar-s-12.jpg"
+import React from "react";
+import { Card, CardHeader, CardTitle, CardBody, Button } from "reactstrap";
+import { MoreHorizontal, UserPlus, Plus, Trash } from "react-feather";
+
+import defaultImg from "../../../assets/img/profile/Generic-profile-picture.jpg.webp";
+import imgUrlDomain from "../../../utility/imgUrlDomain";
+import SweetAlert from "react-bootstrap-sweetalert";
 
 class EventParticipants extends React.Component {
+  state = {
+    deleteUserModal: false,
+    userId: 0,
+  };
+  imgGenerator = (x) => {
+    return x.image.image
+      ? `${imgUrlDomain}${x.image.image.thumbnail}`
+      : defaultImg;
+  };
+  participantsGenreator = (participants) => {
+    return participants.map((x) => {
+      return { id: x.id, name: x.name, imgUrl: this.imgGenerator(x) };
+    });
+  };
+  marginTopDefiner = (idx) => {
+    return idx === 0 ? "0px" : "30px";
+  };
+  userSelected = (id) => {
+    this.setState({ deleteUserModal: true, userId: id });
+  };
+  handleAlert = (state, value) => {
+    this.setState({
+      [state]: value,
+    });
+  };
   render() {
+    let participants = this.participantsGenreator(this.props.participants);
     return (
       <Card>
         <CardHeader>
-        <p className="font-weight-bold mb-0">شرکت کنندگان</p>
-          {/* <MoreHorizontal className="cursor-pointer" size={15} /> */}
+          <CardTitle>شرکت‌‌کنندگان</CardTitle>
         </CardHeader>
-        <CardBody>
-          <div className="d-flex justify-content-between align-items-center mb-1">
-            <div className="user-info d-flex align-items-center">
-              <div className="avatar mr-50">
-                <img src={img1} alt="avtar img holder" height="35" width="35" />
-              </div>
-              <div className="user-page-info">
-                <h6 className="mb-0">علی اکبری</h6>
-                {/* <span className="font-small-2">6 Mutual Friends</span> */}
-              </div>
-            </div>
-            <Button color="primary" className="btn-icon ml-auto">
-              <Trash size={17} />
-            </Button>
-          </div>
-          <div className="d-flex justify-content-between align-items-center mb-1">
-            <div className="user-info d-flex align-items-center">
-              <div className="avatar mr-50">
-                <img src={img5} alt="avtar img holder" height="35" width="35" />
-              </div>
-              <div className="user-page-info">
-                <h6 className="mb-0">حسین ناصری</h6>
-                {/* <span className="font-small-2">3 Mutual Friends</span> */}
-              </div>
-            </div>
-            <Button color="primary" className="btn-icon ml-auto">
-              <Trash size={17} />
-            </Button>
-          </div>
-          <div className="d-flex justify-content-between align-items-center mb-1">
-            <div className="user-info d-flex align-items-center">
-              <div className="avatar mr-50">
-                <img src={img3} alt="avtar img holder" height="35" width="35" />
-              </div>
-              <div className="user-page-info">
-                <h6 className="mb-0">محمد جواد </h6>
-                {/* <span className="font-small-2">2 Mutual Friends</span> */}
-              </div>
-            </div>
-            <Button color="primary" className="btn-icon ml-auto">
-              <Trash size={17} />
-            </Button>
-          </div>
-        </CardBody>
+        {participants.length > 0 && (
+          <CardBody style={{ height: "450px", overflow: "auto" }}>
+            {participants.map((item, index) => {
+              return (
+                <div
+                  style={{ marginTop: this.marginTopDefiner(index) }}
+                  className="d-flex justify-content-between align-items-center mb-1"
+                  key={index}
+                >
+                  <div className="user-info d-flex align-items-center">
+                    <div className="avatar mr-50">
+                      <img
+                        src={item.imgUrl}
+                        alt="avtar img holder"
+                        height="35"
+                        width="35"
+                      />
+                    </div>
+                    <div className="user-page-info">
+                      <h6 className="mb-0">{item.name}</h6>
+                    </div>
+                  </div>
+                  <Button
+                    onClick={() => {
+                      this.userSelected(item.id);
+                    }}
+                    color="danger"
+                    className="btn-icon ml-auto"
+                  >
+                    <Trash size={17} />
+                  </Button>
+                </div>
+              );
+            })}
+            <SweetAlert
+              title="آیا از حذف این مورد اطمینان دارید؟"
+              warning
+              show={this.state.deleteUserModal}
+              showCancel
+              reverseButtons
+              cancelBtnBsStyle="warning"
+              confirmBtnText="بله؛ حذف کن"
+              cancelBtnText="لغو"
+              confirmBtnBsStyle="danger"
+              onConfirm={() => {
+                this.props.deleteUser(this.state.userId);
+                this.handleAlert("deleteUserModal", false);
+              }}
+              onCancel={() => {
+                this.handleAlert("deleteUserModal", false);
+              }}
+            >
+              بعد از حذف نمیتوانید دوباره این مورد را بازگردانی کنید!
+            </SweetAlert>
+          </CardBody>
+        )}
+        {participants.length === 0 && (
+          <CardBody
+            style={{ height: "200px" }}
+            className="justify-content-center d-flex"
+          >
+            <p style={{ marginTop: "50px" }}>
+              شرکت‌‌کننده‌ای در رویداد شما شرکت نکرده است
+            </p>
+          </CardBody>
+        )}
       </Card>
-    )
+    );
   }
 }
-export default EventParticipants
+export default EventParticipants;

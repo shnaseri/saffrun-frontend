@@ -98,8 +98,10 @@ class Revenue extends React.Component {
           style: {
             color: this.props.strokeColor,
           },
+          offsetX: -45,
+          offsetY: 0,
           formatter: (val) => {
-            return val > 999 ? (val / 1000).toFixed(1) + "تومان" : val;
+            return val > 999 ? (val / 1000) + "تومان" : val;
           },
         },
       },
@@ -152,7 +154,7 @@ class Revenue extends React.Component {
   };
   render() {
     return (
-      <Card>
+      <Card style={{ height: "460px" }}>
         <CardHeader>
           <CardTitle>وضعیت مالی</CardTitle>
           {/* <Settings size={20} className="cursor-pointer text-muted" /> */}
@@ -180,7 +182,7 @@ class Revenue extends React.Component {
           </UncontrolledDropdown>
         </CardHeader>
         <CardBody>
-          <div className="d-flex justify-content-start mb-1">
+          <div className="d-flex justify-content-center mb-1">
             <div className="mr-2">
               <p className="mb-50 text-bold-600">این ماه</p>
               <h2 className="text-bold-400">

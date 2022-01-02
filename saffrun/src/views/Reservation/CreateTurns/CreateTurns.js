@@ -47,6 +47,7 @@ class BookingCreation extends React.Component {
     capacity: "",
     period_count: "",
     duration: "",
+    price: "",
     successAlert: false,
     errorAlert: false,
     week: {
@@ -159,6 +160,7 @@ class BookingCreation extends React.Component {
     let data = {
       start_date: this.formatDate(startDate),
       end_date: this.formatDate(endDate),
+      price: this.state.price,
       days_list: [],
     };
     let l = [];
@@ -173,6 +175,7 @@ class BookingCreation extends React.Component {
       l.push({ reserve_periods: this.state.week[days[date.getDay()]] });
     }
     data["days_list"] = l;
+    console.log(data);
     let token = localStorage.getItem("access");
     try {
       let res = await axios.post(`${urlDomain}/reserve/create/`, data, {
@@ -210,6 +213,7 @@ class BookingCreation extends React.Component {
   fillInput = () => {
     if (
       this.state.capacity === "" ||
+      this.state.price === "" ||
       (this.state.period_count === "" && this.state.duration === "") ||
       parseInt(this.state.duration % 5) !== 0
     ) {
@@ -493,14 +497,7 @@ class BookingCreation extends React.Component {
                       تعداد نفرات مجاز
                       <span style={{ color: "red" }}>*</span>
                     </Label>
-                    <UncontrolledTooltip
-                      style={{
-                        backgroundColor: "rgb(245, 199, 100)",
-                        color: "black",
-                      }}
-                      placement="top"
-                      target="personsNum"
-                    >
+                    <UncontrolledTooltip placement="top" target="personsNum">
                       تعداد افرادی که در هر نوبت می‌توانند حضور داشته‌باشند
                     </UncontrolledTooltip>
                     <Input
@@ -528,14 +525,7 @@ class BookingCreation extends React.Component {
                       تعداد نوبت‌ها
                       <span style={{ color: "red" }}>*</span>
                     </Label>
-                    <UncontrolledTooltip
-                      style={{
-                        backgroundColor: "rgb(245, 199, 100)",
-                        color: "black",
-                      }}
-                      placement="top"
-                      target="NumOfTurns"
-                    >
+                    <UncontrolledTooltip placement="top" target="NumOfTurns">
                       در بین دو بازه زمانی چه تعداد نوبت می‌خواهید ایجاد کنید
                     </UncontrolledTooltip>
                     <Input
@@ -586,6 +576,28 @@ class BookingCreation extends React.Component {
                 <Col md="1" />
               </Row>
               <Row style={{ marginTop: "5px", marginBottom: "20px" }}>
+                <Col md="3" sm="12">
+                  <FormGroup>
+                    <Label for="price">
+                      هزینه نوبت
+                      <span style={{ color: "red" }}>*</span>
+                    </Label>
+                    <Input
+                      type="number"
+                      name="price"
+                      id="price"
+                      onChange={(e) => {
+                        if (e.target.value.length < 7) {
+                          this.setState({ price: e.target.value });
+                        }
+                      }}
+                      maxLength={3}
+                      value={this.state.price}
+                      placeholder="قیمت به تومان"
+                    />
+                  </FormGroup>
+                </Col>
+                <Col md="1" />
                 <Col md="3" sm="12">
                   <DatePicker
                     label="تاریخ شروع"
@@ -682,6 +694,7 @@ class BookingCreation extends React.Component {
           confirmBtnText="باشه"
           onConfirm={() => {
             this.handleAlert("successAlert", false);
+            history.push("my-reservation");
           }}
         >
           <p className="sweet-alert-text">نوبت های ممکن ساخته شد.</p>

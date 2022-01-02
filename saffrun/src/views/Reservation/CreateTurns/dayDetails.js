@@ -36,7 +36,6 @@ const ActionsComponent = (props) => {
       <UncontrolledTooltip
         placement="top"
         target={`edit-icon-${props.row.id}-${props.day}`}
-        style={{ backgroundColor: "rgb(245, 199, 100)", color: "black" }}
       >
         ویرایش
       </UncontrolledTooltip>
@@ -55,7 +54,6 @@ const ActionsComponent = (props) => {
         />
       </span>
       <UncontrolledTooltip
-        style={{ backgroundColor: "rgb(245, 199, 100)", color: "black" }}
         placement="top"
         target={`delete-icon-${props.row.id}-${props.day}`}
       >
