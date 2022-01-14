@@ -1,10 +1,10 @@
 import React from "react";
 import { Card, CardBody, CardHeader, CardTitle, Table } from "reactstrap";
 import DataTable from "react-data-table-component";
-import isAuthenticated from './../../utility/authenticated';
-import { history } from './../../history';
-import urlDomain from './../../utility/urlDomain';
-import  axios  from 'axios';
+import isAuthenticated from "./../../utility/authenticated";
+import { history } from "./../../history";
+import urlDomain from "./../../utility/urlDomain";
+import axios from "axios";
 import ReactPaginate from "react-paginate";
 import {
   ChevronLeft,
@@ -17,6 +17,9 @@ import {
 
 const dateConverter = (date) => {
   return new Date(date).toLocaleDateString("fa-IR");
+};
+const numberWithCommas = (x) => {
+  return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 };
 const columns = [
   {
@@ -48,6 +51,7 @@ const columns = [
     name: "مبلغ",
     selector: "total_payment",
     sortable: true,
+    cell: (row) => <span>{numberWithCommas(row.total_payment)}</span>,
   },
 ];
 
@@ -118,47 +122,51 @@ const data = [
       },
     ],
   },
-  
- 
 ];
 
 const ExpandableTable = ({ data }) => {
   return (
-    <Table className="border border-4 border-secondary rounded-2" responsive striped>
-      <thead>
-        <tr>
-          <th>نام و نام خانوادگی</th>
-          <th>نوع</th>
-          <th>ساعت</th>
-          <th>مبلغ</th>
-        </tr>
-      </thead>
-      <tbody>
-        {data.payment_detail.map((row, ind) => {
-          return (
-            <React.Fragment>
-              <tr>
-                <td>{row.name}</td>
-                <td>{row.type}</td>
-                <td>{new Date(row.time).toLocaleTimeString()}</td>
-                <td>{row.amount}</td>
-              </tr>
-            </React.Fragment>
-          );
-        })}
-      </tbody>
-    </Table>
+    <div style={{ height: "200px", overflow: "auto" }}>
+      <Table
+        className="border border-4 border-secondary rounded-2"
+        responsive
+        striped
+      >
+        <thead>
+          <tr>
+            <th>نام و نام خانوادگی</th>
+            <th>نوع</th>
+            <th>ساعت</th>
+            <th>مبلغ</th>
+          </tr>
+        </thead>
+        <tbody>
+          {data.payment_detail.map((row, ind) => {
+            return (
+              <React.Fragment>
+                <tr>
+                  <td>{row.name}</td>
+                  <td>{row.type}</td>
+                  <td>{new Date(row.time).toLocaleTimeString("en-GB")}</td>
+                  <td>{numberWithCommas(row.amount)}</td>
+                </tr>
+              </React.Fragment>
+            );
+          })}
+        </tbody>
+      </Table>
+    </div>
   );
 };
 
 class DataTableExpandableRows extends React.Component {
-  state ={
-    loadSpinner :true,
-    tradeData : {},
+  state = {
+    loadSpinner: true,
+    tradeData: {},
     pageCount: 1,
-    currentPage : 1,
-    totalPages : 0
-  }
+    currentPage: 1,
+    totalPages: 0,
+  };
   pageChanged = async (data) => {
     this.setState({ currentPage: data.selected + 1 });
     let pagination = {
@@ -167,22 +175,39 @@ class DataTableExpandableRows extends React.Component {
     };
     let token = localStorage.getItem("access");
     token = `Bearer ${token}`;
-    let tradeData = await axios.get(`${urlDomain}/payment/web/get-all-payment/`, {
-      headers: { Authorization: token },
-      params : {...pagination}
+    let tradeData = await axios.get(
+      `${urlDomain}/payment/web/get-all-payment/`,
+      {
+        headers: { Authorization: token },
+        params: { ...pagination },
+      }
+    );
+    this.setState({
+      tradeData: tradeData.data,
+      loadSpinner: false,
+      totalPages: tradeData.data["pages"],
     });
-    this.setState({ tradeData: tradeData.data, loadSpinner: false , totalPages : tradeData.data["pages"] });
   };
   componentDidMount = async () => {
     let authenticated = await isAuthenticated();
     if (!authenticated) history.push("/login");
     let token = localStorage.getItem("access");
     token = `Bearer ${token}`;
-    let tradeData = await axios.get(`${urlDomain}/payment/web/get-all-payment/`, {
-      headers: { Authorization: token },
-      params : {page : this.state.currentPage , page_count :this.state.pageCount}
+    let tradeData = await axios.get(
+      `${urlDomain}/payment/web/get-all-payment/`,
+      {
+        headers: { Authorization: token },
+        params: {
+          page: this.state.currentPage,
+          page_count: this.state.pageCount,
+        },
+      }
+    );
+    this.setState({
+      tradeData: tradeData.data,
+      loadSpinner: false,
+      totalPages: tradeData.data["pages"],
     });
-    this.setState({ tradeData: tradeData.data, loadSpinner: false , totalPages : tradeData.data["pages"] });
     // console.log(this.state.userData);
   };
   render() {
@@ -197,25 +222,24 @@ class DataTableExpandableRows extends React.Component {
             columns={columns}
             noHeader
             expandableRows
-            
             expandOnRowClicked
-            expandableRowsComponent={<ExpandableTable  />}
+            expandableRowsComponent={<ExpandableTable />}
           />
           <ReactPaginate
-                previousLabel={<ChevronLeft size="15" />}
-                nextLabel={<ChevronRight size="15" />}
-                breakLabel={"..."}
-                breakClassName={"break-me"}
-                pageCount={this.state.totalPages}
-                marginPagesDisplayed={1}
-                pageRangeDisplayed={2}
-                containerClassName={
-                  "vx-pagination icon-pagination pagination-center mt-3"
-                }
-                activeClassName={"active"}
-                onPageChange={this.pageChanged}
-                forcePage={this.state.currentPage - 1}
-              />
+            previousLabel={<ChevronLeft size="15" />}
+            nextLabel={<ChevronRight size="15" />}
+            breakLabel={"..."}
+            breakClassName={"break-me"}
+            pageCount={this.state.totalPages}
+            marginPagesDisplayed={1}
+            pageRangeDisplayed={2}
+            containerClassName={
+              "vx-pagination icon-pagination pagination-center mt-3"
+            }
+            activeClassName={"active"}
+            onPageChange={this.pageChanged}
+            forcePage={this.state.currentPage - 1}
+          />
         </CardBody>
       </Card>
     );
