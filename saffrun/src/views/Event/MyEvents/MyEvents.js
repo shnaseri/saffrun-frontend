@@ -236,7 +236,7 @@ class MyEvents extends React.Component {
                     <span style={{ marginLeft: "4px" }}>
                       {this.moreThan1000(ev.participants.length)}
                     </span>
-                    <Icon.Users size={24} />
+                    <Icon.Users size={20} />
 
                     {/* </div> */}
                   </Col>

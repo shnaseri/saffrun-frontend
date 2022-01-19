@@ -59,10 +59,10 @@ class CurrentCard extends Component {
     let reserve = this.props.data
       ? {
           ...this.props.data,
-          duration: this.differenceTwoTime(
+          duration: this.props.data.start_time ? this.differenceTwoTime(
             this.props.data.start_time,
             this.props.data.end_time
-          ),
+          ) : "",
           participants: this.participantsGenreator(
             this.props.data.participants
           ),
