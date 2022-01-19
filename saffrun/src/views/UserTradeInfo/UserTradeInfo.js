@@ -470,13 +470,7 @@ class TreadeInfo extends React.Component {
         </Row> */}
         <Row>
           <Col>
-            <Card>
-              <CardHeader>
-                <CardBody>
-                  <DataTableExpandableRows />
-                </CardBody>
-              </CardHeader>
-            </Card>
+            <DataTableExpandableRows />
           </Col>
         </Row>
       </React.Fragment>

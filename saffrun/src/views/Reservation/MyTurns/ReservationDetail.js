@@ -19,6 +19,9 @@ class ReserveDetail extends Component {
   async componentDidMount() {
     let authenticated = await isAuthenticated();
     if (!authenticated) history.push("/login");
+    await this.callServer();
+  }
+  callServer = async () => {
     let token = localStorage.getItem("access");
     let params = { date: this.props.match.params.date };
     try {
@@ -34,7 +37,11 @@ class ReserveDetail extends Component {
       this.setState({ loadSpinner: false });
       console.log(e);
     }
-  }
+  };
+  updateAfterUserDelete = async () => {
+    this.setState({ loadSpinner: false });
+    await this.callServer();
+  };
   showSpinner = () => {
     return (
       <div style={{ marginTop: "500px" }}>
@@ -50,7 +57,10 @@ class ReserveDetail extends Component {
             <Row>
               <Col lg="8" xs="12">
                 <ReserveStats data={this.state} />
-                <ReserveTable date={this.props.match.params.date} />
+                <ReserveTable
+                  updateReserveDetail={this.updateAfterUserDelete}
+                  date={this.props.match.params.date}
+                />
               </Col>
               <Col lg="4" xs="12">
                 <CurrentClosest data={this.state.nearest_reserve} />
@@ -59,7 +69,7 @@ class ReserveDetail extends Component {
             </Row>
             <Row>
               <Col xs="12">
-                <CapacityChart data={this.state.data_of_chart}/>
+                <CapacityChart data={this.state.data_of_chart} />
               </Col>
             </Row>
           </React.Fragment>

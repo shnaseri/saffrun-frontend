@@ -111,19 +111,22 @@ class Comment extends Component {
                     </div>
                   </div>
                 </div>
-                <Trash2
-                  size="20"
-                  color="#ff531f"
+                <span
                   id={`remove-comment-${this.props.cid}`}
-                  style={{ marginLeft: "10px" }}
                   onClick={() => this.handleAlert("defaultAlert", true)}
-                />
-                <BiMessageRoundedDetail
-                  size="20"
-                  color="orange"
+                >
+                  <Trash2
+                    size="20"
+                    color="#ff531f"
+                    style={{ marginLeft: "10px" }}
+                  />
+                </span>
+                <span
                   id={`main-comment-${this.props.cid}`}
                   onClick={() => this.toggleParentModal()}
-                />
+                >
+                  <BiMessageRoundedDetail size="20" color="orange" />
+                </span>
               </Row>
             </Col>
           </Row>

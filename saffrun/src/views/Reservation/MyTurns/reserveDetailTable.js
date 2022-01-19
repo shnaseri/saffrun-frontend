@@ -33,19 +33,30 @@ import defaultImg from "../../../assets/img/profile/Generic-profile-picture.jpg.
 import imgUrlDomain from "../../../utility/imgUrlDomain";
 import ComponentSpinner from "../../../components/@vuexy/spinner/Loading-spinner";
 
+const reserveDateGreatherThanToday = (reserveDate) => {
+  if (new Date(reserveDate) > new Date()) return true;
+  return false;
+};
+
+const createClass = (reserveDate) => {
+  if (reserveDateGreatherThanToday(reserveDate)) {
+    return "cursor-pointer delete-reserve-icon";
+  }
+  return "disabled-icon-color";
+};
+
 const ActionsComponent = (props) => {
   return (
     <div className="data-list-action">
-      <UncontrolledTooltip placement="top" target={`edit-icon-${props.row.id}`}>
+      <UncontrolledTooltip
+        placement="top"
+        target={`participants-icon-${props.row.id}`}
+      >
         شرکت کنندگان
       </UncontrolledTooltip>
-      <span id={`edit-icon-${props.row.id}`}>
+      <span id={`participants-icon-${props.row.id}`}>
         <Users
-          onMouseOver={(e) => {
-            e.currentTarget.style.color = "orange";
-          }}
-          onMouseOut={(e) => (e.currentTarget.style.color = null)}
-          className="cursor-pointer mr-1"
+          className={`cursor-pointer mr-1 show-participants-icon`}
           size={20}
           onClick={() => {
             props.participantsShow(props.row);
@@ -60,14 +71,11 @@ const ActionsComponent = (props) => {
       </UncontrolledTooltip>
       <span id={`delete-icon-${props.row.id}`}>
         <Trash
-          onMouseOver={(e) => {
-            e.currentTarget.style.color = "red";
-          }}
-          onMouseOut={(e) => (e.currentTarget.style.color = null)}
-          className="cursor-pointer"
+          className={`${createClass(props.date, "delete")}`}
           size={20}
           onClick={() => {
-            props.deleteRow(props.row);
+            if (reserveDateGreatherThanToday(props.date))
+              props.deleteRow(props.row);
           }}
         />
       </span>
@@ -136,9 +144,9 @@ class ReservationTable extends Component {
         cell: (row) => (
           <ActionsComponent
             row={row}
-            toggleModal={this.toggleModal}
             participantsShow={this.participantsShow}
             deleteRow={this.deleteRow}
+            date={this.props.date}
           />
         ),
       },
@@ -148,6 +156,7 @@ class ReservationTable extends Component {
     participantsModal: false,
     reserveDeleteModal: false,
     loadSpinner: false,
+    participantDeleted: false,
     reserveDetails: [],
     currentPage: 1,
     pageCount: 5,
@@ -230,12 +239,30 @@ class ReservationTable extends Component {
   getParticipants = () => {
     let { reserveDetails, rowClicked, loadSpinner } = this.state;
     if (reserveDetails.length === 0 || rowClicked === 0 || loadSpinner)
-      return []
-    let foundParticipant = reserveDetails.find((item) => item.id === this.state.rowClicked);
-    if (! foundParticipant)
-      return [] 
-    if (foundParticipant)
-      return foundParticipant.participants; 
+      return [];
+    let foundParticipant = reserveDetails.find(
+      (item) => item.id === this.state.rowClicked
+    );
+    if (!foundParticipant) return [];
+    if (foundParticipant) return foundParticipant.participants;
+  };
+  disabledDeleteParticipants = () => {
+    let { reserveDetails, rowClicked, loadSpinner } = this.state;
+    if (reserveDetails.length === 0 || rowClicked === 0 || loadSpinner)
+      return false;
+    let foundDateTime = reserveDetails.find(
+      (item) => item.id === this.state.rowClicked
+    );
+    if (!foundDateTime) return false;
+
+    return (
+      new Date() > new Date(`${foundDateTime.date}T${foundDateTime.end_time}`)
+    );
+  };
+  participantHasDeleted = () => {
+    this.setState({
+      participantDeleted: true,
+    });
   };
   callServer = async (pagination) => {
     let token = localStorage.getItem("access");
@@ -275,6 +302,7 @@ class ReservationTable extends Component {
         data: { reserve_id: this.state.rowClicked },
       }
     );
+    await this.props.updateReserveDetail()
     let statusCode = await this.callServer(pagination);
     if (statusCode === 404) {
       this.setState({ currentPage: 1 });
@@ -285,8 +313,18 @@ class ReservationTable extends Component {
     await this.deleteWholeReserve();
     history.push({ pathname: "/edit-day", state: { date: this.props.date } });
   };
-  toggleModal = () => {
-    this.setState({ participantsModal: !this.state.participantsModal });
+  toggleModal = async () => {
+    let { participantDeleted } = this.state;
+    if (participantDeleted) {
+      this.setState({ loadSpinner: true, rowClicked: 0 });
+      let pagination = {
+        page: this.state.currentPage,
+        page_count: this.state.pageCount,
+      };
+      await this.props.updateReserveDetail()
+      await this.callServer(pagination);
+    }
+    this.setState({ participantsModal: false, participantDeleted: false });
   };
   pageChanged = async (data) => {
     this.setState({ currentPage: data.selected + 1, loadSpinner: true });
@@ -303,6 +341,13 @@ class ReservationTable extends Component {
       </div>
     );
   };
+  createIconColor = (icon) => {
+    if (reserveDateGreatherThanToday(this.props.date)) {
+      if (icon === "edit") return "cursor-pointer show-participants-icon";
+      return "cursor-pointer delete-reserve-icon";
+    }
+    return "disabled-icon-color";
+  };
   render() {
     let { reserveDetails } = this.state;
     return (
@@ -311,26 +356,26 @@ class ReservationTable extends Component {
           <CardHeader>
             <CardTitle>
               جزئیات روز
-              <Edit2
-                size={16}
-                id="edit-reserve"
-                onMouseOver={(e) => {
-                  e.currentTarget.style.color = "orange";
-                }}
-                className="cursor-pointer mr-1 ml-1"
-                onMouseOut={(e) => (e.currentTarget.style.color = null)}
-                onClick={() => this.handleAlert("editModalOpen", true)}
-              />
-              <Trash
-                size={16}
-                id="delete-reserve"
-                onMouseOver={(e) => {
-                  e.currentTarget.style.color = "red";
-                }}
-                className="cursor-pointer"
-                onMouseOut={(e) => (e.currentTarget.style.color = null)}
-                onClick={() => this.handleAlert("deleteModalOpen", true)}
-              />
+              <span id="edit-reserve">
+                <Edit2
+                  size={16}
+                  className={`mr-1 ml-1 ${this.createIconColor("edit")}`}
+                  onClick={() => {
+                    if (reserveDateGreatherThanToday(this.props.date))
+                      this.handleAlert("editModalOpen", true);
+                  }}
+                />
+              </span>
+              <span id="delete-reserve">
+                <Trash
+                  size={16}
+                  className={`${this.createIconColor("delete")}`}
+                  onClick={() => {
+                    if (reserveDateGreatherThanToday(this.props.date))
+                      this.handleAlert("deleteModalOpen", true);
+                  }}
+                />
+              </span>
             </CardTitle>
             <UncontrolledTooltip placement="top" target="edit-reserve">
               ویرایش کل نوبت
@@ -420,7 +465,12 @@ class ReservationTable extends Component {
                 <strong style={{ marginRight: "20px" }}>شرکت‌کنندگان</strong>
               </ModalHeader>
               <ModalBody>
-                <ReserveParticipants participants={this.getParticipants()} />
+                <ReserveParticipants
+                  diabledDeleteBtn={this.disabledDeleteParticipants()}
+                  participants={this.getParticipants()}
+                  reserveId={this.state.rowClicked}
+                  participantHasDeleted={this.participantHasDeleted}
+                />
               </ModalBody>
             </Modal>
             {!this.state.loadSpinner && (
