@@ -37,6 +37,7 @@ class ReserveParticipants extends React.Component {
       this.setState({ participants, loadSpinner: false });
     } catch (e) {
       this.setState({ loadSpinner: false });
+      console.log("error raised");
       console.log(e);
     }
   };
