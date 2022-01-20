@@ -56,14 +56,14 @@ class UserEdit extends React.Component {
     let x = await axios.put(
       `${urlDomain}/profile/user/`,
 
-      { ...this.state.userData , phone : this.state.userData["phone"].replace(/\s/g, "")  },
+      { ...this.state.userData , phone : this.state.userData["phone"] ? this.state.userData["phone"].replace(/\s/g, "")  : " "  },
       {
         headers: { Authorization: token },
       }
     );
     this.notifySuccess();
     }
-    catch{
+    catch(e){
       this.notifyError();
     }
     

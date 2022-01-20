@@ -284,6 +284,20 @@ class UserAccountTab extends React.Component {
                   />
                 </FormGroup> */}
               </Col>
+              <Col
+                className="d-flex justify-content-end flex-wrap mt-2"
+                sm="12"
+                style={{ marginTop: 50 }}
+              >
+                <Button
+                  className="mr-1"
+                  color="primary"
+                  onClick={this.props.postData}
+                  style={{ marginTop: 20 }}
+                >
+                  اعمال تغییرات
+                </Button>
+              </Col>
               <Col sm="12" style={{ marginTop: 35 }}>
                 <div className="permissions border px-2">
                   <div className="title pt-2 pb-0">
@@ -499,20 +513,7 @@ class UserAccountTab extends React.Component {
                   </Table>
                 </div>
               </Col> */}
-              <Col
-                className="d-flex justify-content-end flex-wrap mt-2"
-                sm="12"
-                style={{ marginTop: 50 }}
-              >
-                <Button
-                  className="mr-1"
-                  color="primary"
-                  onClick={this.props.postData}
-                  style={{ marginTop: 20 }}
-                >
-                  اعمال تغییرات
-                </Button>
-              </Col>
+              
             </Row>
           </Form>
         </Col>
