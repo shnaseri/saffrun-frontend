@@ -120,7 +120,7 @@ class UserAccountTab extends React.Component {
     if (this.props.userData["avatar"]["image"]) {
       return this.state.isUploadedImg
         ? this.state.uploadedUrl
-        : "http://127.0.0.1:8000" +
+        : "http://185.235.40.173:8000" +
             this.props.userData["avatar"]["image"]["thumbnail"];
     } else {
       return userImg;

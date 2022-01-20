@@ -25,7 +25,7 @@ class ThemeNavbar extends React.Component {
   };
   imgGenerator = (x) => {
     return x
-      ? `http://localhost:8000${x.thumbnail}`
+      ? `http://185.235.40.173:8000${x.thumbnail}`
       : defaultImg;
   };
   async componentDidMount ()

@@ -48,7 +48,7 @@ class DispatchedOrders extends React.Component {
                         <img
                           src={
                             "id" in R["image"]
-                              ? "http://127.0.0.1:8000" + R["image"]["image"]["thumbnail"]
+                              ? "http://185.235.40.173:8000" + R["image"]["image"]["thumbnail"]
                               : userImg 
                           }
                           alt="avatar"

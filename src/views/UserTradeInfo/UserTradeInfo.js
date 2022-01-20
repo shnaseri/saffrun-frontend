@@ -122,7 +122,7 @@ class TreadeInfo extends React.Component {
     return new Date(eventDateTime) > new Date();
   };
   loadImg = (img) => {
-    return `http://localhost:8000${img.image.full_size}`;
+    return `http://185.235.40.173:8000${img.image.full_size}`;
   };
   loadImages = (event) => {
     let images = event.images;
