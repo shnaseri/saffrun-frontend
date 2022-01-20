@@ -1,3 +1,17 @@
 .modal-title {
   margin-top: 5px !important;
 }
+
+.disabled-icon-color {
+  color: gray;
+}
+
+.delete-reserve-icon:hover {
+  color: red;
+  
+}
+
+.show-participants-icon:hover {
+  color: orange;
+  
+}

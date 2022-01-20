@@ -104,7 +104,7 @@ class Comments extends Component {
         headers: { Authorization: token },
         params: this.paramsGenerator(),
       });
-      
+
       let data = comments.data.comments.map((item) => {
         return {
           ...item,
@@ -137,12 +137,29 @@ class Comments extends Component {
       />
     );
   };
-  handleDelete = (cid) => {
-    let data = [...this.state.data];
-    data = data.filter((x) => x.id !== cid);
-    let comments = this.loadFileteredComments(data);
-    if (comments.length === 0) this.setState({ currentPage: 0 });
-    this.setState({ data });
+  handleDelete = async (cid) => {
+    let token = localStorage.getItem("access");
+    token = `Bearer ${token}`;
+    try {
+      this.setState({ loadSpinner: true });
+      let deleteReserveItem = await axios.delete(
+        `${urlDomain}/comment/delete_comment_owner/`,
+        {
+          headers: { Authorization: token },
+          data: {
+            comment_id: cid,
+          },
+        }
+      );
+      let data = [...this.state.data];
+      data = data.filter((x) => x.id !== cid);
+      let comments = this.loadFileteredComments(data);
+      if (comments.length === 0) this.setState({ currentPage: 0 });
+      this.setState({ data, loadSpinner: false });
+    } catch (e) {
+      this.setState({ loadSpinner: false });
+      console.log(e);
+    }
   };
   toggleAnswered = async (answer, cid) => {
     let token = localStorage.getItem("access");
