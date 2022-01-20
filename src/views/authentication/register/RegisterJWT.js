@@ -15,6 +15,7 @@ class RegisterJWT extends React.Component {
     confirmPass: "",
   };
 
+
   handleRegister = async (e) => {
     e.preventDefault();
     this.props.changeSpinnerState(true);
@@ -30,8 +31,8 @@ class RegisterJWT extends React.Component {
         `${urlDomain}/auth/register/`,
         {
           ...this.state,
+          client: "web",
         },
-        // { headers: { Client: "web" }}
       );
       try {
         // then login user
