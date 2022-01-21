@@ -90,6 +90,18 @@ class Revenue extends React.Component {
         axisBorder: {
           show: false,
         },
+        tickAmount: 4,
+        labels: {
+          show: true,
+          rotate: 0,
+          style: {
+            colors: [],
+            fontSize: "12px",
+            fontFamily: "Dana-FaNum, Arial, sans-serif",
+            fontWeight: 400,
+            // cssClass: "apexcharts-yaxis-label",
+          },
+        },
         tickPlacement: "on",
       },
       yaxis: {
@@ -108,6 +120,15 @@ class Revenue extends React.Component {
       tooltip: {
         x: { show: false },
       },
+      tooltip: {
+        style: {
+          fontSize: "12px",
+          fontFamily: "Dana-FaNum, Arial, sans-serif",
+        },
+        marker: {
+          show: false,
+        },
+      },
     },
     series: [
       {
@@ -119,6 +140,7 @@ class Revenue extends React.Component {
       //   data: [46000, 48000, 45500, 46600, 44500, 46500, 45000, 47000,65000,87123,36500,63000]
       // }
     ],
+    
   };
 
   async componentDidMount() {
@@ -162,7 +184,7 @@ class Revenue extends React.Component {
             <DropdownToggle className="cursor-pointer" tag="small">
               {this.state.year} <ChevronDown size={10} />
             </DropdownToggle>
-            <DropdownMenu right>
+            <DropdownMenu >
               <DropdownItem value={2022} onClick={(e) => this.setValue(e)}>
                 1401
               </DropdownItem>

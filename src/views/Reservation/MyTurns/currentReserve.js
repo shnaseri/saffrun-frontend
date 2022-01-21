@@ -215,7 +215,7 @@ class CurrentReserve extends Component {
               <Button
                 color="primary"
                 onClick={() => {
-                  history.push(`reserve-detail/${currentReserve.date}`);
+                  history.push(`reserve-detail/${currentReserve.holdDate}`);
                 }}
               >
                 مشاهده جزئیات

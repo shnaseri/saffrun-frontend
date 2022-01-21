@@ -224,6 +224,7 @@ class DataTableExpandableRows extends React.Component {
             expandableRows
             expandOnRowClicked
             expandableRowsComponent={<ExpandableTable />}
+            noDataComponent="آیتمی برای نشان دادن نیست."
           />
           <ReactPaginate
             previousLabel={<ChevronLeft size="15" />}

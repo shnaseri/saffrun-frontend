@@ -76,7 +76,7 @@ class SupportTracker extends React.Component {
               <hr></hr>
 
               <h1 className="font-large-2 text-bold-600 mt-2 mb-0">
-                {this.props.rate}
+                {this.props.rate === null ? 0 : this.props.rate}
               </h1>
               <div className="float-left">
                 <Star size="15" className="warning" />
@@ -87,7 +87,7 @@ class SupportTracker extends React.Component {
             <Col sm="10" className="d-flex justify-content-center">
               <Chart
                 options={this.state.options}
-                series={[parseFloat(this.props.rate) * 20]}
+                series={this.props.rate === null ? [0] :[parseInt(parseFloat(this.props.rate) * 20)]}
                 type="radialBar"
                 height={350}
                 className="support-tracker-card"

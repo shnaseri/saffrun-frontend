@@ -27,6 +27,7 @@ import { Media } from "reactstrap";
 import Comments from "../../UserReceivedComments/receivedComment";
 import "swiper/css/swiper.css";
 import "../../../assets/scss/pages/app-ecommerce-shop.scss";
+import ComponentSpinner from "../../../components/@vuexy/spinner/Loading-spinner";
 import Status from "../../../components/@vuexy/status/status";
 import ShowParticipant from "./ShowParticipant";
 import EventStartTime from "./eventStartTime";
@@ -51,6 +52,7 @@ class DetailPage extends React.Component {
       participants: [],
     },
     editClicked: false,
+    loadSpinner: true,
   };
   async componentDidMount() {
     let authenticated = await isAuthenticated();
@@ -103,21 +105,20 @@ class DetailPage extends React.Component {
       new Date(startDateTime) < new Date()
     );
   };
+
+  diabledDeleteParticipants = () => {
+    return new Date(this.state.event.end_datetime) < new Date();
+  };
+
   eventStatus = (date, startDateTime) => {
     return this.compareDateTimes(date, startDateTime)
       ? " timeline-icon bg-success "
       : "timeline-icon bg-danger";
   };
   deleteUser = async (userId) => {
-    let filteredUsers = this.state.event.participants.filter(
-      (x) => x.id !== userId
-    );
-    let event = { ...this.state.event };
-    event.participants = filteredUsers;
-    this.setState({ event });
+    this.setState({ loadSpinner: true });
     let token = localStorage.getItem("access");
     token = `Bearer ${token}`;
-    console.log(token);
     try {
       await axios.delete(`${urlDomain}/event/remove-participant-event`, {
         data: {
@@ -126,9 +127,23 @@ class DetailPage extends React.Component {
         },
         headers: { Authorization: token },
       });
+      let filteredUsers = this.state.event.participants.filter(
+        (x) => x.id !== userId
+      );
+      let event = { ...this.state.event };
+      event.participants = filteredUsers;
+      this.setState({ event, loadSpinner: false });
     } catch (e) {
+      this.setState({ loadSpinner: false });
       console.log(e);
     }
+  };
+  showSpinner = () => {
+    return (
+      <div style={{ marginTop: "400px" }}>
+        <ComponentSpinner />
+      </div>
+    );
   };
 
   eventDetailShow = () => {
@@ -282,6 +297,7 @@ class DetailPage extends React.Component {
                 <EventParticipants
                   participants={this.state.event.participants}
                   deleteUser={this.deleteUser}
+                  disabledDeleteParticipants={this.diabledDeleteParticipants()}
                 />
                 <EventStartTime
                   end_datetime={this.state.event.end_datetime}
@@ -306,7 +322,9 @@ class DetailPage extends React.Component {
     );
   };
   render() {
-    return this.state.editClicked ? (
+    return this.state.loadSpinner ? (
+      this.showSpinner()
+    ) : this.state.editClicked ? (
       <EditEvent
         event={this.state.event}
         id={this.state.event.id}

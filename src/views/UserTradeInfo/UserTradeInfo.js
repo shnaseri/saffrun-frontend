@@ -52,6 +52,7 @@ import moment from "moment-jalaali";
 import ComponentSpinner from "../../components/@vuexy/spinner/Loading-spinner";
 import "../../assets/scss/plugins/tables/_agGridStyleOverride.scss";
 import "../../assets/scss/pages/users.scss";
+import imgUrlDomain from "../../utility/imgUrlDomain";
 import urlDomain from "../../utility/urlDomain";
 import sliderImage1 from "../../assets/img/slider/03.jpg";
 import sliderImage2 from "../../assets/img/slider/04.jpg";
@@ -122,7 +123,7 @@ class TreadeInfo extends React.Component {
     return new Date(eventDateTime) > new Date();
   };
   loadImg = (img) => {
-    return `http://185.235.40.173:8000${img.image.full_size}`;
+    return `${imgUrlDomain}${img.image.full_size}`;
   };
   loadImages = (event) => {
     let images = event.images;

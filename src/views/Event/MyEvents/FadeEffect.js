@@ -19,10 +19,10 @@ const params = {
     el: ".swiper-pagination",
     clickable: true,
   },
-  autoplay: {
-    delay: 2500,
-    disableOnInteraction: false,
-  },
+  // autoplay: {
+  //   delay: 2500,
+  //   disableOnInteraction: false,
+  // },
   navigation: {
     nextEl: ".swiper-button-prev",
     prevEl: ".swiper-button-next",
@@ -40,15 +40,18 @@ class FadeEffectSwiper extends React.Component {
           <CardTitle> تصاویر رویداد</CardTitle>
         </CardHeader>
         <CardBody className="justify-content-center d-flex">
-          {images.length === 0 && (
-            <p>عکسی برای این رویداد موجود نیست.</p>
-          )}
+          {images.length === 0 && <p>عکسی برای این رویداد موجود نیست.</p>}
           {images.length !== 0 && (
             <Swiper dotColor="orange" activeDotColor="red" {...params}>
               {this.imagesGenreator(images).map((item) => {
                 return (
                   <div>
-                    <img src={item} alt="swiper 1" className="img-fluid" />
+                    <img
+                      style={{ height: "500px" }}
+                      src={item}
+                      alt="swiper 1"
+                      className="img-fluid"
+                    />
                   </div>
                 );
               })}

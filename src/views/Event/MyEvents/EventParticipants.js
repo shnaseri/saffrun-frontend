@@ -34,6 +34,7 @@ class EventParticipants extends React.Component {
   };
   render() {
     let participants = this.participantsGenreator(this.props.participants);
+    let disabledButton = this.props.disabledDeleteParticipants;
     return (
       <Card>
         <CardHeader>
@@ -67,6 +68,8 @@ class EventParticipants extends React.Component {
                     }}
                     color="danger"
                     className="btn-icon ml-auto"
+                    disabled={disabledButton}
+                    outline
                   >
                     <Trash size={17} />
                   </Button>

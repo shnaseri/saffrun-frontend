@@ -39,6 +39,18 @@ class ApexLineCharts extends React.Component {
           "بهمن",
           "اسفند",
         ],
+        tickAmount: 4,
+        labels: {
+          show: true,
+          rotate: 0,
+          style: {
+            colors: [],
+            fontSize: "12px",
+            fontFamily: "Dana-FaNum, Arial, sans-serif",
+            fontWeight: 400,
+            // cssClass: "apexcharts-yaxis-label",
+          },
+        },
       },
       yaxis: {
         fontFamily: "Dana-FaNum",
@@ -68,7 +80,17 @@ class ApexLineCharts extends React.Component {
           opacity: 0.5,
         },
       },
+      tooltip: {
+        style: {
+          fontSize: "12px",
+          fontFamily: "Dana-FaNum, Arial, sans-serif",
+        },
+        marker: {
+          show: false,
+        },
+      },
     },
+
     series: [
       {
         name: " نوبت‌ها ",
@@ -127,7 +149,7 @@ class ApexLineCharts extends React.Component {
             <DropdownToggle className="cursor-pointer" tag="small">
               {this.state.year} <ChevronDown size={10} />
             </DropdownToggle>
-            <DropdownMenu right>
+            <DropdownMenu style={{ left: "none" }}>
               <DropdownItem value={2022} onClick={(e) => this.setValue(e)}>
                 1401
               </DropdownItem>

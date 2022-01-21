@@ -3,3 +3,8 @@
   font-family: "Dana-FaNum" !important;
   margin-top: 4px;
 }
+.dropdown .dropdown-menu{
+  top: 0px !important;
+  right: 0px !important;
+  
+}

@@ -31,6 +31,7 @@ import { Color } from "ag-grid-community";
 import urlDomain from "../../utility/urlDomain";
 import isAuthenticated from "../../utility/authenticated";
 import "./edit.css";
+import imgUrlDomain from "../../utility/imgUrlDomain";
 
 class UsersList extends React.Component {
   state = {
@@ -165,7 +166,7 @@ class UsersList extends React.Component {
   SetImg = (params) => {
     console.log(params.data.avatar)
     if (params.data.avatar["image"] !=null) {
-      return "http://127.0.0.1:8000" + params.data.avatar["image"]["thumbnail"];
+      return imgUrlDomain + params.data.avatar["image"]["thumbnail"];
     } else {
       return userImg;
     }
@@ -334,13 +335,15 @@ class UsersList extends React.Component {
                         colResizeDefault={"shift"}
                         animateRows={true}
                         // floatingFilter={true}
-                        pagination={true}
-                        pivotPanelShow="always"
-                        paginationPageSize={pageSize}
+                        // pagination={false}
+                        suppressPaginationPanel = {false}
+                        // pivotPanelShow="always"
+                        // paginationPageSize={pageSize}
                         resizable={true}
                         enableRtl={context.state.direction === "rtl"}
                         rowStyle={{ borderBlockColor: "#ff9f43" }}
                         headerStyle={{ backgroundColor: "#ff9f43" }}
+                        localeText= {{noRowsToShow: 'دنبال کننده ای جهت نمایش یافت نشد'}}
                       />
                     )}
                   </ContextLayout.Consumer>

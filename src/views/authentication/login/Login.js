@@ -34,7 +34,7 @@ class Login extends React.Component {
     this.setState({ loadSpinner: status });
   };
 
-  to_show = () => {
+  loginForm = () => {
     return (
       <Row className="m-0 justify-content-center h-100">
         <Col
@@ -76,7 +76,7 @@ class Login extends React.Component {
     );
   };
   render() {
-    return this.state.loadSpinner ? <ComponentSpinner /> : this.to_show();
+    return this.state.loadSpinner ? <ComponentSpinner /> : this.loginForm();
   }
 }
 export default Login;

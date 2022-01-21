@@ -27,7 +27,7 @@ class Register extends React.Component {
   toggleSpinner = (status) => {
     this.setState({ loadSpinner: status });
   };
-  to_show = () => {
+  registerForm = () => {
     return (
       <Row className="m-0 justify-content-center">
         <Col
@@ -71,7 +71,7 @@ class Register extends React.Component {
     );
   };
   render() {
-    return this.state.loadSpinner ? <ComponentSpinner /> : this.to_show();
+    return this.state.loadSpinner ? <ComponentSpinner /> : this.registerForm();
   }
 }
 export default Register;

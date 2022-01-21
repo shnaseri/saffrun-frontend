@@ -50,6 +50,7 @@ import ComponentSpinner from "../../../components/@vuexy/spinner/Loading-spinner
 import "../../../assets/scss/plugins/tables/_agGridStyleOverride.scss";
 import "../../../assets/scss/pages/users.scss";
 import urlDomain from "../../../utility/urlDomain";
+import imgUrlDomain from "../../../utility/imgUrlDomain"
 import sliderImage1 from "../../../assets/img/pages/not-found-image.jpg";
 
 class MyEvents extends React.Component {
@@ -139,7 +140,7 @@ class MyEvents extends React.Component {
   };
 
   loadImg = (img) => {
-    return `http://185.235.40.173:8000${img.image.full_size}`;
+    return `${imgUrlDomain}${img.image.full_size}`;
   };
   loadImages = (event) => {
     let images = event.images;

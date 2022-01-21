@@ -6,6 +6,7 @@ import NavbarUser from "./NavbarUser";
 import userImg from "../../../assets/img/portrait/small/avatar-s-11.jpg";
 import axios from "axios";
 import urlDomain from "../../../utility/urlDomain";
+import imgUrlDomain from "../../../utility/imgUrlDomain"
 import { history } from "../../../history";
 import isAuthenticated from "../../../utility/authenticated";
 import defaultImg from "../../../assets/img/profile/Generic-profile-picture.jpg.webp";
@@ -25,7 +26,7 @@ class ThemeNavbar extends React.Component {
   };
   imgGenerator = (x) => {
     return x
-      ? `http://185.235.40.173:8000${x.thumbnail}`
+      ? `${imgUrlDomain}${x.thumbnail}`
       : defaultImg;
   };
   async componentDidMount ()

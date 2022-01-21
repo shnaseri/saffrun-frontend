@@ -1,7 +1,6 @@
 import React from "react";
 import { Row, Col, Button } from "reactstrap";
-import avatar1 from "../../../assets/img/portrait/small/avatar-s-5.jpg";
-import avatar2 from "../../../assets/img/portrait/small/avatar-s-7.jpg";
+
 import RevenueChart from "../../ui-elements/cards/analytics/Revenue";
 import SupportTracker from "./../../ui-elements/cards/analytics/SupportTracker";
 import { Star, Users, Command, MessageCircle, Check } from "react-feather";
@@ -15,8 +14,9 @@ import { history } from "./../../../history";
 import isAuthenticated from "./../../../utility/authenticated";
 import axios from "axios";
 import urlDomain from "./../../../utility/urlDomain";
-import ComponentSpinner from './../../../components/@vuexy/spinner/Loading-spinner';
+import ComponentSpinner from "./../../../components/@vuexy/spinner/Loading-spinner";
 import userImg from "../../../assets/img/profile/Generic-profile-picture.jpg.webp";
+import imgUrlDomain from "../../../utility/imgUrlDomain";
 
 let $primary = "#7367F0",
   $danger = "#EA5455",
@@ -51,17 +51,16 @@ class Home extends React.Component {
     }
   }
   handleAvatar = () => {
-    if (this.state.homeData["image"]["image"] ) {
-      return (
-         "http://127.0.0.1:8000" +
-        this.state.homeData["image"]["image"]["thumbnail"]
-      );
+    if (this.state.homeData["image"]["image"]) {
+      return imgUrlDomain + this.state.homeData["image"]["image"]["thumbnail"];
     } else {
       return userImg;
     }
   };
   render() {
-    return this.state.loadSpinner ? (<ComponentSpinner/>) :(
+    return this.state.loadSpinner ? (
+      <ComponentSpinner />
+    ) : (
       <React.Fragment>
         <Row className="match-height">
           <Col lg="4" md="6" sm="12">
@@ -95,59 +94,63 @@ class Home extends React.Component {
                   </div> */}
                 </div>
                 <hr className="my-2" />
-                <div className="d-flex flex-column ">
-                  <ul
-                    className=" activity-timeline timeline-left list-unstyled"
-                    style={{ textAlign: "right" }}
-                  >
-                    {this.state.last_comments.slice(0,2).map((comment) => {
-                      return (
-                        <li>
-                          <div className="timeline-icon bg-primary">
-                            <MessageCircle size="18" />
-                          </div>
+                {this.state.last_comments.length > 0 ? (
+                  <div style={{ height: 250 }} className="d-flex  flex-column ">
+                    <ul
+                      className=" activity-timeline timeline-left list-unstyled"
+                      style={{ textAlign: "right" }}
+                    >
+                      {this.state.last_comments.slice(0, 2).map((comment) => {
+                        return (
+                          <li>
+                            <div className="timeline-icon bg-primary">
+                              <MessageCircle size="18" />
+                            </div>
 
-                          <div className="timeline-info">
-                            <p className="font-weight-bold">
-                              {comment["username"]}
-                            </p>
-                            <span
-                              style={{
-                                display: "inline-block",
-                                overflow: "hidden",
-                                textOverflow: "ellipsis",
-                                maxHeight: "8ch",
-                              }}
-                            >
-                              {comment["content"]}
-                            </span>
-                          </div>
-                          <small className="">
-                            {new Date(comment["created_at"]).toLocaleDateString(
-                              "fa-IR"
-                            )}
-                          </small>
-                          {"  "}
-                          <small className="">
-                            {new Date(comment["created_at"]).toLocaleTimeString(
-                              "en-GB"
-                            )}
-                          </small>
-                        </li>
-                      );
-                    })}
-                  </ul>
-                  <Button
-                    onClick={() => {
-                      history.push("/received-comments");
-                    }}
-                    className="align-self-end btn-block shadow"
-                    color="primary"
-                  >
-                    <ChevronsRight size={15} />
-                    مشاهده همه
-                  </Button>
-                </div>
+                            <div className="timeline-info">
+                              <p className="font-weight-bold">
+                                {comment["username"]}
+                              </p>
+                              <span
+                                style={{
+                                  display: "inline-block",
+                                  overflow: "hidden",
+                                  textOverflow: "ellipsis",
+                                  maxHeight: "8ch",
+                                }}
+                              >
+                                {comment["content"]}
+                              </span>
+                            </div>
+                            <small className="">
+                              {new Date(
+                                comment["created_at"]
+                              ).toLocaleDateString("fa-IR")}
+                            </small>
+                            {"  "}
+                            <small className="">
+                              {new Date(
+                                comment["created_at"]
+                              ).toLocaleTimeString("en-GB")}
+                            </small>
+                          </li>
+                        );
+                      })}
+                    </ul>
+                    <Button
+                      onClick={() => {
+                        history.push("/received-comments");
+                      }}
+                      className=" mt-auto btn-block shadow"
+                      color="primary"
+                    >
+                      <ChevronsRight size={15} />
+                      مشاهده همه
+                    </Button>
+                  </div>
+                ) : (
+                  "پیامی برای نمایش دادن یافت نشد"
+                )}
               </CardBody>
             </Card>
           </Col>
