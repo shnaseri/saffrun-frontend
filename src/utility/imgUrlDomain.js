@@ -1,3 +1,3 @@
-let imgUrlDomain = "http://185.235.40.173:8000";
+let imgUrlDomain = "https://saffrun.mehdi-mostafavi.ir";
 
 export default imgUrlDomain;
