@@ -21,7 +21,7 @@ import classnames from "classnames";
 import TimeField from "react-simple-timefield";
 import axios from "axios";
 import urlDomain from "../../../utility/urlDomain";
-import "../../Event/EventCreation/input-datepicker.css";
+import "./input-datepicker2.css";
 import theme from "../../../assets/datePickerTheme/theme";
 import colWidthes from "./dayColumnsWidth";
 import { object } from "prop-types";
@@ -50,6 +50,7 @@ class BookingCreation extends React.Component {
     price: "",
     successAlert: false,
     errorAlert: false,
+    submitBtnDisabled: false,
     week: {
       saturday: [
         {
@@ -145,6 +146,7 @@ class BookingCreation extends React.Component {
     this.setState({ [name]: value["_d"].getTime() });
   };
   PostToServer = async () => {
+    this.setState({ submitBtnDisabled: true });
     var days = {
       0: "sunday",
       1: "monday",
@@ -183,8 +185,10 @@ class BookingCreation extends React.Component {
           Authorization: `Bearer ${token}`,
         },
       });
+      this.setState({ submitBtnDisabled: false });
       this.handleAlert("successAlert", true);
     } catch (e) {
+      this.setState({ submitBtnDisabled: false });
       this.handleAlert("errorAlert", true);
     }
   };
@@ -674,8 +678,12 @@ class BookingCreation extends React.Component {
                           style={{ float: "left" }}
                           // type="submit"
                           className="mr-1 mb-1"
+                          outline
                           onClick={this.PostToServer}
-                          disabled={this.disabledSubmitButton()}
+                          disabled={
+                            this.state.submitBtnDisabled ||
+                            this.disabledSubmitButton()
+                          }
                         >
                           ثبت
                         </Button>

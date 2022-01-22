@@ -185,7 +185,7 @@ class ClosestReserve extends Component {
                     <span className="font-small-3">
                       <ul className="list-unstyled users-list m-0 d-flex">
                         {nearestFive[curIdx].participants ? (
-                          nearestFive[curIdx].participants.map((R, idx) => (
+                          nearestFive[curIdx].participants.slice(0,5).map((R, idx) => (
                             <li key={idx} className="avatar pull-up">
                               <img
                                 src={R["imgUrl"]}

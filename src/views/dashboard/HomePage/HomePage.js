@@ -177,6 +177,7 @@ class Home extends React.Component {
               className="h-250"
               cardName="5 نوبت نزدیک"
               header={header}
+              uniqueIdentifier="reserve"
               tBody={this.state.homeData["last_given_reserves"]}
             />
           </Col>
@@ -193,6 +194,7 @@ class Home extends React.Component {
                 "مدت",
                 "تعداد شرکت کننده",
               ]}
+              uniqueIdentifier="event"
               tBody={this.state.homeData["last_events"]}
             />
           </Col>

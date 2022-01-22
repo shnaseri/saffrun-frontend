@@ -57,14 +57,7 @@ export const searchResult = [
     icon: "DollarSign",
     starred: false
   },
-  {
-    id: 8,
-    target: "LogOut",
-    title: "خروج",
-    link: "/login",
-    icon: "LogOut",
-    starred: true
-  },
+ 
 ]
 
 mock.onGet("/api/search/bookmarks/data").reply(200, {

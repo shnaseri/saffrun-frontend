@@ -14,6 +14,7 @@ import {
   ArrowUp,
   Filter,
 } from "react-feather";
+import ComponentSpinner from "../../components/@vuexy/spinner/Loading-spinner";
 
 const dateConverter = (date) => {
   return new Date(date).toLocaleDateString("fa-IR");
@@ -52,75 +53,6 @@ const columns = [
     selector: "total_payment",
     sortable: true,
     cell: (row) => <span>{numberWithCommas(row.total_payment)}</span>,
-  },
-];
-
-const data = [
-  {
-    date: "1400/12/25",
-
-    events: "5",
-    reserves: "8",
-    totalPrice: "8500000",
-    details: [
-      {
-        name: "حسن کریمی",
-        time: "12:50",
-        price: "250000",
-        type: "نوبت",
-      },
-      {
-        name: "حسن کریمی",
-        time: "12:50",
-        price: "250000",
-        type: "نوبت",
-      },
-      {
-        name: "حسن کریمی",
-        time: "12:50",
-        price: "250000",
-        type: "نوبت",
-      },
-      {
-        name: "حسن کریمی",
-        time: "12:50",
-        price: "250000",
-        type: "نوبت",
-      },
-    ],
-  },
-  {
-    date: "1400/12/25",
-
-    events: "5",
-    reserves: "8",
-    totalPrice: "8500000",
-    details: [
-      {
-        name: "حسن کریمی",
-        time: "12:50",
-        price: "250000",
-        type: "نوبت",
-      },
-      {
-        name: "حسن کریمی",
-        time: "12:50",
-        price: "250000",
-        type: "نوبت",
-      },
-      {
-        name: "حسن کریمی",
-        time: "12:50",
-        price: "250000",
-        type: "نوبت",
-      },
-      {
-        name: "حسن کریمی",
-        time: "12:50",
-        price: "250000",
-        type: "نوبت",
-      },
-    ],
   },
 ];
 
@@ -168,7 +100,7 @@ class DataTableExpandableRows extends React.Component {
     totalPages: 0,
   };
   pageChanged = async (data) => {
-    this.setState({ currentPage: data.selected + 1 });
+    this.setState({ currentPage: data.selected + 1, loadSpinner: true });
     let pagination = {
       page: data.selected + 1,
       page_count: this.state.pageCount,
@@ -217,30 +149,38 @@ class DataTableExpandableRows extends React.Component {
           <CardTitle>تاریخچه تراکنش ها</CardTitle>
         </CardHeader>
         <CardBody>
-          <DataTable
-            data={this.state.tradeData["payments"]}
-            columns={columns}
-            noHeader
-            expandableRows
-            expandOnRowClicked
-            expandableRowsComponent={<ExpandableTable />}
-            noDataComponent="آیتمی برای نشان دادن نیست."
-          />
-          <ReactPaginate
-            previousLabel={<ChevronLeft size="15" />}
-            nextLabel={<ChevronRight size="15" />}
-            breakLabel={"..."}
-            breakClassName={"break-me"}
-            pageCount={this.state.totalPages}
-            marginPagesDisplayed={1}
-            pageRangeDisplayed={2}
-            containerClassName={
-              "vx-pagination icon-pagination pagination-center mt-3"
-            }
-            activeClassName={"active"}
-            onPageChange={this.pageChanged}
-            forcePage={this.state.currentPage - 1}
-          />
+          {this.state.loadSpinner ? (
+            <div style={{ marginTop: "400px" }}>
+              <ComponentSpinner />
+            </div>
+          ) : (
+            <React.Fragment>
+              <DataTable
+                data={this.state.tradeData["payments"]}
+                columns={columns}
+                noHeader
+                expandableRows
+                expandOnRowClicked
+                expandableRowsComponent={<ExpandableTable />}
+                noDataComponent="آیتمی برای نشان دادن نیست."
+              />
+              <ReactPaginate
+                previousLabel={<ChevronLeft size="15" />}
+                nextLabel={<ChevronRight size="15" />}
+                breakLabel={"..."}
+                breakClassName={"break-me"}
+                pageCount={this.state.totalPages}
+                marginPagesDisplayed={1}
+                pageRangeDisplayed={2}
+                containerClassName={
+                  "vx-pagination icon-pagination pagination-center mt-3"
+                }
+                activeClassName={"active"}
+                onPageChange={this.pageChanged}
+                forcePage={this.state.currentPage - 1}
+              />
+            </React.Fragment>
+          )}
         </CardBody>
       </Card>
     );

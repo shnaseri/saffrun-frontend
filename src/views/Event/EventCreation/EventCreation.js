@@ -28,6 +28,7 @@ import axios from "axios";
 import theme from "../../../assets/datePickerTheme/theme";
 import { history } from "../../../history";
 import isAuthenticated from "../../../utility/authenticated";
+import ComponentSpinner from "../../../components/@vuexy/spinner/Loading-spinner";
 
 class EventCreation extends React.Component {
   state = {
@@ -47,8 +48,9 @@ class EventCreation extends React.Component {
     startMinute: { value: 0, label: "00" },
     endMinute: { value: 0, label: "00" },
     discount: 0,
-    price : 0,
+    price: 0,
     files: [],
+    submitBtnDisabled: false,
     successAlert: false,
     errorAlert: false,
   };
@@ -62,8 +64,7 @@ class EventCreation extends React.Component {
         headers: { Authorization: token },
       });
       this.loadCategories(categories.data);
-    }
-    catch {
+    } catch {
       history.push("/login");
     }
   }
@@ -204,15 +205,15 @@ class EventCreation extends React.Component {
     return imageIds;
   };
   eventObject = () => {
-    let { title, description, discount, jobCategory ,price } = this.state;
+    let { title, description, discount, jobCategory, price } = this.state;
     let event = {
       title,
       description,
       discount,
       start_datetime: this.acceptableDateFormat(this.createDate("from")),
       end_datetime: this.acceptableDateFormat(this.createDate("to")),
-      category_id : jobCategory.value,
-      price : price,
+      category_id: jobCategory.value,
+      price: price,
     };
     return event;
   };
@@ -221,7 +222,7 @@ class EventCreation extends React.Component {
     var headers = {
       Authorization: token,
     };
-    console.log({ ...this.eventObject() })
+    console.log({ ...this.eventObject() });
     try {
       let response = await axios.post(
         `${urlDomain}/event/add/`,
@@ -235,7 +236,9 @@ class EventCreation extends React.Component {
     }
   };
   formSubmitted = async () => {
+    this.setState({ submitBtnDisabled: true });
     let eventPost = await this.handleServerRequests();
+    this.setState({ submitBtnDisabled: false });
     if (eventPost) this.handleAlert("successAlert", true);
     else this.handleAlert("errorAlert", true);
   };
@@ -271,7 +274,7 @@ class EventCreation extends React.Component {
   };
 
   stepsGenerator() {
-    let { description, title, discount ,price } = this.state;
+    let { description, title, discount, price, submitBtnDisabled } = this.state;
     let jobSelect = this.state.jobCategory ? this.state.jobCategory.value : "";
     return [
       {
@@ -302,7 +305,7 @@ class EventCreation extends React.Component {
               </FormGroup>
               <FormGroup>
                 <Label>
-                  عنوان شغل
+                  دسته‌بندی رویداد
                   <span style={{ color: "red" }}>*</span>
                 </Label>
                 <Select
@@ -320,7 +323,13 @@ class EventCreation extends React.Component {
                 <Label> تخفیف </Label>
                 <Input
                   value={this.state.discount}
-                  onChange={(e) => this.setState({ discount: e.target.value })}
+                  min={0}
+                  max={100}
+                  pattern="\d*"
+                  onChange={(e) => {
+                    if (e.target.value.length <= 3)
+                      this.setState({ discount: e.target.value });
+                  }}
                   type="number"
                   placeholder="مقدار تخفیف را به درصد وارد کنید"
                 />
@@ -332,16 +341,20 @@ class EventCreation extends React.Component {
               </FormGroup>
             </Col>
             <Col md="6" sm="12">
-            <FormGroup>
+              <FormGroup>
                 <Label> قیمت </Label>
                 <span style={{ color: "red" }}>*</span>
                 <Input
                   value={this.state.price}
-                  onChange={(e) => this.setState({ price: e.target.value })}
+                  pattern="\d*"
+                  onChange={(e) => {
+                    if (e.target.value.length <= 8)
+                      this.setState({ price: e.target.value });
+                  }}
                   type="number"
                   placeholder="هزینه رویداد را به تومان وارد کنید"
                 />
-                {(price < 0 ||  discount === "") && (
+                {(price < 0 || discount === "") && (
                   <small style={{ color: "red", fontSize: "11px" }}>
                     عدد معتبر وارد کنید
                   </small>
@@ -470,8 +483,15 @@ class EventCreation extends React.Component {
       },
       {
         title: "۳",
-        buttonDisabled: false,
-        content: (
+        buttonDisabled: submitBtnDisabled,
+        content: submitBtnDisabled ? (
+          <React.Fragment>
+            <div style={{ height: "160px" }}></div>
+            <div>
+              <ComponentSpinner customClass="without-margin" />
+            </div>
+          </React.Fragment>
+        ) : (
           <DropzoneBasic
             imageUploaded={this.imageUploaded}
             files={this.state.files}

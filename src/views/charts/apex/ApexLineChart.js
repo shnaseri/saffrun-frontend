@@ -150,19 +150,19 @@ class ApexLineCharts extends React.Component {
               {this.state.year} <ChevronDown size={10} />
             </DropdownToggle>
             <DropdownMenu style={{ left: "none" }}>
-              <DropdownItem value={2022} onClick={(e) => this.setValue(e)}>
+              <DropdownItem value={2023} onClick={(e) => this.setValue(e)}>
                 1401
               </DropdownItem>
-              <DropdownItem value={2021} onClick={(e) => this.setValue(e)}>
+              <DropdownItem value={2022} onClick={(e) => this.setValue(e)}>
                 1400
               </DropdownItem>
-              <DropdownItem value={2020} onClick={(e) => this.setValue(e)}>
+              <DropdownItem value={2021} onClick={(e) => this.setValue(e)}>
                 1399
               </DropdownItem>
-              <DropdownItem value={2019} onClick={(e) => this.setValue(e)}>
+              <DropdownItem value={2020} onClick={(e) => this.setValue(e)}>
                 1398
               </DropdownItem>
-              <DropdownItem value={2018} onClick={(e) => this.setValue(e)}>
+              <DropdownItem value={2019} onClick={(e) => this.setValue(e)}>
                 1397
               </DropdownItem>
             </DropdownMenu>

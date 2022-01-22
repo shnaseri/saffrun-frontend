@@ -19,10 +19,10 @@ const params = {
     el: ".swiper-pagination",
     clickable: true,
   },
-  // autoplay: {
-  //   delay: 2500,
-  //   disableOnInteraction: false,
-  // },
+  autoplay: {
+    delay: 2500,
+    disableOnInteraction: false,
+  },
   navigation: {
     nextEl: ".swiper-button-prev",
     prevEl: ".swiper-button-next",
@@ -47,7 +47,7 @@ class FadeEffectSwiper extends React.Component {
                 return (
                   <div>
                     <img
-                      style={{ height: "500px" }}
+                      style={{ height: "500px" , width : "800px"}}
                       src={item}
                       alt="swiper 1"
                       className="img-fluid"

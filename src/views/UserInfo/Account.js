@@ -17,7 +17,7 @@ import {
   DropdownToggle,
 } from "reactstrap";
 import InputMask from "react-input-mask";
-import { Trash2, Edit } from "react-feather";
+import { Trash2, Edit, Edit2 } from "react-feather";
 import userImg from "../../assets/img/profile/Generic-profile-picture.jpg.webp";
 import Checkbox from "../../components/@vuexy/checkbox/CheckboxesVuexy";
 import { Check, Lock } from "react-feather";
@@ -25,7 +25,7 @@ import axios from "axios";
 import { history } from "../../history";
 import isAuthenticated from "../../utility/authenticated";
 import urlDomain from "../../utility/urlDomain";
-import imgUrlDomain from "../../utility/imgUrlDomain"
+import imgUrlDomain from "../../utility/imgUrlDomain";
 
 import { toast } from "react-toastify";
 // import { Avatar } from 'react-native-elements';
@@ -40,14 +40,18 @@ class UserAccountTab extends React.Component {
       currPass: "",
       newPass: "",
       repPass: "",
+      disabledSubmitBtn : false,
+      disabledResetPasswordBtn : false
     };
   }
 
   postPassword = async () => {
+
     var token = "Bearer " + localStorage.getItem("access");
     var headers = {
       Authorization: token,
     };
+    this.setState({disabledResetPasswordBtn : true})
     try {
       let response = await axios.post(
         `${urlDomain}/auth/change_password/`,
@@ -61,12 +65,14 @@ class UserAccountTab extends React.Component {
       toast.success("رمز شما با موفقیت تغییر پیدا کرد", {
         position: toast.POSITION.TOP_CENTER,
       });
+      this.setState({disabledResetPasswordBtn : false})
       return response;
     } catch (e) {
       console.log(e);
       toast.error("عملیات با خطا روبرو شد.", {
         position: toast.POSITION.TOP_CENTER,
       });
+      this.setState({disabledResetPasswordBtn : false})
       return false;
     }
   };
@@ -94,6 +100,7 @@ class UserAccountTab extends React.Component {
 
   postImg = async (file) => {
     try {
+      this.setState({disabledSubmitBtn : true});
       var token = "Bearer " + localStorage.getItem("access");
       var headers = {
         "Content-type": "multipart/form-data",
@@ -109,8 +116,10 @@ class UserAccountTab extends React.Component {
         }
       );
       this.props.updateImg(response.data.id);
+      this.setState({disabledSubmitBtn : false});
     } catch (e) {
       console.log(e);
+      this.setState({disabledSubmitBtn : false});
       return false;
     }
   };
@@ -119,11 +128,10 @@ class UserAccountTab extends React.Component {
   };
 
   handleAvatar = () => {
-    if (this.props.userData["avatar"]["image"] || this.state.uploadedUrl ) {
+    if (this.props.userData["avatar"]["image"] || this.state.uploadedUrl) {
       return this.state.isUploadedImg
         ? this.state.uploadedUrl
-        : imgUrlDomain +
-            this.props.userData["avatar"]["image"]["thumbnail"];
+        : imgUrlDomain + this.props.userData["avatar"]["image"]["thumbnail"];
     } else {
       return userImg;
     }
@@ -143,25 +151,40 @@ class UserAccountTab extends React.Component {
                 height="84"
                 width="84"
               />
-
               <UncontrolledButtonDropdown
-                direction="right"
-                isOpen={this.state.dropdownOpen}
-                toggle={this.toggle}
-                style={{ marginTop: 58, marginRight: -20 }}
+                style={{ marginTop: 72, marginRight: -16 }}
               >
                 <DropdownToggle
-                  style={{ padding: 3, backgroundColor: "#fff", float: "left" }}
+                  style={{ padding: 3, backgroundColor: "#fff" }}
+                  color="primary"
                   caret
                 >
-                  <Edit style={{ right: 0, borderRadius: "5px" }} />
+                  <Edit size={14} style={{ right: 0, borderRadius: "5px" }} />
                 </DropdownToggle>
-                <DropdownMenu style={{ marginRight: 35 }}>
+                <DropdownMenu>
                   <DropdownItem onClick={this.handleClick}>تغییر</DropdownItem>
                   <DropdownItem divider />
                   <DropdownItem onClick={this.handleDel}>حذف</DropdownItem>
                 </DropdownMenu>
               </UncontrolledButtonDropdown>
+              {/* <UncontrolledButtonDropdown
+                direction="right"
+                isOpen={this.state.dropdownOpen}
+                toggle={this.toggle}
+                style={{ marginTop: 72, marginRight: -16 }}
+              >
+                <DropdownToggle
+                  style={{ padding: 3, backgroundColor: "#fff" }}
+                  caret
+                >
+                  <Edit size={14} style={{ right: 0, borderRadius: "5px" }} />
+                </DropdownToggle>
+                <DropdownMenu style={{ marginRight: "-41px" }}>
+                  <DropdownItem onClick={this.handleClick}>تغییر</DropdownItem>
+                  <DropdownItem divider />
+                  <DropdownItem onClick={this.handleDel}>حذف</DropdownItem>
+                </DropdownMenu>
+              </UncontrolledButtonDropdown> */}
             </Media>
             <Media className="mt-2" body>
               <Media className="font-medium-1 text-bold-600" tag="p" heading>
@@ -193,7 +216,6 @@ class UserAccountTab extends React.Component {
                     type="text"
                     value={this.props.userData["username"]}
                     id="username"
-                    
                     onChange={this.props.updateData}
                   />
                 </FormGroup>
@@ -210,7 +232,6 @@ class UserAccountTab extends React.Component {
                     type="text"
                     value={this.props.userData["email"]}
                     id="email"
-                   
                     onChange={this.props.updateData}
                   />
                 </FormGroup>
@@ -228,7 +249,6 @@ class UserAccountTab extends React.Component {
                     type="text"
                     value={this.props.userData["first_name"]}
                     id="first_name"
-                 
                     onChange={this.props.updateData}
                   />
                 </FormGroup>
@@ -296,6 +316,7 @@ class UserAccountTab extends React.Component {
                   color="primary"
                   onClick={this.props.postData}
                   style={{ marginTop: 20 }}
+                  disabled={this.state.disabledSubmitBtn}
                 >
                   اعمال تغییرات
                 </Button>
@@ -316,7 +337,6 @@ class UserAccountTab extends React.Component {
                           value={this.state.currPass}
                           id="password"
                           required
-             
                           onChange={(e) =>
                             this.setState({ currPass: e.target.value })
                           }
@@ -332,7 +352,6 @@ class UserAccountTab extends React.Component {
                           name="newpassword"
                           id="newpassword"
                           required
-                   
                           onChange={(e) =>
                             this.setState({ newPass: e.target.value })
                           }
@@ -370,7 +389,7 @@ class UserAccountTab extends React.Component {
                         color="primary"
                         disabled={
                           this.state.repPass !== this.state.newPass ||
-                          this.state.newPass.length === 0
+                          this.state.newPass.length === 0 || this.state.disabledResetPasswordBtn
                         }
                         onClick={() => this.postPassword()}
                         style={{ margin: 20 }}
@@ -514,7 +533,6 @@ class UserAccountTab extends React.Component {
                   </Table>
                 </div>
               </Col> */}
-              
             </Row>
           </Form>
         </Col>

@@ -57,12 +57,12 @@ class DispatchedOrders extends React.Component {
               </tr>
             </thead>
             <tbody>
-              {this.props.tBody.map((row) => (
+              {this.props.tBody.map((row , idxItem) => (
                 <tr>
                   <td className="p-1">
                     <ul className="list-unstyled users-list m-0 d-flex">
                       {row["list_participants"] &&
-                        row["list_participants"].map((R) => (
+                        row["list_participants"].map((R, idxImage) => (
                           <li className="avatar pull-up">
                             <img
                               src={
@@ -74,11 +74,11 @@ class DispatchedOrders extends React.Component {
                               alt="avatar"
                               height="30"
                               width="30"
-                              id={"id" + R["first_name"]}
+                              id={`id-${this.props.uniqueIdentifier}-${idxItem}-${idxImage}`}
                             />
                             <UncontrolledTooltip
                               placement="bottom"
-                              target={"id" + R["first_name"]}
+                              target={`id-${this.props.uniqueIdentifier}-${idxItem}-${idxImage}`}
                             >
                               {R["first_name"]} {R["last_name"]}
                             </UncontrolledTooltip>

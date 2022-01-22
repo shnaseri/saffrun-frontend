@@ -41,6 +41,7 @@ class FormNotif extends React.Component {
     defalert: false,
     title: "",
     exampleRadio: 2,
+    disabledSubmitBtn: false,
   };
 
   handleAlert = (state, value) => {
@@ -52,21 +53,9 @@ class FormNotif extends React.Component {
   async componentDidMount() {
     let authenticated = await isAuthenticated();
     if (!authenticated) history.push("/login");
-    let token = localStorage.getItem("access");
-    token = `Bearer ${token}`;
-    try {
-      let response = await axios.get(`${urlDomain}/profile/user/`, {
-        headers: { Authorization: token },
-      });
-      this.setState({
-        username: response.data.username,
-        image: response.data.avatar["image"],
-      });
-    } catch (e) {
-      // this.setState({ loadSpinner: false });
-    }
   }
   sendNotif = async () => {
+    this.setState({ disabledSubmitBtn: true });
     var token = "Bearer " + localStorage.getItem("access");
     var headers = {
       Authorization: token,
@@ -86,16 +75,30 @@ class FormNotif extends React.Component {
         position: toast.POSITION.TOP_CENTER,
       });
       this.setState({
-        title : "",
-        answer : ""
+        title: "",
+        answer: "",
+        disabledSubmitBtn: false,
       });
       return response;
     } catch (e) {
       toast.error("ارسال نشد", {
         position: toast.POSITION.TOP_CENTER,
       });
+      this.setState({
+        disabledSubmitBtn: false,
+      });
+
       return false;
     }
+  };
+  updateInput = (e, name) => {
+    this.toggleDirection(e);
+    this.setState({ [name]: e.target.value });
+  };
+  toggleDirection = (e) => {
+    if (e.target.value && e.target.value[0].match(/[a-z]/i))
+      e.target.style.direction = "ltr";
+    else e.target.style.direction = "rtl";
   };
 
   render() {
@@ -144,7 +147,7 @@ class FormNotif extends React.Component {
                 maxLength={30}
                 placeholder="عنوان اعلان"
                 required
-                onChange={(e) => this.setState({ title: e.target.value })}
+                onChange={(e) => this.updateInput(e, "title")}
               />
             </FormGroup>
             <FormGroup style={{ marginTop: "20px" }}>
@@ -158,12 +161,15 @@ class FormNotif extends React.Component {
                 placeholder="توضیحات درمورد اعلان"
                 maxLength={500}
                 required
-                onChange={(e) => this.setState({ answer: e.target.value })}
+                value={this.state.answer}
+                onChange={(e) => this.updateInput(e, "answer")}
               />
             </FormGroup>
             <Button
               disabled={
-                this.state.answer.length === 0 || this.state.title.length === 0
+                this.state.answer.length === 0 ||
+                this.state.title.length === 0 ||
+                this.state.disabledSubmitBtn
               }
               onClick={() => this.handleAlert("defalert", true)}
               className="btn-block shadow"
@@ -183,9 +189,9 @@ class FormNotif extends React.Component {
           confirmBtnBsStyle="success"
           confirmBtnText="بله؛ ارسال کن"
           cancelBtnText="لغو"
-          onConfirm={() => {
+          onConfirm={async () => {
             this.handleAlert("defalert", false);
-            this.sendNotif();
+            await this.sendNotif();
           }}
           onCancel={() => {
             this.handleAlert("defalert", false);

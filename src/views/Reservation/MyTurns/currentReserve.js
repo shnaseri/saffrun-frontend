@@ -72,14 +72,22 @@ class CurrentReserve extends Component {
         </CardHeader>
 
         <CardBody style={{ justifyContent: "center" }}>
-          <Badge
-            style={{ borderRadius: "50%", padding: "0.6rem" }}
-            pill
-            color="warning"
-            className="mr-1 mb-1 badge-lg blinking-clock"
+          <span
+            style={{
+              borderRadius: "50%",
+              display: "inline-block",
+              height: "25px",
+              width: "25px",
+              backgroundColor: "orange",
+              paddingRight: "6px",
+              paddingTop: "3px",
+            }}
+            // pill
+            // color="warning"
+            className="mr-1 mb-1 blinking-clock"
           >
-            <Clock size={16} />
-          </Badge>
+            <Clock style={{ color: "white" }} size={13} />
+          </span>
 
           <span style={{ lineHeight: "3" }}>
             نوبت کنونی شما در ساعت{" "}
@@ -90,7 +98,7 @@ class CurrentReserve extends Component {
             <mark>
               <strong>{currentReserve.participants.length}</strong>
             </mark>{" "}
-             شرکت‌کننده شروع‌شده و در ساعت
+            شرکت‌کننده شروع‌شده و در ساعت
             <mark>
               <strong>{this.correctHour(currentReserve.endTime)}</strong>
             </mark>{" "}

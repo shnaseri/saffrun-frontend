@@ -19,8 +19,8 @@ import { history } from "./../../../../history";
 
 class Revenue extends React.Component {
   state = {
-    current : 0,
-    past : 0,
+    current: 0,
+    past: 0,
     loadSpinner: true,
     year: 1400,
     options: {
@@ -74,6 +74,9 @@ class Revenue extends React.Component {
           show: false,
         },
         categories: [
+          "دی",
+          "بهمن",
+          "اسفند",
           "فروردین",
           "اردیبهشت",
           "خرداد",
@@ -83,9 +86,7 @@ class Revenue extends React.Component {
           "مهر",
           "آبان",
           "آذر",
-          "دی",
-          "بهمن",
-          "اسفند",
+          
         ],
         axisBorder: {
           show: false,
@@ -110,10 +111,10 @@ class Revenue extends React.Component {
           style: {
             color: this.props.strokeColor,
           },
-          offsetX: -45,
+          offsetX: -25,
           offsetY: 0,
           formatter: (val) => {
-            return val > 999 ? (val / 1000) + "تومان" : val;
+            return val > 999 ? val / 1000 + "تومان" : val;
           },
         },
       },
@@ -140,7 +141,6 @@ class Revenue extends React.Component {
       //   data: [46000, 48000, 45500, 46600, 44500, 46500, 45000, 47000,65000,87123,36500,63000]
       // }
     ],
-    
   };
 
   async componentDidMount() {
@@ -159,12 +159,12 @@ class Revenue extends React.Component {
           params: { year: date },
         }
       );
-      console.log(chartData.data)
+      console.log(chartData.data);
       this.setState({
         loadSpinner: false,
         series: [{ name: "تراکنش", data: chartData.data.data }],
-        current : chartData.data.current_month,
-        past : chartData.data.past_month
+        current: chartData.data.current_month,
+        past: chartData.data.past_month,
       });
     } catch (e) {
       this.setState({ loadSpinner: false });
@@ -184,20 +184,20 @@ class Revenue extends React.Component {
             <DropdownToggle className="cursor-pointer" tag="small">
               {this.state.year} <ChevronDown size={10} />
             </DropdownToggle>
-            <DropdownMenu >
-              <DropdownItem value={2022} onClick={(e) => this.setValue(e)}>
+            <DropdownMenu>
+              <DropdownItem value={2023} onClick={(e) => this.setValue(e)}>
                 1401
               </DropdownItem>
-              <DropdownItem value={2021} onClick={(e) => this.setValue(e)}>
+              <DropdownItem value={2022} onClick={(e) => this.setValue(e)}>
                 1400
               </DropdownItem>
-              <DropdownItem value={2020} onClick={(e) => this.setValue(e)}>
+              <DropdownItem value={2021} onClick={(e) => this.setValue(e)}>
                 1399
               </DropdownItem>
-              <DropdownItem value={2019} onClick={(e) => this.setValue(e)}>
+              <DropdownItem value={2020} onClick={(e) => this.setValue(e)}>
                 1398
               </DropdownItem>
-              <DropdownItem value={2018} onClick={(e) => this.setValue(e)}>
+              <DropdownItem value={2019} onClick={(e) => this.setValue(e)}>
                 1397
               </DropdownItem>
             </DropdownMenu>

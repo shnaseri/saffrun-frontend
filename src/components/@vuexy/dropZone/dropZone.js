@@ -47,6 +47,7 @@ class DropzoneBasic extends React.Component {
         <CardBody>
           <DropzoneArea
             initialFiles={this.props.imageUrlList}
+            
             dropzoneText="عکس مورد نظر را انتخاب یا به روی مکان زیر بکشید"
             onChange={(files) => this.props.imageUploaded(files)}
             dropzoneClass="my-dropzone-style"

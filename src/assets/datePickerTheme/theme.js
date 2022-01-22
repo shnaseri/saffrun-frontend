@@ -30,10 +30,10 @@ let theme = {
   cancelHoverBackColor: "#D6D6D6",
   cancelColor: "#000",
   cancelHoverColor: "#000",
-  changeViewButtonBackColor: "#D6D6D6",
+  changeViewButtonBackColor: "#fff",
   changeViewButtonHoverBackColor: "#fff",
-  changeViewButtonColor: "#000",
-  changeViewButtonHoverColor: "#617fdf",
+  changeViewButtonColor: "#fff",
+  changeViewButtonHoverColor: "#fff",
   // time
   timeBackColor: "#f0f0f0",
   timeNumberColor: "#000",

@@ -9,6 +9,7 @@ import {
   DropdownToggle,
   Media,
   Badge,
+  UncontrolledTooltip,
 } from "reactstrap";
 import PerfectScrollbar from "react-perfect-scrollbar";
 import axios from "axios";
@@ -24,7 +25,7 @@ const handleNavigation = (e, path) => {
 
 const UserDropdown = (props) => {
   return (
-    <DropdownMenu right>
+    <DropdownMenu right={false} style={{ width: "300px" }}>
       <DropdownItem
         tag="a"
         href="#"
@@ -79,6 +80,11 @@ class NavbarUser extends React.PureComponent {
   handleLangDropdown = () =>
     this.setState({ langDropdown: !this.state.langDropdown });
 
+  logOutClicked = () => {
+    localStorage.clear();
+    history.push("/login");
+  };
+
   render() {
     return (
       <ul className="nav navbar-nav navbar-nav-user float-right">
@@ -98,6 +104,14 @@ class NavbarUser extends React.PureComponent {
                 alt="avatar"
               />
             </span>
+            <Icon.Power
+              id="logout-power-icon"
+              className="ml-2 mr-1 cursor-pointer"
+              onClick={this.logOutClicked}
+            />
+            <UncontrolledTooltip target="logout-power-icon">
+              خروج
+            </UncontrolledTooltip>
           </DropdownToggle>
           {/* <UserDropdown {...this.props} /> */}
         </UncontrolledDropdown>
