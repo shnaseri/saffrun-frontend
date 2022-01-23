@@ -58,7 +58,7 @@ class ReserveStats extends Component {
       num = `${num / 1000}`;
       return `${num.substring(0, 3)} هزار تومان`;
     }
-    return num;
+    return `${num} تومان`;
   };
   tempFunction = () => {
     history.push({ pathname: "/edit-day", state: { date: "1400/12/24" } });

@@ -1,6 +1,7 @@
 import React from "react";
 import { Form, FormGroup, Input, Label, Button } from "reactstrap";
 import { connect } from "react-redux";
+import { Mail, Lock, User } from "react-feather";
 import { history } from "../../../history";
 import axios from "axios";
 import urlDomain from "../../../utility/urlDomain";
@@ -77,7 +78,7 @@ class RegisterJWT extends React.Component {
           </div>
         ) : (
           <Form onSubmit={this.handleRegister}>
-            <FormGroup style={{ marginTop: "5%" }} className="form-label-group">
+            <FormGroup style={{ marginTop: "5%" }} className="form-label-group position-relative has-icon-left">
               <Input
                 type="text"
                 placeholder="نام کاربری"
@@ -89,6 +90,9 @@ class RegisterJWT extends React.Component {
                   this.state.username.length < 6
                 }
               />
+                <div className="form-control-position">
+                  <User size={15} />
+                </div>
               <Label style={{ fontSize: "12px" }}>نام کاربری</Label>
               {this.state.username.length > 0 &&
                 this.state.username.length < 6 && (
@@ -99,8 +103,11 @@ class RegisterJWT extends React.Component {
             </FormGroup>
             <FormGroup
               style={{ marginTop: "10%" }}
-              className="form-label-group"
+              className="form-label-group position-relative has-icon-left"
             >
+                   <div className="form-control-position">
+                  <Lock size={15} />
+                </div>
               <Input
                 type="password"
                 placeholder="رمز"
@@ -112,6 +119,7 @@ class RegisterJWT extends React.Component {
                   this.state.password.length < 8
                 }
               />
+                 
               <Label style={{ fontSize: "12px" }}>رمز</Label>
               {this.state.password.length > 0 &&
                 this.state.password.length < 8 && (
@@ -122,7 +130,7 @@ class RegisterJWT extends React.Component {
             </FormGroup>
             <FormGroup
               style={{ marginTop: "10%" }}
-              className="form-label-group"
+              className="form-label-group position-relative has-icon-left"
             >
               <Input
                 type="password"
@@ -132,6 +140,9 @@ class RegisterJWT extends React.Component {
                 onChange={(e) => this.setState({ confirmPass: e.target.value })}
                 invalid={this.state.confirmPass !== this.state.password}
               />
+                              <div className="form-control-position">
+                  <Lock size={15} />
+                </div>
               <Label style={{ fontSize: "12px" }}>تایید رمز</Label>
               {this.state.confirmPass !== this.state.password && (
                 <small style={{ color: "red", fontSize: "11px" }}>
