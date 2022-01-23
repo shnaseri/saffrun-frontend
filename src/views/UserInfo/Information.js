@@ -73,10 +73,7 @@ class UserInfoTab extends React.Component {
       <Form onSubmit={(e) => e.preventDefault()}>
         <Row className="mt-1">
           <Col className="mt-1" md="6" sm="12">
-            <h5 className="mb-1">
-              <User className="mr-50" size={16} />
-              <span className="align-middle">اطلاعات شخصی</span>
-            </h5>
+           
             {/* <FormGroup>
               <Label className="d-block" for="dob">
                 تاریخ تولد
@@ -138,10 +135,20 @@ class UserInfoTab extends React.Component {
             </FormGroup>
           </Col>
           <Col className="mt-1" md="6" sm="12">
-            <h5 className="mb-1">
-              <MapPin className="mr-50" size={16} />
-              <span className="align-middle">آدرس</span>
-            </h5>
+          <FormGroup>
+              <Label for="pincode">استان</Label>
+              <Input
+                style={{
+                  direction: this.props.changeDIR(
+                    this.props.userData["province"]
+                  ),
+                }}
+                type="text"
+                id="province"
+                value={this.props.userData["province"]}
+                onChange={this.props.updateData}
+              />
+            </FormGroup>
             <FormGroup>
               <Label for="address1">نشانی</Label>
               <Input
@@ -156,20 +163,7 @@ class UserInfoTab extends React.Component {
                 onChange={this.props.updateData}
               />
             </FormGroup>
-            <FormGroup>
-              <Label for="pincode">استان</Label>
-              <Input
-                style={{
-                  direction: this.props.changeDIR(
-                    this.props.userData["province"]
-                  ),
-                }}
-                type="text"
-                id="province"
-                value={this.props.userData["province"]}
-                onChange={this.props.updateData}
-              />
-            </FormGroup>
+            
           </Col>
           <Col
             className="d-flex justify-content-end flex-wrap"

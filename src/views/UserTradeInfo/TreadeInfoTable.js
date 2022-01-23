@@ -52,13 +52,23 @@ const columns = [
     name: "مبلغ",
     selector: "total_payment",
     sortable: true,
-    cell: (row) => <span>{numberWithCommas(row.total_payment)}</span>,
+    cell: (row) => <span>{moreThan1000(row.total_payment)}</span>,
   },
 ];
-
+const moreThan1000 = (num) => {
+  if (num > 1000000) {
+    num = `${num / 1000000}`;
+    return `${num.substring(0, 3)} میلیون تومان`;
+  }
+  if (num > 1000) {
+    num = `${num / 1000}`;
+    return `${num.substring(0, 3)} هزار تومان`;
+  }
+  return `${num} تومان`;
+};
 const ExpandableTable = ({ data }) => {
   return (
-    <div style={{ height: "200px", overflow: "auto" }}>
+    <div style={{ maxHeight: "200px", overflow: "auto" }}>
       <Table
         className="border border-4 border-secondary rounded-2"
         responsive
@@ -79,8 +89,8 @@ const ExpandableTable = ({ data }) => {
                 <tr>
                   <td>{row.name}</td>
                   <td>{row.type}</td>
-                  <td>{new Date(row.time).toLocaleTimeString("en-GB")}</td>
-                  <td>{numberWithCommas(row.amount)}</td>
+                  <td>{new Date(row.time).toLocaleTimeString("en-GB").substring(0,5)}</td>
+                  <td>{moreThan1000(row.amount)}</td>
                 </tr>
               </React.Fragment>
             );
@@ -95,7 +105,7 @@ class DataTableExpandableRows extends React.Component {
   state = {
     loadSpinner: true,
     tradeData: {},
-    pageCount: 1,
+    pageCount: 5,
     currentPage: 1,
     totalPages: 0,
   };
