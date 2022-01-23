@@ -92,6 +92,24 @@ const navigationConfig = [
     navLink: "/my-events",
   },
 
+  {
+    type: "groupHeader",
+    groupTitle: "پشتیبانی",
+  },
+  {
+    id: "about_us",
+    title: "درباره ما",
+    type: "item",
+    icon: <Icon.Info size={20} />,
+    navLink: "/about-us",
+  },
+  {
+    id: "call_us",
+    title: "تماس با ما",
+    type: "item",
+    icon: <Icon.PhoneCall size={20} />,
+    navLink: "/call-us",
+  },
 ];
 
 export default navigationConfig;
