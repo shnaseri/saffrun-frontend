@@ -1,3 +1,3 @@
-let urlDomain = "http://188.121.110.151:9000/api";
+let urlDomain = "http://188.121.109.248:8000/api";
 
 export default urlDomain;

@@ -1,3 +1,3 @@
-let imgUrlDomain = "http://188.121.110.151:9000";
+let imgUrlDomain = "http://188.121.109.248:8000";
 
 export default imgUrlDomain;
