@@ -1,5 +1,5 @@
 import React from "react";
-import urlDomain from "../../../utility/urlDomain";
+import {urlDomain }from "../../../utility/urlDomain";
 import SweetAlert from "react-bootstrap-sweetalert";
 import Wizard from "../../../components/@vuexy/wizard/WizardComponent";
 import {

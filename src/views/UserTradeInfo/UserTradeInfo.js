@@ -53,7 +53,7 @@ import ComponentSpinner from "../../components/@vuexy/spinner/Loading-spinner";
 import "../../assets/scss/plugins/tables/_agGridStyleOverride.scss";
 import "../../assets/scss/pages/users.scss";
 import imgUrlDomain from "../../utility/imgUrlDomain";
-import urlDomain from "../../utility/urlDomain";
+import { urlDomain } from "../../utility/urlDomain";
 import sliderImage1 from "../../assets/img/slider/03.jpg";
 import sliderImage2 from "../../assets/img/slider/04.jpg";
 import sliderImage3 from "../../assets/img/slider/05.jpg";

@@ -5,32 +5,27 @@ import NavbarBookmarks from "./NavbarBookmarks";
 import NavbarUser from "./NavbarUser";
 import userImg from "../../../assets/img/portrait/small/avatar-s-11.jpg";
 import axios from "axios";
-import urlDomain from "../../../utility/urlDomain";
-import imgUrlDomain from "../../../utility/imgUrlDomain"
+import { urlDomain } from "../../../utility/urlDomain";
+import imgUrlDomain from "../../../utility/imgUrlDomain";
 import { history } from "../../../history";
 import isAuthenticated from "../../../utility/authenticated";
 import defaultImg from "../../../assets/img/profile/Generic-profile-picture.jpg.webp";
 
-const UserName=props=>
-{
-
+const UserName = (props) => {
   return props.userdata;
-}
+};
 
 const colorsArr = ["primary", "danger", "success", "info", "warning", "dark"];
 const navbarTypes = ["floating", "static", "sticky", "hidden"];
 class ThemeNavbar extends React.Component {
   state = {
-    username:"",
-    image:"",
+    username: "",
+    image: "",
   };
   imgGenerator = (x) => {
-    return x
-      ? `${imgUrlDomain}${x.thumbnail}`
-      : defaultImg;
+    return x ? `${imgUrlDomain}${x.thumbnail}` : defaultImg;
   };
-  async componentDidMount ()
-  {
+  async componentDidMount() {
     let authenticated = await isAuthenticated();
     if (!authenticated) history.push("/login");
     let token = localStorage.getItem("access");
@@ -39,7 +34,10 @@ class ThemeNavbar extends React.Component {
       let response = await axios.get(`${urlDomain}/profile/user/`, {
         headers: { Authorization: token },
       });
-      this.setState({ username: response.data.username,image:response.data.avatar["image"]});
+      this.setState({
+        username: response.data.username,
+        image: response.data.avatar["image"],
+      });
     } catch (e) {
       // this.setState({ loadSpinner: false });
     }
@@ -105,7 +103,6 @@ class ThemeNavbar extends React.Component {
                 <NavbarUser
                   userName={<UserName userdata={this.state.username} />}
                   userImg={this.imgGenerator(this.state.image)}
-                  
                 />
               </div>
             </div>

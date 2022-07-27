@@ -1,3 +1,1 @@
-let urlDomain = process.env.REACT_APP_HOST;
-
-export default urlDomain;
+export const urlDomain = process.env.REACT_APP_HOST;

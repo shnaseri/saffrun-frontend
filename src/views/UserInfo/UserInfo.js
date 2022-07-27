@@ -21,7 +21,7 @@ import { toast } from "react-toastify";
 import ComponentSpinner from "../../components/@vuexy/spinner/Loading-spinner";
 import { history } from "../../history";
 import isAuthenticated from "../../utility/authenticated";
-import urlDomain from "../../utility/urlDomain";
+import { urlDomain } from "../../utility/urlDomain";
 
 class UserEdit extends React.Component {
   state = {
@@ -50,45 +50,50 @@ class UserEdit extends React.Component {
     console.log(this.state.userData);
   };
   postData = async () => {
-    try{
+    try {
       let token = localStorage.getItem("access");
-    token = `Bearer ${token}`;
-    let x = await axios.put(
-      `${urlDomain}/profile/user/`,
+      token = `Bearer ${token}`;
+      let x = await axios.put(
+        `${urlDomain}/profile/user/`,
 
-      { ...this.state.userData , phone : this.state.userData["phone"] ? this.state.userData["phone"].replace(/\s/g, "")  : " "  },
-      {
-        headers: { Authorization: token },
-      }
-    );
-    this.notifySuccess();
-    }
-    catch(e){
+        {
+          ...this.state.userData,
+          phone: this.state.userData["phone"]
+            ? this.state.userData["phone"].replace(/\s/g, "")
+            : " ",
+        },
+        {
+          headers: { Authorization: token },
+        }
+      );
+      this.notifySuccess();
+    } catch (e) {
       this.notifyError();
     }
-    
+
     // if (x.status === 200) {
     //   this.notifySuccess();
     // } else {
-     
+
     // }
   };
   updateImg = (id) => {
-    
-    let userData = { ...this.state.userData, image_id:id };
-    console.log(userData)
+    let userData = { ...this.state.userData, image_id: id };
+    console.log(userData);
     this.setState({ userData });
   };
   delImg = () => {
-
-    let userData = { ...this.state.userData , image_id : -1 , avatar : {image : null} };
-    console.log(userData)
+    let userData = {
+      ...this.state.userData,
+      image_id: -1,
+      avatar: { image: null },
+    };
+    console.log(userData);
     this.setState({ userData });
     // console.log(this.state.userData);
   };
   updateData = (e) => {
-    if (e.target.id !== "phone")
-      this.toggleDirection(e);
+    if (e.target.id !== "phone") this.toggleDirection(e);
     let userData = { ...this.state.userData, [e.target.id]: e.target.value };
     this.setState({ userData });
     console.log(this.state.userData);

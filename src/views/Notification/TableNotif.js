@@ -29,7 +29,7 @@ import ReactPaginate from "react-paginate";
 import "../../assets/scss/plugins/extensions/react-paginate.scss";
 import SweetAlert from "react-bootstrap-sweetalert";
 import axios from "axios";
-import urlDomain from "../../utility/urlDomain";
+import { urlDomain } from "../../utility/urlDomain";
 import isAuthenticated from "../../utility/authenticated";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";

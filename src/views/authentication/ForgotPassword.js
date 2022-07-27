@@ -16,7 +16,7 @@ import fgImg from "../../assets/img/pages/forgot-password.png";
 import { history } from "../../history";
 import "../../assets/scss/pages/authentication.scss";
 import axios from "axios";
-import urlDomain from "../../utility/urlDomain";
+import {urlDomain} from "../../utility/urlDomain";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "../../assets/scss/plugins/extensions/toastr.scss";

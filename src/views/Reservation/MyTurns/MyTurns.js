@@ -16,7 +16,7 @@ import { history } from "../../../history";
 import isAuthenticated from "../../../utility/authenticated";
 import axios from "axios";
 import Avatar from "../../../components/@vuexy/avatar/AvatarComponent";
-import urlDomain from "../../../utility/urlDomain";
+import { urlDomain } from "../../../utility/urlDomain";
 import imgUrlDomain from "../../../utility/imgUrlDomain";
 import ComponentSpinner from "../../../components/@vuexy/spinner/Loading-spinner";
 import FutureTable from "./futureReservesTable";

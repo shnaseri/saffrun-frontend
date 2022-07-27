@@ -27,7 +27,7 @@ import SweetAlert from "react-bootstrap-sweetalert";
 import "./buttonStyle.css";
 import ReserveParticipants from "./reserveParticipants";
 import axios from "axios";
-import urlDomain from "../../../utility/urlDomain";
+import { urlDomain } from "../../../utility/urlDomain";
 import "./modal-style.css";
 import defaultImg from "../../../assets/img/profile/Generic-profile-picture.jpg.webp";
 import imgUrlDomain from "../../../utility/imgUrlDomain";
@@ -302,7 +302,7 @@ class ReservationTable extends Component {
         data: { reserve_id: this.state.rowClicked },
       }
     );
-    await this.props.updateReserveDetail()
+    await this.props.updateReserveDetail();
     let statusCode = await this.callServer(pagination);
     if (statusCode === 404) {
       this.setState({ currentPage: 1 });
@@ -321,7 +321,7 @@ class ReservationTable extends Component {
         page: this.state.currentPage,
         page_count: this.state.pageCount,
       };
-      await this.props.updateReserveDetail()
+      await this.props.updateReserveDetail();
       await this.callServer(pagination);
     }
     this.setState({ participantsModal: false, participantDeleted: false });

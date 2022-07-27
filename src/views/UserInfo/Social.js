@@ -28,7 +28,7 @@ import { history } from "../../history";
 import "../../assets/scss/plugins/tables/_agGridStyleOverride.scss";
 import "../../assets/scss/pages/users.scss";
 import { Color } from "ag-grid-community";
-import urlDomain from "../../utility/urlDomain";
+import { urlDomain } from "../../utility/urlDomain";
 import isAuthenticated from "../../utility/authenticated";
 import "./edit.css";
 import imgUrlDomain from "../../utility/imgUrlDomain";
@@ -164,8 +164,8 @@ class UsersList extends React.Component {
     ],
   };
   SetImg = (params) => {
-    console.log(params.data.avatar)
-    if (params.data.avatar["image"] !=null) {
+    console.log(params.data.avatar);
+    if (params.data.avatar["image"] != null) {
       return imgUrlDomain + params.data.avatar["image"]["thumbnail"];
     } else {
       return userImg;
@@ -336,14 +336,16 @@ class UsersList extends React.Component {
                         animateRows={true}
                         // floatingFilter={true}
                         // pagination={false}
-                        suppressPaginationPanel = {false}
+                        suppressPaginationPanel={false}
                         // pivotPanelShow="always"
                         // paginationPageSize={pageSize}
                         resizable={true}
                         enableRtl={context.state.direction === "rtl"}
                         rowStyle={{ borderBlockColor: "#ff9f43" }}
                         headerStyle={{ backgroundColor: "#ff9f43" }}
-                        localeText= {{noRowsToShow: 'دنبال کننده ای جهت نمایش یافت نشد'}}
+                        localeText={{
+                          noRowsToShow: "دنبال کننده ای جهت نمایش یافت نشد",
+                        }}
                       />
                     )}
                   </ContextLayout.Consumer>

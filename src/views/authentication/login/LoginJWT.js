@@ -4,7 +4,7 @@ import { CardBody, FormGroup, Form, Input, Button, Label } from "reactstrap";
 import { Mail, Lock, User } from "react-feather";
 import { history } from "../../../history";
 import axios from "axios";
-import urlDomain from "../../../utility/urlDomain";
+import {urlDomain} from "../../../utility/urlDomain";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "../../../assets/scss/plugins/extensions/toastr.scss";

@@ -32,7 +32,7 @@ import Status from "../../../components/@vuexy/status/status";
 import ShowParticipant from "./ShowParticipant";
 import EventStartTime from "./eventStartTime";
 import Avatar from "../../../components/@vuexy/avatar/AvatarComponent";
-import urlDomain from "../../../utility/urlDomain";
+import { urlDomain } from "../../../utility/urlDomain";
 import isAuthenticated from "../../../utility/authenticated";
 import axios from "axios";
 

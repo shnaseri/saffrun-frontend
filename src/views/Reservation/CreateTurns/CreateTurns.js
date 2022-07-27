@@ -20,7 +20,7 @@ import { ChevronDown, Check, Plus, Clock, Trash2 } from "react-feather";
 import classnames from "classnames";
 import TimeField from "react-simple-timefield";
 import axios from "axios";
-import urlDomain from "../../../utility/urlDomain";
+import { urlDomain } from "../../../utility/urlDomain";
 import "./input-datepicker2.css";
 import theme from "../../../assets/datePickerTheme/theme";
 import colWidthes from "./dayColumnsWidth";

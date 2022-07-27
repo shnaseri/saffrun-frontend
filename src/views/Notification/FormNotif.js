@@ -31,7 +31,7 @@ import {
 } from "react-feather";
 import Radio from "../../components/@vuexy/radio/RadioVuexy";
 import axios from "axios";
-import urlDomain from "../../utility/urlDomain";
+import { urlDomain } from "../../utility/urlDomain";
 import { history } from "../../history";
 import isAuthenticated from "../../utility/authenticated";
 

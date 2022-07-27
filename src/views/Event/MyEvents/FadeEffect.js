@@ -8,7 +8,7 @@ import img4 from "../../../assets/img/slider/banner-4.jpg";
 import img5 from "../../../assets/img/slider/banner-5.jpg";
 import "swiper/css/swiper.css";
 import "../../../assets/scss/plugins/extensions/swiper.scss";
-import urlDomain from "../../../utility/urlDomain";
+import { urlDomain } from "../../../utility/urlDomain";
 import isAuthenticated from "../../../utility/authenticated";
 import axios from "axios";
 
@@ -47,7 +47,7 @@ class FadeEffectSwiper extends React.Component {
                 return (
                   <div>
                     <img
-                      style={{ height: "500px" , width : "800px"}}
+                      style={{ height: "500px", width: "800px" }}
                       src={item}
                       alt="swiper 1"
                       className="img-fluid"

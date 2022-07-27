@@ -24,7 +24,7 @@ import SweetAlert from "react-bootstrap-sweetalert";
 import { history } from "../../../history";
 import Checkbox from "../../../components/@vuexy/checkbox/CheckboxesVuexy";
 import axios from "axios";
-import urlDomain from "../../../utility/urlDomain";
+import { urlDomain } from "../../../utility/urlDomain";
 
 const chipColors = {
   "on hold": "warning",

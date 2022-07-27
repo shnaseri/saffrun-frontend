@@ -20,7 +20,7 @@ import "../Event/EventCreation/input-datepicker.css";
 import DropzoneBasic from "../../components/@vuexy/dropZone/dropZone";
 import isAuthenticated from "./../../utility/authenticated";
 import { history } from "./../../history";
-import urlDomain from "./../../utility/urlDomain";
+import { urlDomain } from "./../../utility/urlDomain";
 import { Edit } from "react-feather";
 import { toast } from "react-toastify";
 import ComponentSpinner from "../../components/@vuexy/spinner/Loading-spinner";

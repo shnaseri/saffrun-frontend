@@ -3,7 +3,7 @@ import { Card, CardBody, CardHeader, CardTitle, Table } from "reactstrap";
 import DataTable from "react-data-table-component";
 import isAuthenticated from "./../../utility/authenticated";
 import { history } from "./../../history";
-import urlDomain from "./../../utility/urlDomain";
+import { urlDomain } from "./../../utility/urlDomain";
 import axios from "axios";
 import ReactPaginate from "react-paginate";
 import {
@@ -89,7 +89,11 @@ const ExpandableTable = ({ data }) => {
                 <tr>
                   <td>{row.name}</td>
                   <td>{row.type}</td>
-                  <td>{new Date(row.time).toLocaleTimeString("en-GB").substring(0,5)}</td>
+                  <td>
+                    {new Date(row.time)
+                      .toLocaleTimeString("en-GB")
+                      .substring(0, 5)}
+                  </td>
                   <td>{moreThan1000(row.amount)}</td>
                 </tr>
               </React.Fragment>

@@ -13,7 +13,7 @@ import { ChevronsRight } from "react-feather";
 import { history } from "./../../../history";
 import isAuthenticated from "./../../../utility/authenticated";
 import axios from "axios";
-import urlDomain from "./../../../utility/urlDomain";
+import {urlDomain} from "./../../../utility/urlDomain";
 import ComponentSpinner from "./../../../components/@vuexy/spinner/Loading-spinner";
 import userImg from "../../../assets/img/profile/Generic-profile-picture.jpg.webp";
 import imgUrlDomain from "../../../utility/imgUrlDomain";

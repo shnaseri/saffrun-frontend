@@ -14,7 +14,7 @@ import { DropzoneArea } from "material-ui-dropzone";
 import "./dropzone.css";
 import { UploadCloud } from "react-feather";
 import { toast } from "react-toastify";
-import urlDomain from "./../../../utility/urlDomain";
+import {urlDomain} from "./../../../utility/urlDomain";
 import axios from "axios";
 import isAuthenticated from "./../../../utility/authenticated";
 import { history } from "./../../../history";

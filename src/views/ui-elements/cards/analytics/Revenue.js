@@ -14,7 +14,7 @@ import { ChevronDown } from "react-feather";
 import { Settings } from "react-feather";
 import isAuthenticated from "./../../../../utility/authenticated";
 import axios from "axios";
-import urlDomain from "./../../../../utility/urlDomain";
+import { urlDomain } from "./../../../../utility/urlDomain";
 import { history } from "./../../../../history";
 
 class Revenue extends React.Component {
@@ -86,7 +86,6 @@ class Revenue extends React.Component {
           "مهر",
           "آبان",
           "آذر",
-          
         ],
         axisBorder: {
           show: false,

@@ -3,7 +3,7 @@ import { Card, CardHeader, CardTitle, CardBody, Button } from "reactstrap";
 import { Trash } from "react-feather";
 import SweetAlert from "react-bootstrap-sweetalert";
 import axios from "axios";
-import urlDomain from "../../../utility/urlDomain";
+import { urlDomain } from "../../../utility/urlDomain";
 import ComponentSpinner from "../../../components/@vuexy/spinner/Loading-spinner";
 
 class ReserveParticipants extends React.Component {

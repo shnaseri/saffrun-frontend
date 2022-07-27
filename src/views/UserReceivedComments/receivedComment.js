@@ -47,7 +47,7 @@ import _ from "lodash";
 import { history } from "../../history";
 import isAuthenticated from "../../utility/authenticated";
 import axios from "axios";
-import urlDomain from "../../utility/urlDomain";
+import { urlDomain } from "../../utility/urlDomain";
 import defaultImg from "../../assets/img/profile/Generic-profile-picture.jpg.webp";
 import imgUrlDomain from "../../utility/imgUrlDomain";
 import ComponentSpinner from "../../components/@vuexy/spinner/Loading-spinner";

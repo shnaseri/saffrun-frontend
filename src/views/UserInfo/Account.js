@@ -24,7 +24,7 @@ import { Check, Lock } from "react-feather";
 import axios from "axios";
 import { history } from "../../history";
 import isAuthenticated from "../../utility/authenticated";
-import urlDomain from "../../utility/urlDomain";
+import { urlDomain } from "../../utility/urlDomain";
 import imgUrlDomain from "../../utility/imgUrlDomain";
 
 import { toast } from "react-toastify";
@@ -40,18 +40,17 @@ class UserAccountTab extends React.Component {
       currPass: "",
       newPass: "",
       repPass: "",
-      disabledSubmitBtn : false,
-      disabledResetPasswordBtn : false
+      disabledSubmitBtn: false,
+      disabledResetPasswordBtn: false,
     };
   }
 
   postPassword = async () => {
-
     var token = "Bearer " + localStorage.getItem("access");
     var headers = {
       Authorization: token,
     };
-    this.setState({disabledResetPasswordBtn : true})
+    this.setState({ disabledResetPasswordBtn: true });
     try {
       let response = await axios.post(
         `${urlDomain}/auth/change_password/`,
@@ -65,14 +64,14 @@ class UserAccountTab extends React.Component {
       toast.success("رمز شما با موفقیت تغییر پیدا کرد", {
         position: toast.POSITION.TOP_CENTER,
       });
-      this.setState({disabledResetPasswordBtn : false})
+      this.setState({ disabledResetPasswordBtn: false });
       return response;
     } catch (e) {
       console.log(e);
       toast.error("عملیات با خطا روبرو شد.", {
         position: toast.POSITION.TOP_CENTER,
       });
-      this.setState({disabledResetPasswordBtn : false})
+      this.setState({ disabledResetPasswordBtn: false });
       return false;
     }
   };
@@ -100,7 +99,7 @@ class UserAccountTab extends React.Component {
 
   postImg = async (file) => {
     try {
-      this.setState({disabledSubmitBtn : true});
+      this.setState({ disabledSubmitBtn: true });
       var token = "Bearer " + localStorage.getItem("access");
       var headers = {
         "Content-type": "multipart/form-data",
@@ -116,10 +115,10 @@ class UserAccountTab extends React.Component {
         }
       );
       this.props.updateImg(response.data.id);
-      this.setState({disabledSubmitBtn : false});
+      this.setState({ disabledSubmitBtn: false });
     } catch (e) {
       console.log(e);
-      this.setState({disabledSubmitBtn : false});
+      this.setState({ disabledSubmitBtn: false });
       return false;
     }
   };
@@ -389,7 +388,8 @@ class UserAccountTab extends React.Component {
                         color="primary"
                         disabled={
                           this.state.repPass !== this.state.newPass ||
-                          this.state.newPass.length === 0 || this.state.disabledResetPasswordBtn
+                          this.state.newPass.length === 0 ||
+                          this.state.disabledResetPasswordBtn
                         }
                         onClick={() => this.postPassword()}
                         style={{ margin: 20 }}

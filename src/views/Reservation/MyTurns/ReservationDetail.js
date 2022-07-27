@@ -5,7 +5,7 @@ import ReserveStats from "./reserveStats";
 import CurrentClosest from "./CurrentORColsest";
 import ReserveTable from "./reserveDetailTable";
 import { Card, CardHeader, CardTitle, CardBody, Row, Col } from "reactstrap";
-import urlDomain from "../../../utility/urlDomain";
+import { urlDomain } from "../../../utility/urlDomain";
 import imgUrlDomain from "../../../utility/imgUrlDomain";
 import { history } from "../../../history";
 import isAuthenticated from "../../../utility/authenticated";

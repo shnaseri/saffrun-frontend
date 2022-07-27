@@ -1,5 +1,5 @@
 import axios from "axios";
-import urlDomain from "./urlDomain"
+import {urlDomain} from "./urlDomain"
 async function isAuthenticated() {
     let token = localStorage.getItem("access");
     let authenticatedStatus = false; 
