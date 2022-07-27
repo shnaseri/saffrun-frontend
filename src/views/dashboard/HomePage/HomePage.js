@@ -37,7 +37,7 @@ class Home extends React.Component {
     let token = localStorage.getItem("access");
     token = `Bearer ${token}`;
     try {
-      let homeData = await axios.get(`${urlDomain}/core/homepage`, {
+      let homeData = await axios.get(`${urlDomain}/core/homepage/`, {
         headers: { Authorization: token },
       });
       console.log(homeData.data["last_comments"]);
