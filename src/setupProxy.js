@@ -10,13 +10,4 @@ module.exports = function (app) {
       secure: false,
     })
   );
-  app.use(
-    "/saffrun-image**",
-    createProxyMiddleware({
-      target: "http://188.121.109.248:8000",
-      changeOrigin: true,
-      pathRewrite: { "^/saffrun-image": "" },
-      secure: false,
-    })
-  );
 };
